@@ -5,6 +5,7 @@ import { PrimaryAction } from '@/components/primary-action';
 import { PhraseLens } from '@/components/phrase-lens';
 import { ThemedText } from '@/components/themed-text';
 import type { EncounterTask } from '@/content/first-encounter';
+import evidenceLedger from '@/content/first-encounter-evidence.json';
 import { useTheme } from '@/theme';
 
 export type GuidedTaskCompletion = {
@@ -31,6 +32,7 @@ export function GuidedTask({
   const [retrievalPhraseRevealed, setRetrievalPhraseRevealed] = useState(false);
   const [incorrectCheckCount, setIncorrectCheckCount] = useState(0);
   const { colors, spacing, radii, layout } = useTheme();
+  const evidenceCard = evidenceLedger.cards.find((card) => card.content_id === task.id);
 
   const selectedChoice = task.kind === 'choice' ? task.choices.find((choice) => choice.id === selectedChoiceId) : undefined;
   const choiceCorrect = selectedChoice?.correct === true;
@@ -71,9 +73,17 @@ export function GuidedTask({
   return (
     <View style={{ gap: spacing.lg }}>
       <View style={{ gap: spacing.xs }}>
-        <ThemedText variant="caption" tone="accent">
-          TARGET · {task.target_skill_id.toUpperCase()}
-        </ThemedText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          <ThemedText variant="caption" tone="accent">
+            TARGET · {task.target_skill_id.toUpperCase()}
+          </ThemedText>
+          {evidenceCard ? (
+            <ThemedText variant="caption" tone="current">
+              EVIDENCE · {evidenceCard.evidence_levels.join(' · ')}
+            </ThemedText>
+          ) : null}
+        </View>
+        {evidenceCard ? <ThemedText variant="callout" tone="muted">{evidenceCard.function}</ThemedText> : null}
         <ThemedText variant="title">{task.title}</ThemedText>
         <ThemedText tone="muted">{task.prompt}</ThemedText>
       </View>
