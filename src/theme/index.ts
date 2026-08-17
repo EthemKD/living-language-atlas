@@ -67,6 +67,7 @@ const textStyle = (style: TextStyle) => style;
 export const typography = {
   display: textStyle({ fontFamily: fonts.rounded, fontSize: 34, lineHeight: 40, fontWeight: '700' }),
   title: textStyle({ fontFamily: fonts.rounded, fontSize: 28, lineHeight: 34, fontWeight: '700' }),
+  phrase: textStyle({ fontFamily: fonts.rounded, fontSize: 24, lineHeight: 32, fontWeight: '700' }),
   heading: textStyle({ fontFamily: fonts.sans, fontSize: 20, lineHeight: 26, fontWeight: '700' }),
   body: textStyle({ fontFamily: fonts.sans, fontSize: 17, lineHeight: 24, fontWeight: '400' }),
   bodyStrong: textStyle({ fontFamily: fonts.sans, fontSize: 17, lineHeight: 24, fontWeight: '600' }),

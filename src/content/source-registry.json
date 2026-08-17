@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Trace what supports curriculum scope, skill boundaries and source-selection decisions without copying course material or pretending that a linked source reviewed this app.",
+  "sources": [
+    {
+      "id": "COE-CEFR-A1-QUALITATIVE",
+      "publisher": "Council of Europe",
+      "authority_type": "intergovernmental",
+      "url": "https://www.coe.int/en/web/common-european-framework-reference-languages/table-3-cefr-3.3-common-reference-levels-qualitative-aspects-of-spoken-language-use",
+      "accessed_on": "2026-08-17",
+      "supports": [
+        "A1 scope: personal details and concrete situations",
+        "memorised phrase repertoire as a bounded starting point",
+        "repair, repetition and rephrasing as legitimate interaction support"
+      ],
+      "does_not_support": [
+        "awarding CEFR A1 from this app",
+        "judging pronunciation or fluency",
+        "copying a course or assessment item"
+      ],
+      "use_mode": "scope_only"
+    },
+    {
+      "id": "PUSHKIN-A1-ELEMENTARY",
+      "publisher": "State Institute of Russian Language A.S. Pushkin",
+      "authority_type": "state higher-education institute",
+      "url": "https://pushkininstitute.ru/beginner",
+      "accessed_on": "2026-08-17",
+      "supports": [
+        "an elementary path may include reading notices and restaurant menus",
+        "a phonetics-and-script prerequisite before a main communication module",
+        "greeting, introductions and ordering a restaurant meal as beginner-topic boundaries"
+      ],
+      "does_not_support": [
+        "reusing the institute's lesson content, audio or assessment",
+        "claiming that a small prototype has completed its A1 course"
+      ],
+      "use_mode": "scope_only"
+    },
+    {
+      "id": "SPBU-RUSSIAN-A1-PLUS-PART-1",
+      "publisher": "St Petersburg State University",
+      "authority_type": "public university",
+      "url": "https://online.spbu.ru/courses/russian-language-a1-part-1/",
+      "accessed_on": "2026-08-17",
+      "supports": [
+        "talking about self, work and study at A1+ entry",
+        "ordering food in a café or restaurant as a beginner communication topic"
+      ],
+      "does_not_support": [
+        "copying lectures, tests or recordings",
+        "treating a café task alone as a proficiency certification"
+      ],
+      "use_mode": "topic_scope_only"
+    },
+    {
+      "id": "LEKTORIUM-TPU-RKI-A1",
+      "publisher": "Lectorium / Tomsk Polytechnic University Russian-language teaching staff",
+      "authority_type": "university-authored open course",
+      "url": "https://www.lektorium.tv/russian-language",
+      "accessed_on": "2026-08-17",
+      "supports": [
+        "letter-and-sound work before beginner communication",
+        "formal questions about name and origin in an elementary Russian sequence",
+        "separate phonetics, vocabulary and grammar practice at elementary level"
+      ],
+      "does_not_support": [
+        "copying its videos, exercises or answer key",
+        "a substitute for qualified review of each learner-visible string"
+      ],
+      "use_mode": "scope_only"
+    }
+  ]
+}

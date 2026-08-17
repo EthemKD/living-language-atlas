@@ -4,18 +4,28 @@
   "interface_language": "English",
   "target_language": "Russian",
   "content_evidence_card": {
+    "content_version": "0.2.0",
     "target_skill_id": "rus.a0.first-encounter",
     "author": "Living Language Atlas product seed",
     "language_reviewer": null,
     "audio_source": null,
     "review_status": "language_review_required",
+    "source_checked_on": "2026-08-17",
+    "source_registry_ids": [
+      "COE-CEFR-A1-QUALITATIVE",
+      "PUSHKIN-A1-ELEMENTARY",
+      "SPBU-RUSSIAN-A1-PLUS-PART-1",
+      "LEKTORIUM-TPU-RKI-A1"
+    ],
     "source_refs": [
       "docs/product/12_product_foundation_mvp_slice_v0.1.md",
-      "docs/product/13_first_encounter_build_spec_v0.1.md"
+      "docs/product/13_first_encounter_build_spec_v0.1.md",
+      "src/content/source-registry.json"
     ],
     "known_limits": [
       "No audio or pronunciation scoring is included in this reference build.",
       "Completion records a deterministic rehearsal trace, not a CEFR or fluency claim.",
+      "Source links constrain scope and do not replace qualified Russian-language review.",
       "All learner-facing Russian remains blocked from production publication pending qualified review."
     ]
   },
@@ -27,6 +37,7 @@
       "eyebrow": "SCRIPT GATE",
       "duration": "4 min",
       "target_skill_id": "rus.a0.read.mission-signs",
+      "source_registry_ids": ["PUSHKIN-A1-ELEMENTARY", "LEKTORIUM-TPU-RKI-A1"],
       "can_do": "I can spot a few Cyrillic shapes needed for this mission without treating them as Latin letters.",
       "evidence_boundary": "This is a guided script check, not a claim of Cyrillic fluency.",
       "tasks": [
@@ -59,15 +70,15 @@
           "id": "rus00-r",
           "kind": "choice",
           "title": "Catch another false friend",
-          "prompt": "Which Cyrillic letter is used for the r sound in a word such as ресторан?",
+          "prompt": "What sound does this Cyrillic letter carry in a word such as ресторан?",
           "source_line": "Р",
           "translation": "r sound in this mission",
           "retry_hint": "The letter looks like Latin P, but its job in Russian is different.",
           "target_skill_id": "rus.a0.read.false-friend-r",
           "choices": [
-            { "id": "er", "label": "Р", "correct": true },
-            { "id": "pe", "label": "П", "correct": false },
-            { "id": "ve", "label": "В", "correct": false }
+            { "id": "r-sound", "label": "r sound", "correct": true },
+            { "id": "p-sound", "label": "p sound", "correct": false },
+            { "id": "v-sound", "label": "v sound", "correct": false }
           ]
         }
       ]
@@ -79,6 +90,7 @@
       "eyebrow": "INTRODUCE YOURSELF",
       "duration": "5 min",
       "target_skill_id": "rus.a0.first-contact",
+      "source_registry_ids": ["COE-CEFR-A1-QUALITATIVE", "PUSHKIN-A1-ELEMENTARY", "LEKTORIUM-TPU-RKI-A1"],
       "can_do": "I can greet formally and give my name in one supported exchange.",
       "evidence_boundary": "This is guided phrase retrieval; it does not assess spontaneous conversation.",
       "tasks": [
@@ -96,15 +108,15 @@
           "id": "rus01-ask-name",
           "kind": "choice",
           "title": "Recognize the question",
-          "prompt": "Which line asks a person for their name using the formal register?",
+          "prompt": "Which English meaning matches this formal question?",
           "source_line": "Как вас зовут?",
           "translation": "What is your name? (formal)",
           "retry_hint": "Look for the line whose job is asking a name, not giving one.",
           "target_skill_id": "rus.a0.ask-name.formal",
           "choices": [
-            { "id": "ask-name", "label": "Как вас зовут?", "correct": true },
-            { "id": "give-name", "label": "Меня зовут Марко.", "correct": false },
-            { "id": "ask-price", "label": "Сколько стоит?", "correct": false }
+            { "id": "ask-name", "label": "What is your name?", "correct": true },
+            { "id": "give-name", "label": "My name is Marco.", "correct": false },
+            { "id": "ask-price", "label": "How much is it?", "correct": false }
           ]
         },
         {
@@ -128,6 +140,7 @@
       "eyebrow": "CONCRETE NEED",
       "duration": "6 min",
       "target_skill_id": "rus.a0.cafe-request",
+      "source_registry_ids": ["COE-CEFR-A1-QUALITATIVE", "PUSHKIN-A1-ELEMENTARY", "SPBU-RUSSIAN-A1-PLUS-PART-1"],
       "can_do": "I can request a menu and order one supported drink politely.",
       "evidence_boundary": "The activity practices one bounded transaction, not free restaurant conversation.",
       "tasks": [
@@ -157,15 +170,15 @@
           "id": "rus02-price",
           "kind": "choice",
           "title": "Ask the price",
-          "prompt": "Which question asks how much the item costs?",
+          "prompt": "Which English meaning matches this question?",
           "source_line": "Сколько стоит?",
           "translation": "How much is it?",
           "retry_hint": "Choose the question about cost, not the request for a menu.",
           "target_skill_id": "rus.a0.ask-price",
           "choices": [
-            { "id": "price", "label": "Сколько стоит?", "correct": true },
-            { "id": "menu", "label": "Можно меню, пожалуйста?", "correct": false },
-            { "id": "close", "label": "Спасибо. До свидания.", "correct": false }
+            { "id": "price", "label": "How much is it?", "correct": true },
+            { "id": "menu", "label": "May I have a menu, please?", "correct": false },
+            { "id": "close", "label": "Thank you. Goodbye.", "correct": false }
           ]
         }
       ]
@@ -177,6 +190,7 @@
       "eyebrow": "RECOVER, DON'T FREEZE",
       "duration": "5 min",
       "target_skill_id": "rus.a0.repair-interaction",
+      "source_registry_ids": ["COE-CEFR-A1-QUALITATIVE", "PUSHKIN-A1-ELEMENTARY"],
       "can_do": "I can ask for repetition or slower speech when I lose the thread.",
       "evidence_boundary": "The app rehearses a chosen repair response; it does not judge listening ability or pronunciation.",
       "tasks": [
@@ -194,15 +208,15 @@
           "id": "rus03-understand",
           "kind": "choice",
           "title": "Name the problem clearly",
-          "prompt": "Which line means: I do not understand?",
+          "prompt": "Which English meaning matches this line?",
           "source_line": "Я не понимаю.",
           "translation": "I do not understand.",
           "retry_hint": "Choose the line that says the problem plainly instead of asking a new question.",
           "target_skill_id": "rus.a0.repair.not-understand",
           "choices": [
-            { "id": "understand", "label": "Я не понимаю.", "correct": true },
-            { "id": "price", "label": "Сколько стоит?", "correct": false },
-            { "id": "name", "label": "Меня зовут Марко.", "correct": false }
+            { "id": "understand", "label": "I do not understand.", "correct": true },
+            { "id": "price", "label": "How much is it?", "correct": false },
+            { "id": "name", "label": "My name is Marco.", "correct": false }
           ]
         },
         {
@@ -210,12 +224,12 @@
           "kind": "build",
           "title": "Request a slower reply",
           "prompt": "Build the line: More slowly, please.",
-          "source_line": "Медленнее, пожалуйста.",
-          "translation": "More slowly, please.",
-          "retry_hint": "Name the speed first, then make the request polite.",
+          "source_line": "Говорите медленнее, пожалуйста.",
+          "translation": "Please speak more slowly.",
+          "retry_hint": "Use the full formal request: ask the other person to speak more slowly.",
           "target_skill_id": "rus.a0.repair.slower",
-          "tokens": ["пожалуйста.", "Медленнее,"],
-          "correct_token_order": ["Медленнее,", "пожалуйста."]
+          "tokens": ["медленнее,", "пожалуйста.", "Говорите"],
+          "correct_token_order": ["Говорите", "медленнее,", "пожалуйста."]
         }
       ]
     }
@@ -228,6 +242,12 @@
     "duration": "7 min",
     "changed_detail": "The demonstrated coffee order becomes tea, then the server speaks too quickly.",
     "required_stage_ids": ["RUS-00", "RUS-01", "RUS-02", "RUS-03"],
+    "source_registry_ids": [
+      "COE-CEFR-A1-QUALITATIVE",
+      "PUSHKIN-A1-ELEMENTARY",
+      "SPBU-RUSSIAN-A1-PLUS-PART-1",
+      "LEKTORIUM-TPU-RKI-A1"
+    ],
     "evidence_boundary": "This reference build records a deterministic rehearsal trace. It cannot issue a language level, pronunciation, or fluency judgement.",
     "steps": [
       {
@@ -271,12 +291,12 @@
         "kind": "choice",
         "title": "Recover when the reply is too fast",
         "prompt": "The server says the price too quickly. Which response keeps the interaction going?",
-        "source_line": "Медленнее, пожалуйста.",
-        "translation": "More slowly, please.",
+        "source_line": "Говорите медленнее, пожалуйста.",
+        "translation": "Please speak more slowly.",
         "retry_hint": "The problem is speed, so choose the repair that asks for a slower reply.",
         "target_skill_id": "rus.a0.repair.slower.transfer",
         "choices": [
-          { "id": "slower", "label": "Медленнее, пожалуйста.", "correct": true },
+          { "id": "slower", "label": "Говорите медленнее, пожалуйста.", "correct": true },
           { "id": "name", "label": "Меня зовут Марко.", "correct": false },
           { "id": "menu", "label": "Можно меню, пожалуйста?", "correct": false }
         ]

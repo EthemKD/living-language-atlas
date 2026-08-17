@@ -52,7 +52,7 @@ All learner-facing Russian must be reviewed by a qualified native Russian langua
 | P08 | Можно меню, пожалуйста? | May I have a menu, please? | request | Fixed request pattern |
 | P09 | Сколько стоит? | How much is it? | ask price | System supplies a simple answer; learner is not scored on full numeral production in v0.1 |
 | P10 | Повторите, пожалуйста. | Please repeat. | repair | Must be requested by a generated repair event |
-| P11 | Медленнее, пожалуйста. | More slowly, please. | repair | Same event class as P10, but user selects intent |
+| P11 | Говорите медленнее, пожалуйста. | Please speak more slowly. | repair | Full formal repair request; same event class as P10 |
 | P12 | Я не понимаю. | I do not understand. | repair | Same event class as P10/P11 |
 | P13 | Спасибо. До свидания. | Thank you. Goodbye. | close | Required after completed café interaction |
 
@@ -207,7 +207,9 @@ These are not omissions by accident. Each carries content-quality, moderation, f
 
 - [Council of Europe: CEFR A1 global scale](https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale)
 - [Council of Europe: qualitative A1 spoken-language descriptors](https://www.coe.int/en/web/common-european-framework-reference-languages/table-3-cefr-3.3-common-reference-levels-qualitative-aspects-of-spoken-language-use)
+- [State Institute of Russian Language A.S. Pushkin: Beginner Russian](https://pushkininstitute.ru/beginner)
 - [St Petersburg State University: Russian A1 course topics include self, work/study and ordering food](https://online.spbu.ru/courses/russian-language-a1-part-1/)
+- [Lectorium / Tomsk Polytechnic University: Elementary Russian course](https://www.lektorium.tv/russian-language)
 - [St Petersburg State University: TORFL overview](https://testingcenter.spbu.ru/en/exams/russian/torfl.html)
 - [Busuu product/course evidence](https://help.busuu.com/hc/en-us/articles/15936615354641-What-is-Busuu)
 - [Memrise Russian course evidence](https://www.memrise.com/en/learn-russian)

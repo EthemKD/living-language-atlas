@@ -2,7 +2,7 @@ import { Text, type TextProps, type TextStyle } from 'react-native';
 
 import { useTheme } from '@/theme';
 
-type TextVariant = 'display' | 'title' | 'heading' | 'body' | 'bodyStrong' | 'callout' | 'caption' | 'code';
+type TextVariant = 'display' | 'title' | 'phrase' | 'heading' | 'body' | 'bodyStrong' | 'callout' | 'caption' | 'code';
 type TextTone = 'default' | 'muted' | 'faint' | 'accent' | 'current' | 'danger' | 'inverse';
 
 type ThemedTextProps = TextProps & { variant?: TextVariant; tone?: TextTone };

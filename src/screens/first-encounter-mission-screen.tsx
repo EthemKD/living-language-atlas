@@ -15,19 +15,29 @@ export function FirstEncounterMissionScreen() {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
   const [stepIndex, setStepIndex] = useState(0);
+  const [isRehearsingAgain, setIsRehearsingAgain] = useState(false);
   const { colors, spacing, layout } = useTheme();
   const mission = firstEncounter.mission;
   const unlocked = canOpenFirstEncounterMission();
-  const complete = progress.missionRehearsed || stepIndex >= mission.steps.length;
+  const complete = stepIndex >= mission.steps.length;
+  const showSummary = complete || (progress.missionRehearsed && !isRehearsingAgain);
   const step = mission.steps[stepIndex];
 
   function advanceMission() {
-    setStepIndex((current) => Math.min(current + 1, mission.steps.length));
+    const nextStepIndex = Math.min(stepIndex + 1, mission.steps.length);
+    if (nextStepIndex >= mission.steps.length) completeFirstEncounterMission();
+    setStepIndex(nextStepIndex);
   }
 
   function finishMission() {
     completeFirstEncounterMission();
+    setIsRehearsingAgain(false);
     router.replace('/atlas');
+  }
+
+  function startRehearsalAgain() {
+    setStepIndex(0);
+    setIsRehearsingAgain(true);
   }
 
   return (
@@ -43,15 +53,19 @@ export function FirstEncounterMissionScreen() {
             <ThemedText variant="caption" tone="current">
               {mission.eyebrow}
             </ThemedText>
-            <ThemedText variant="caption" tone="faint">
-              {mission.duration}
+            <ThemedText variant="caption" tone="faint" style={{ fontVariant: ['tabular-nums'] }}>
+              {showSummary
+                ? `${mission.steps.length} / ${mission.steps.length}`
+                : unlocked
+                  ? `${stepIndex + 1} / ${mission.steps.length}`
+                  : 'LOCKED'}
             </ThemedText>
           </View>
           <ThemedText variant="heading">{mission.setting}</ThemedText>
           <ThemedText variant="callout" tone="muted">
             {mission.changed_detail}
           </ThemedText>
-          <ProgressLine value={stepIndex / mission.steps.length} tone="current" />
+          <ProgressLine value={showSummary ? 1 : unlocked ? stepIndex / mission.steps.length : 0} tone="current" />
         </View>
 
         {!unlocked ? (
@@ -67,7 +81,7 @@ export function FirstEncounterMissionScreen() {
             </View>
             <PrimaryAction label="Return to First Encounter" onPress={() => router.replace('/atlas')} />
           </View>
-        ) : complete ? (
+        ) : showSummary ? (
           <View style={{ gap: spacing.lg }}>
             <View style={{ gap: spacing.xs }}>
               <ThemedText variant="caption" tone="accent">
@@ -85,9 +99,16 @@ export function FirstEncounterMissionScreen() {
               </ThemedText>
             </View>
             <PrimaryAction label="Return to Atlas" onPress={finishMission} />
+            {progress.missionRehearsed ? <PrimaryAction label="Rehearse this scene again" variant="quiet" onPress={startRehearsalAgain} /> : null}
           </View>
         ) : step ? (
-          <GuidedTask task={step} onComplete={advanceMission} actionLabel={stepIndex + 1 === mission.steps.length ? 'Finish rehearsal' : 'Continue scene'} />
+          <GuidedTask
+            key={step.id}
+            task={step}
+            onComplete={advanceMission}
+            actionLabel={stepIndex + 1 === mission.steps.length ? 'Finish rehearsal' : 'Continue scene'}
+            phrasePresentation="retrieve"
+          />
         ) : null}
       </View>
     </ScrollView>

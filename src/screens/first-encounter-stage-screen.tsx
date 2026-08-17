@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Stack from 'expo-router/stack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { GuidedTask } from '@/components/guided-task';
@@ -8,7 +8,11 @@ import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { findFirstEncounterStage, firstEncounterStageAfter } from '@/content/first-encounter';
-import { completeFirstEncounterStage, useFirstEncounterProgress } from '@/domain/first-encounter-state';
+import {
+  canOpenFirstEncounterStage,
+  completeFirstEncounterStage,
+  useFirstEncounterProgress,
+} from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
 export function FirstEncounterStageScreen() {
@@ -17,7 +21,13 @@ export function FirstEncounterStageScreen() {
   const progress = useFirstEncounterProgress();
   const stage = findFirstEncounterStage(params['stage-id']);
   const [taskIndex, setTaskIndex] = useState(0);
+  const [isRehearsingAgain, setIsRehearsingAgain] = useState(false);
   const { colors, spacing, layout } = useTheme();
+
+  useEffect(() => {
+    setTaskIndex(0);
+    setIsRehearsingAgain(false);
+  }, [stage?.id]);
 
   if (!stage) {
     return (
@@ -29,21 +39,37 @@ export function FirstEncounterStageScreen() {
   }
 
   const alreadyComplete = progress.completedStageIds.includes(stage.id);
+  const unlocked = canOpenFirstEncounterStage(stage.id);
   const complete = taskIndex >= stage.tasks.length;
+  const showSummary = complete || (alreadyComplete && !isRehearsingAgain);
   const task = stage.tasks[taskIndex];
   const nextStage = firstEncounterStageAfter(stage.id);
+  const progressLabel = showSummary
+    ? `${stage.tasks.length} / ${stage.tasks.length}`
+    : unlocked
+      ? `${taskIndex + 1} / ${stage.tasks.length}`
+      : 'LOCKED';
+  const progressValue = showSummary ? 1 : unlocked ? taskIndex / stage.tasks.length : 0;
 
   function advanceTask() {
-    setTaskIndex((current) => Math.min(current + 1, stage.tasks.length));
+    const nextTaskIndex = Math.min(taskIndex + 1, stage.tasks.length);
+    if (nextTaskIndex >= stage.tasks.length) completeFirstEncounterStage(stage.id);
+    setTaskIndex(nextTaskIndex);
   }
 
   function finishStage() {
     completeFirstEncounterStage(stage.id);
+    setIsRehearsingAgain(false);
     if (nextStage) {
       router.replace({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': nextStage.id } });
       return;
     }
     router.replace('/atlas/encounter/mission');
+  }
+
+  function startRehearsalAgain() {
+    setTaskIndex(0);
+    setIsRehearsingAgain(true);
   }
 
   return (
@@ -60,16 +86,29 @@ export function FirstEncounterStageScreen() {
               {stage.eyebrow}
             </ThemedText>
             <ThemedText variant="caption" tone="faint" style={{ fontVariant: ['tabular-nums'] }}>
-              {complete ? stage.tasks.length : taskIndex + 1} / {stage.tasks.length}
+              {progressLabel}
             </ThemedText>
           </View>
-          <ProgressLine value={taskIndex / stage.tasks.length} />
+          <ProgressLine value={progressValue} />
           <ThemedText variant="callout" tone="muted">
             {stage.can_do}
           </ThemedText>
         </View>
 
-        {complete || alreadyComplete ? (
+        {!unlocked ? (
+          <View style={{ gap: spacing.lg }}>
+            <View style={{ gap: spacing.xs }}>
+              <ThemedText variant="caption" tone="current">
+                SUPPORT REQUIRED
+              </ThemedText>
+              <ThemedText variant="title">Build the preceding step first.</ThemedText>
+              <ThemedText tone="muted">
+                This route stays ordered so the mission never asks you to retrieve language before its support has appeared.
+              </ThemedText>
+            </View>
+            <PrimaryAction label="Return to First Encounter" onPress={() => router.replace('/atlas')} />
+          </View>
+        ) : showSummary ? (
           <View style={{ gap: spacing.lg }}>
             <View style={{ gap: spacing.xs }}>
               <ThemedText variant="caption" tone="accent">
@@ -87,9 +126,15 @@ export function FirstEncounterStageScreen() {
               </ThemedText>
             </View>
             <PrimaryAction label={nextStage ? `Continue to ${nextStage.title}` : 'Start changed-context rehearsal'} onPress={finishStage} />
+            {alreadyComplete ? <PrimaryAction label="Rehearse this step again" variant="quiet" onPress={startRehearsalAgain} /> : null}
           </View>
         ) : task ? (
-          <GuidedTask task={task} onComplete={advanceTask} actionLabel={taskIndex + 1 === stage.tasks.length ? 'Finish guided step' : 'Continue'} />
+          <GuidedTask
+            key={task.id}
+            task={task}
+            onComplete={advanceTask}
+            actionLabel={taskIndex + 1 === stage.tasks.length ? 'Finish guided step' : 'Continue'}
+          />
         ) : null}
       </View>
     </ScrollView>

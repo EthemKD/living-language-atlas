@@ -7,15 +7,17 @@ async function readJson(relativePath) {
 }
 
 export async function loadContent() {
-  const [track, demo, encounter] = await Promise.all([
+  const [track, demo, encounter, sourceRegistry, readingAssist] = await Promise.all([
     readJson('src/content/russian-foundation-reference-track.json'),
     readJson('src/content/demo-missions.json'),
     readJson('src/content/first-encounter.json'),
+    readJson('src/content/source-registry.json'),
+    readJson('src/content/reading-assist.json'),
   ]);
-  return { track, demo, encounter };
+  return { track, demo, encounter, sourceRegistry, readingAssist };
 }
 
-export function validateContent({ track, demo, encounter }) {
+export function validateContent({ track, demo, encounter, sourceRegistry, readingAssist }) {
   const errors = [];
   const bundles = track.districts.flatMap((district) => district.bundles);
   const missionSummaries = track.districts.flatMap((district) => district.missions);
@@ -63,6 +65,41 @@ export function validateContent({ track, demo, encounter }) {
   if (encounter.content_evidence_card.language_reviewer !== null || encounter.content_evidence_card.audio_source !== null) {
     errors.push('First Encounter cannot imply reviewed language or traceable audio before those fields are supplied.');
   }
+  if (!/^20\d{2}-\d{2}-\d{2}$/.test(encounter.content_evidence_card.source_checked_on)) {
+    errors.push('First Encounter needs a valid source-check date.');
+  }
+  if (!encounter.content_evidence_card.source_refs.includes('src/content/source-registry.json')) {
+    errors.push('First Encounter evidence must point to the source registry.');
+  }
+
+  const sourceRecords = sourceRegistry.sources;
+  const sourceIds = sourceRecords.map((source) => source.id);
+  const sourceIdSet = new Set(sourceIds);
+  if (sourceRecords.length !== 4) errors.push(`Expected four registered curriculum-scope sources, found ${sourceRecords.length}.`);
+  if (sourceIdSet.size !== sourceIds.length) errors.push('Source registry IDs must be unique.');
+  for (const source of sourceRecords) {
+    if (!source.publisher || !source.authority_type || !source.url?.startsWith('https://')) {
+      errors.push(`${source.id || 'unknown source'} is missing traceable publisher metadata.`);
+    }
+    if (!Array.isArray(source.supports) || source.supports.length === 0 || !Array.isArray(source.does_not_support) || source.does_not_support.length === 0) {
+      errors.push(`${source.id || 'unknown source'} must state both its scope and its limits.`);
+    }
+    if (!['scope_only', 'topic_scope_only'].includes(source.use_mode)) {
+      errors.push(`${source.id || 'unknown source'} has an unsupported source-use mode.`);
+    }
+  }
+
+  function requireRegisteredSources(ownerId, registryIds) {
+    if (!Array.isArray(registryIds) || registryIds.length === 0) {
+      errors.push(`${ownerId} must name at least one curriculum-scope source.`);
+      return;
+    }
+    for (const sourceId of registryIds) {
+      if (!sourceIdSet.has(sourceId)) errors.push(`${ownerId} references unknown source ${sourceId}.`);
+    }
+  }
+
+  requireRegisteredSources('First Encounter evidence card', encounter.content_evidence_card.source_registry_ids);
 
   const expectedStageIds = ['RUS-00', 'RUS-01', 'RUS-02', 'RUS-03'];
   if (encounter.stages.map((stage) => stage.id).join('|') !== expectedStageIds.join('|')) {
@@ -73,6 +110,7 @@ export function validateContent({ track, demo, encounter }) {
       errors.push(`${stage.id} is missing a skill or evidence boundary.`);
     }
     if (stage.tasks.length < 3) errors.push(`${stage.id} needs at least three authored learning tasks.`);
+    requireRegisteredSources(stage.id, stage.source_registry_ids);
   }
 
   const encounterTasks = [...encounter.stages.flatMap((stage) => stage.tasks), ...encounter.mission.steps];
@@ -102,6 +140,26 @@ export function validateContent({ track, demo, encounter }) {
   if (!encounter.mission.steps.some((step) => step.target_skill_id.includes('repair'))) {
     errors.push('The changed-context mission must retain a repair event.');
   }
+  requireRegisteredSources(encounter.mission.id, encounter.mission.source_registry_ids);
+
+  if (readingAssist.status !== encounter.status) {
+    errors.push('Reading assist must preserve the First Encounter language-review gate.');
+  }
+  const readingAssistLines = readingAssist.items.map((item) => item.source_line);
+  const readingAssistLineSet = new Set(readingAssistLines);
+  if (readingAssistLineSet.size !== readingAssistLines.length) errors.push('Reading-assist source lines must be unique.');
+  for (const item of readingAssist.items) {
+    if (!item.source_line || !item.reading_assist || item.reading_assist.trim() !== item.reading_assist) {
+      errors.push('Every reading-assist entry must contain a clean source line and optional-reading value.');
+    }
+  }
+  const encounterSourceLines = new Set(encounterTasks.map((task) => task.source_line));
+  for (const sourceLine of encounterSourceLines) {
+    if (!readingAssistLineSet.has(sourceLine)) errors.push(`Missing reading assist for ${sourceLine}.`);
+  }
+  for (const sourceLine of readingAssistLineSet) {
+    if (!encounterSourceLines.has(sourceLine)) errors.push(`Reading assist is not attached to First Encounter content: ${sourceLine}.`);
+  }
 
   return {
     errors,
@@ -112,6 +170,8 @@ export function validateContent({ track, demo, encounter }) {
       demoMissions: demo.missions.length,
       firstEncounterStages: encounter.stages.length,
       firstEncounterTasks: encounterTasks.length,
+      curriculumScopeSources: sourceRecords.length,
+      readingAssistItems: readingAssist.items.length,
     },
   };
 }

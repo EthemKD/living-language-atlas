@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { PrimaryAction } from '@/components/primary-action';
+import { PhraseLens } from '@/components/phrase-lens';
 import { ThemedText } from '@/components/themed-text';
 import type { EncounterTask } from '@/content/first-encounter';
 import { useTheme } from '@/theme';
@@ -10,9 +11,15 @@ type GuidedTaskProps = {
   task: EncounterTask;
   onComplete: () => void;
   actionLabel?: string;
+  phrasePresentation?: 'reference' | 'retrieve';
 };
 
-export function GuidedTask({ task, onComplete, actionLabel = 'Continue' }: GuidedTaskProps) {
+export function GuidedTask({
+  task,
+  onComplete,
+  actionLabel = 'Continue',
+  phrasePresentation = 'reference',
+}: GuidedTaskProps) {
   const [selectedChoiceId, setSelectedChoiceId] = useState<string>();
   const [selectedTokenIndexes, setSelectedTokenIndexes] = useState<number[]>([]);
   const [checked, setChecked] = useState(false);
@@ -55,25 +62,12 @@ export function GuidedTask({ task, onComplete, actionLabel = 'Continue' }: Guide
         <ThemedText tone="muted">{task.prompt}</ThemedText>
       </View>
 
-      <View
-        style={{
-          gap: spacing.xs,
-          borderLeftWidth: 3,
-          borderLeftColor: colors.accent,
-          paddingLeft: spacing.md,
-        }}>
-        <ThemedText variant="code" selectable>
-          {task.source_line}
-        </ThemedText>
-        <ThemedText variant="callout" tone="muted">
-          {task.translation}
-        </ThemedText>
-        {task.kind === 'notice' ? (
-          <ThemedText variant="callout" tone="muted">
-            {task.explanation}
-          </ThemedText>
-        ) : null}
-      </View>
+      <PhraseLens
+        sourceLine={task.source_line}
+        translation={task.translation}
+        explanation={task.kind === 'notice' ? task.explanation : undefined}
+        presentation={phrasePresentation}
+      />
 
       {task.kind === 'choice' ? (
         <View accessibilityRole="radiogroup" style={{ gap: spacing.xs }}>

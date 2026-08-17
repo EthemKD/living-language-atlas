@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1.0",
+  "status": "reference_draft_language_review_required",
+  "purpose": "Optional Latin reading support for the First Encounter reference content. It is hidden by default, not a pronunciation score, IPA transcription or replacement for reviewed audio.",
+  "items": [
+    { "source_line": "В", "reading_assist": "v" },
+    { "source_line": "КОФЕ", "reading_assist": "kofe" },
+    { "source_line": "Р", "reading_assist": "r" },
+    { "source_line": "Здравствуйте.", "reading_assist": "zdravstvuyte" },
+    { "source_line": "Как вас зовут?", "reading_assist": "kak vas zovut?" },
+    { "source_line": "Меня зовут Марко.", "reading_assist": "menya zovut Marko." },
+    { "source_line": "Можно меню, пожалуйста?", "reading_assist": "mozhno menyu, pozhaluysta?" },
+    { "source_line": "Мне, пожалуйста, кофе.", "reading_assist": "mne, pozhaluysta, kofe." },
+    { "source_line": "Сколько стоит?", "reading_assist": "skol'ko stoit?" },
+    { "source_line": "Повторите, пожалуйста.", "reading_assist": "povtorite, pozhaluysta." },
+    { "source_line": "Я не понимаю.", "reading_assist": "ya ne ponimayu." },
+    { "source_line": "Говорите медленнее, пожалуйста.", "reading_assist": "govorite medlenneye, pozhaluysta." },
+    { "source_line": "Мне, пожалуйста, чай.", "reading_assist": "mne, pozhaluysta, chai." },
+    { "source_line": "Спасибо. До свидания.", "reading_assist": "spasibo. do svidaniya." }
+  ]
+}

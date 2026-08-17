@@ -62,9 +62,23 @@ function StageRow({ stage, state, onPress }: { stage: EncounterStage; state: Rou
 export function AtlasScreen() {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
-  const { colors, spacing, layout } = useTheme();
+  const { colors, spacing, radii, layout } = useTheme();
   const completedCount = progress.completedStageIds.length + Number(progress.missionRehearsed);
   const missionOpen = canOpenFirstEncounterMission();
+  const storageStatus = {
+    loading: {
+      label: 'RESTORING DEVICE PROGRESS',
+      detail: 'Checking this device for the last saved rehearsal state.',
+    },
+    ready: {
+      label: 'PROGRESS SAVES ON THIS DEVICE',
+      detail: 'Only the current guided-stage IDs and rehearsal state are stored; no voice or personal conversation is collected.',
+    },
+    unavailable: {
+      label: 'DEVICE STORAGE UNAVAILABLE',
+      detail: 'You can keep rehearsing now, but this device cannot currently retain the route after the app closes.',
+    },
+  }[progress.storageState];
 
   return (
     <ScrollView
@@ -135,6 +149,7 @@ export function AtlasScreen() {
             padding: spacing.lg,
             borderWidth: 1,
             borderColor: missionOpen ? colors.current : colors.separator,
+            borderRadius: radii.large,
             borderCurve: 'continuous',
             backgroundColor: missionOpen ? colors.accentSoft : colors.surface,
             opacity: missionOpen ? (pressed ? 0.72 : 1) : 0.52,
@@ -162,6 +177,12 @@ export function AtlasScreen() {
           </ThemedText>
           <ThemedText variant="callout" tone="muted">
             Reference content only. A qualified Russian-language review and traceable audio are still required before learner publication.
+          </ThemedText>
+          <ThemedText variant="caption" tone={progress.storageState === 'unavailable' ? 'danger' : 'faint'}>
+            {storageStatus.label}
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            {storageStatus.detail}
           </ThemedText>
         </View>
       </View>
