@@ -4,16 +4,17 @@ An Expo SDK 57 reference build for a mobile language-learning product that separ
 The interface is English-first; Russian is the first content track.
 
 This repository is a working product slice, not a generated landing page. Its primary path is a small, deterministic
-First Encounter: read the mission script, introduce yourself, make a café request, repair a missed reply, then handle
+First Encounter: read the mission script, introduce yourself, make a cafe request, repair a missed reply, then handle
 one changed detail. It also contains evidence-led practice, a source-bound Studio and an inspectable learner record.
 
 ## What works now
 
 - Native `Atlas`, `Practice`, `Studio` and `You` tabs on iOS and Android
-- An authored `First Encounter` learning loop: four guided support stages, a changed-context café rehearsal and a later retrieval scene
+- An authored `First Encounter` learning loop: four guided support stages, a changed-context cafe rehearsal and a later retrieval scene
 - 21 deterministic, source-bound learning tasks: 17 in the initial route and four in a separate 24-hour delayed-retrieval return
 - An in-app reading lens with optional transliteration; it is clearly labelled as a reference aid, not pronunciation scoring
 - Durable on-device progress and a visible later-retrieval schedule, with no voice, conversation, identity or sensitive data stored
+- Resumable First Encounter lesson sessions: completed task boundaries are saved locally, with explicit resume/restart and visible storage failure
 - A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries, retained as a
   longer-horizon curriculum reference rather than a fake unlock tree
 - An inspectable Atlas horizon for those 12 districts, with one runnable D03 reference mission and explicit outline-only
@@ -68,7 +69,7 @@ npm run lint
 | Atlas | Turn a curriculum into a visible route of real-life missions | A reskinned linear lesson tree |
 | Practice | Schedule work from evidence gaps and decay | Let streaks or XP imply ability |
 | Studio | Transform an attached source into an explanation, drill or bounded role-play | A blank generic chatbot |
-| You | Keep habit, evidence and credits legible and separate | One opaque “language score” |
+| You | Keep habit, evidence and credits legible and separate | One opaque "language score" |
 
 ## Repository map
 
@@ -78,7 +79,7 @@ src/screens/      Screen bodies
 src/components/   Reused interface components
 src/theme/        The single token and semantic-color entry point
 src/content/      Versioned reference curriculum and demo mission contracts
-src/domain/       Deterministic learning/session state
+src/domain/       Deterministic learning/session state and local lesson recovery
 scripts/          Content and design checks
 tests/            Node contract tests
 docs/             Research, product decisions and design doctrine
