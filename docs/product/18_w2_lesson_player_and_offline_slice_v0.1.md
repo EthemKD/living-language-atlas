@@ -17,6 +17,7 @@ lesson and must not lose the route or be silently returned to an earlier task.
 
 - `src/domain/lesson-session.ts` stores versioned, validated session records in AsyncStorage.
 - `src/screens/first-encounter-stage-screen.tsx` saves after each completed task boundary.
+- The lesson opens with a preflight that states the objective, evidence limit, task format, content gate, audio state and local recovery behavior.
 - Reopening an unfinished stage shows `SAFE RESUME`, the saved step and an explicit resume/restart choice.
 - Completed stages are marked complete in both the learning trace and the session store.
 - Storage failure is visible as `LOCAL SAVE UNAVAILABLE`; the UI does not pretend that recovery is guaranteed.
