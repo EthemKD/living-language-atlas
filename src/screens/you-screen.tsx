@@ -1,5 +1,7 @@
+import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
+import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter } from '@/content/first-encounter';
@@ -20,6 +22,7 @@ function laterReturnLabel(status: ReturnType<typeof getFirstEncounterReturnStatu
 }
 
 export function YouScreen() {
+  const router = useRouter();
   const progress = useFirstEncounterProgress();
   const { colors, spacing, layout } = useTheme();
   const laterReturn = getFirstEncounterReturnStatus();
@@ -113,6 +116,7 @@ export function YouScreen() {
           <ThemedText variant="caption" tone="faint">
             {firstEncounter.content_evidence_card.known_limits[0]}
           </ThemedText>
+          <PrimaryAction label="Inspect source notes" variant="quiet" onPress={() => router.push('/you/sources')} />
         </View>
       </View>
     </ScrollView>

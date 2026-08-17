@@ -4,6 +4,7 @@ export default function YouLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ title: 'You', headerLargeTitle: true }} />
+      <Stack.Screen name="sources" options={{ title: 'Source notes' }} />
     </Stack>
   );
 }
