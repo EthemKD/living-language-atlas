@@ -75,7 +75,11 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
   const sourceRecords = sourceRegistry.sources;
   const sourceIds = sourceRecords.map((source) => source.id);
   const sourceIdSet = new Set(sourceIds);
-  if (sourceRecords.length !== 4) errors.push(`Expected four registered curriculum-scope sources, found ${sourceRecords.length}.`);
+  const sourcesById = new Map(sourceRecords.map((source) => [source.id, source]));
+  const curriculumScopeSources = sourceRecords.filter((source) => source.use_mode !== 'learning_design_only');
+  const learningDesignSources = sourceRecords.filter((source) => source.use_mode === 'learning_design_only');
+  if (curriculumScopeSources.length !== 4) errors.push(`Expected four registered curriculum-scope sources, found ${curriculumScopeSources.length}.`);
+  if (learningDesignSources.length !== 2) errors.push(`Expected two registered learning-design sources, found ${learningDesignSources.length}.`);
   if (sourceIdSet.size !== sourceIds.length) errors.push('Source registry IDs must be unique.');
   for (const source of sourceRecords) {
     if (!source.publisher || !source.authority_type || !source.url?.startsWith('https://')) {
@@ -84,22 +88,27 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
     if (!Array.isArray(source.supports) || source.supports.length === 0 || !Array.isArray(source.does_not_support) || source.does_not_support.length === 0) {
       errors.push(`${source.id || 'unknown source'} must state both its scope and its limits.`);
     }
-    if (!['scope_only', 'topic_scope_only'].includes(source.use_mode)) {
+    if (!['scope_only', 'topic_scope_only', 'learning_design_only'].includes(source.use_mode)) {
       errors.push(`${source.id || 'unknown source'} has an unsupported source-use mode.`);
     }
   }
 
-  function requireRegisteredSources(ownerId, registryIds) {
+  function requireRegisteredSources(ownerId, registryIds, expectedUseModes) {
     if (!Array.isArray(registryIds) || registryIds.length === 0) {
-      errors.push(`${ownerId} must name at least one curriculum-scope source.`);
+      errors.push(`${ownerId} must name at least one registered source.`);
       return;
     }
     for (const sourceId of registryIds) {
       if (!sourceIdSet.has(sourceId)) errors.push(`${ownerId} references unknown source ${sourceId}.`);
+      const source = sourcesById.get(sourceId);
+      if (source && !expectedUseModes.includes(source.use_mode)) {
+        errors.push(`${ownerId} uses ${sourceId} outside its declared source-use mode.`);
+      }
     }
   }
 
-  requireRegisteredSources('First Encounter evidence card', encounter.content_evidence_card.source_registry_ids);
+  const curriculumUseModes = ['scope_only', 'topic_scope_only'];
+  requireRegisteredSources('First Encounter evidence card', encounter.content_evidence_card.source_registry_ids, curriculumUseModes);
 
   const expectedStageIds = ['RUS-00', 'RUS-01', 'RUS-02', 'RUS-03'];
   if (encounter.stages.map((stage) => stage.id).join('|') !== expectedStageIds.join('|')) {
@@ -110,11 +119,13 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
       errors.push(`${stage.id} is missing a skill or evidence boundary.`);
     }
     if (stage.tasks.length < 3) errors.push(`${stage.id} needs at least three authored learning tasks.`);
-    requireRegisteredSources(stage.id, stage.source_registry_ids);
+    requireRegisteredSources(stage.id, stage.source_registry_ids, curriculumUseModes);
   }
 
-  const encounterTasks = [...encounter.stages.flatMap((stage) => stage.tasks), ...encounter.mission.steps];
-  for (const task of encounterTasks) {
+  const firstEncounterTasks = [...encounter.stages.flatMap((stage) => stage.tasks), ...encounter.mission.steps];
+  const returnTasks = encounter.return_mission.steps;
+  const allEncounterTasks = [...firstEncounterTasks, ...returnTasks];
+  for (const task of allEncounterTasks) {
     if (!task.target_skill_id || !task.source_line || !task.translation) {
       errors.push(`${task.id} is missing source-bound learner content.`);
     }
@@ -140,7 +151,24 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
   if (!encounter.mission.steps.some((step) => step.target_skill_id.includes('repair'))) {
     errors.push('The changed-context mission must retain a repair event.');
   }
-  requireRegisteredSources(encounter.mission.id, encounter.mission.source_registry_ids);
+  requireRegisteredSources(encounter.mission.id, encounter.mission.source_registry_ids, curriculumUseModes);
+
+  if (encounter.return_mission.required_mission_id !== encounter.mission.id) {
+    errors.push('The delayed return must remain gated by the changed-context mission.');
+  }
+  if (encounter.return_mission.available_after_hours !== 24) {
+    errors.push('The delayed return must retain its explicit 24-hour product interval.');
+  }
+  if (returnTasks.length !== 4) errors.push(`The delayed return needs four authored tasks, found ${returnTasks.length}.`);
+  if (!returnTasks.some((step) => step.target_skill_id.includes('repair'))) {
+    errors.push('The delayed return must keep a changed repair event.');
+  }
+  requireRegisteredSources(encounter.return_mission.id, encounter.return_mission.source_registry_ids, curriculumUseModes);
+  requireRegisteredSources(
+    `${encounter.return_mission.id} learning design`,
+    encounter.return_mission.learning_design_source_registry_ids,
+    ['learning_design_only'],
+  );
 
   if (readingAssist.status !== encounter.status) {
     errors.push('Reading assist must preserve the First Encounter language-review gate.');
@@ -153,7 +181,7 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
       errors.push('Every reading-assist entry must contain a clean source line and optional-reading value.');
     }
   }
-  const encounterSourceLines = new Set(encounterTasks.map((task) => task.source_line));
+  const encounterSourceLines = new Set(allEncounterTasks.map((task) => task.source_line));
   for (const sourceLine of encounterSourceLines) {
     if (!readingAssistLineSet.has(sourceLine)) errors.push(`Missing reading assist for ${sourceLine}.`);
   }
@@ -169,8 +197,10 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
       missionSummaries: missionSummaries.length,
       demoMissions: demo.missions.length,
       firstEncounterStages: encounter.stages.length,
-      firstEncounterTasks: encounterTasks.length,
-      curriculumScopeSources: sourceRecords.length,
+      firstEncounterTasks: firstEncounterTasks.length,
+      delayedReturnTasks: returnTasks.length,
+      curriculumScopeSources: curriculumScopeSources.length,
+      learningDesignSources: learningDesignSources.length,
       readingAssistItems: readingAssist.items.length,
     },
   };

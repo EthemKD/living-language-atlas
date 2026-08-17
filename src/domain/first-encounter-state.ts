@@ -4,18 +4,26 @@ import { useEffect, useSyncExternalStore } from 'react';
 import { firstEncounter } from '@/content/first-encounter';
 
 const storageKey = 'living-language-atlas/first-encounter-progress/v1';
+const returnDelayMs = firstEncounter.return_mission.available_after_hours * 60 * 60 * 1000;
 
 export type FirstEncounterStorageState = 'loading' | 'ready' | 'unavailable';
+export type FirstEncounterReturnStatus = 'locked' | 'waiting' | 'ready' | 'complete';
 
 export type FirstEncounterProgress = {
   completedStageIds: readonly string[];
   missionRehearsed: boolean;
+  missionRehearsedAt: number | null;
+  returnMissionAvailableAt: number | null;
+  returnMissionRehearsed: boolean;
   storageState: FirstEncounterStorageState;
 };
 
 let progress: FirstEncounterProgress = {
   completedStageIds: [],
   missionRehearsed: false,
+  missionRehearsedAt: null,
+  returnMissionAvailableAt: null,
+  returnMissionRehearsed: false,
   storageState: 'loading',
 };
 
@@ -45,8 +53,15 @@ function defaultProgress(storageState: FirstEncounterStorageState): FirstEncount
   return {
     completedStageIds: [],
     missionRehearsed: false,
+    missionRehearsedAt: null,
+    returnMissionAvailableAt: null,
+    returnMissionRehearsed: false,
     storageState,
   };
+}
+
+function isTimestamp(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0;
 }
 
 function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounterProgress, 'storageState'> {
@@ -63,10 +78,26 @@ function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounter
       completedStageIds.push(stage.id);
     }
     const hasEveryRequiredStage = firstEncounter.mission.required_stage_ids.every((stageId) => completedStageIds.includes(stageId));
+    const missionRehearsed = parsed.missionRehearsed === true && hasEveryRequiredStage;
+    const migratedCompletionTime = Date.now() - returnDelayMs;
+    const missionRehearsedAt = missionRehearsed
+      ? isTimestamp(parsed.missionRehearsedAt)
+        ? parsed.missionRehearsedAt
+        : migratedCompletionTime
+      : null;
+    const returnMissionAvailableAt =
+      missionRehearsed && missionRehearsedAt
+        ? isTimestamp(parsed.returnMissionAvailableAt)
+          ? parsed.returnMissionAvailableAt
+          : missionRehearsedAt + returnDelayMs
+        : null;
 
     return {
       completedStageIds,
-      missionRehearsed: parsed.missionRehearsed === true && hasEveryRequiredStage,
+      missionRehearsed,
+      missionRehearsedAt,
+      returnMissionAvailableAt,
+      returnMissionRehearsed: missionRehearsed && parsed.returnMissionRehearsed === true,
     };
   } catch {
     return defaultProgress('ready');
@@ -75,9 +106,12 @@ function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounter
 
 function persist(nextProgress: FirstEncounterProgress) {
   const payload = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     completedStageIds: nextProgress.completedStageIds,
     missionRehearsed: nextProgress.missionRehearsed,
+    missionRehearsedAt: nextProgress.missionRehearsedAt,
+    returnMissionAvailableAt: nextProgress.returnMissionAvailableAt,
+    returnMissionRehearsed: nextProgress.returnMissionRehearsed,
   };
 
   void AsyncStorage.setItem(storageKey, JSON.stringify(payload)).catch(() => {
@@ -118,6 +152,17 @@ export function useFirstEncounterProgress() {
     void hydrateFirstEncounterProgress();
   }, []);
 
+  useEffect(() => {
+    const availableAt = currentProgress.returnMissionAvailableAt;
+    if (!availableAt || currentProgress.returnMissionRehearsed) return;
+
+    const delay = availableAt - Date.now();
+    if (delay <= 0) return;
+
+    const timer = setTimeout(() => publish({ ...progress }), delay);
+    return () => clearTimeout(timer);
+  }, [currentProgress.returnMissionAvailableAt, currentProgress.returnMissionRehearsed]);
+
   return currentProgress;
 }
 
@@ -128,17 +173,51 @@ export function completeFirstEncounterStage(stageId: string) {
   updateProgress({
     completedStageIds: [...progress.completedStageIds, stageId],
     missionRehearsed: progress.missionRehearsed,
+    missionRehearsedAt: progress.missionRehearsedAt,
+    returnMissionAvailableAt: progress.returnMissionAvailableAt,
+    returnMissionRehearsed: progress.returnMissionRehearsed,
   });
   return true;
 }
 
 export function completeFirstEncounterMission() {
   if (!canOpenFirstEncounterMission()) return false;
-  if (progress.missionRehearsed) return true;
+  if (progress.missionRehearsed && progress.returnMissionAvailableAt) return true;
+
+  const missionRehearsedAt = progress.missionRehearsedAt ?? Date.now();
 
   updateProgress({
     completedStageIds: progress.completedStageIds,
     missionRehearsed: true,
+    missionRehearsedAt,
+    returnMissionAvailableAt: progress.returnMissionAvailableAt ?? missionRehearsedAt + returnDelayMs,
+    returnMissionRehearsed: progress.returnMissionRehearsed,
+  });
+  return true;
+}
+
+export function getFirstEncounterReturnStatus(): FirstEncounterReturnStatus {
+  if (!progress.missionRehearsed) return 'locked';
+  if (progress.returnMissionRehearsed) return 'complete';
+  if (!progress.returnMissionAvailableAt || Date.now() < progress.returnMissionAvailableAt) return 'waiting';
+  return 'ready';
+}
+
+export function canOpenFirstEncounterReturnMission() {
+  const status = getFirstEncounterReturnStatus();
+  return status === 'ready' || status === 'complete';
+}
+
+export function completeFirstEncounterReturnMission() {
+  if (!canOpenFirstEncounterReturnMission()) return false;
+  if (progress.returnMissionRehearsed) return true;
+
+  updateProgress({
+    completedStageIds: progress.completedStageIds,
+    missionRehearsed: progress.missionRehearsed,
+    missionRehearsedAt: progress.missionRehearsedAt,
+    returnMissionAvailableAt: progress.returnMissionAvailableAt,
+    returnMissionRehearsed: true,
   });
   return true;
 }

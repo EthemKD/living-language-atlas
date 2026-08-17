@@ -13,7 +13,9 @@ test('reference track retains its declared product counts and review gates', asy
     demoMissions: 1,
     firstEncounterStages: 4,
     firstEncounterTasks: 17,
+    delayedReturnTasks: 4,
     curriculumScopeSources: 4,
+    learningDesignSources: 2,
     readingAssistItems: 14,
   });
 });
@@ -51,14 +53,18 @@ test('First Encounter keeps its reviewed-content boundary and changed-context re
   assert.ok(encounter.mission.steps.some((step) => step.target_skill_id.includes('repair')));
   assert.match(encounter.mission.changed_detail, /tea/i);
   assert.equal(encounter.content_evidence_card.source_checked_on, '2026-08-17');
-  assert.equal(sourceRegistry.sources.length, 4);
-  assert.equal(new Set(sourceRegistry.sources.map((source) => source.id)).size, 4);
+  assert.equal(sourceRegistry.sources.length, 6);
+  assert.equal(new Set(sourceRegistry.sources.map((source) => source.id)).size, 6);
   assert.ok(sourceRegistry.sources.every((source) => source.url.startsWith('https://')));
   assert.equal(readingAssist.status, encounter.status);
 
   const encounterLines = new Set([
     ...encounter.stages.flatMap((stage) => stage.tasks.map((task) => task.source_line)),
     ...encounter.mission.steps.map((step) => step.source_line),
+    ...encounter.return_mission.steps.map((step) => step.source_line),
   ]);
   assert.deepEqual(new Set(readingAssist.items.map((item) => item.source_line)), encounterLines);
+  assert.equal(encounter.return_mission.required_mission_id, encounter.mission.id);
+  assert.equal(encounter.return_mission.available_after_hours, 24);
+  assert.equal(encounter.return_mission.learning_design_source_registry_ids.length, 2);
 });

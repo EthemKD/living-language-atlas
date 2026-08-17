@@ -38,27 +38,28 @@ export function FirstEncounterStageScreen() {
     );
   }
 
-  const alreadyComplete = progress.completedStageIds.includes(stage.id);
-  const unlocked = canOpenFirstEncounterStage(stage.id);
-  const complete = taskIndex >= stage.tasks.length;
+  const currentStage = stage;
+  const alreadyComplete = progress.completedStageIds.includes(currentStage.id);
+  const unlocked = canOpenFirstEncounterStage(currentStage.id);
+  const complete = taskIndex >= currentStage.tasks.length;
   const showSummary = complete || (alreadyComplete && !isRehearsingAgain);
-  const task = stage.tasks[taskIndex];
-  const nextStage = firstEncounterStageAfter(stage.id);
+  const task = currentStage.tasks[taskIndex];
+  const nextStage = firstEncounterStageAfter(currentStage.id);
   const progressLabel = showSummary
-    ? `${stage.tasks.length} / ${stage.tasks.length}`
+    ? `${currentStage.tasks.length} / ${currentStage.tasks.length}`
     : unlocked
-      ? `${taskIndex + 1} / ${stage.tasks.length}`
+      ? `${taskIndex + 1} / ${currentStage.tasks.length}`
       : 'LOCKED';
-  const progressValue = showSummary ? 1 : unlocked ? taskIndex / stage.tasks.length : 0;
+  const progressValue = showSummary ? 1 : unlocked ? taskIndex / currentStage.tasks.length : 0;
 
   function advanceTask() {
-    const nextTaskIndex = Math.min(taskIndex + 1, stage.tasks.length);
-    if (nextTaskIndex >= stage.tasks.length) completeFirstEncounterStage(stage.id);
+    const nextTaskIndex = Math.min(taskIndex + 1, currentStage.tasks.length);
+    if (nextTaskIndex >= currentStage.tasks.length) completeFirstEncounterStage(currentStage.id);
     setTaskIndex(nextTaskIndex);
   }
 
   function finishStage() {
-    completeFirstEncounterStage(stage.id);
+    completeFirstEncounterStage(currentStage.id);
     setIsRehearsingAgain(false);
     if (nextStage) {
       router.replace({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': nextStage.id } });
@@ -78,12 +79,12 @@ export function FirstEncounterStageScreen() {
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ alignItems: 'center', paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}>
-      <Stack.Title>{stage.title}</Stack.Title>
+      <Stack.Title>{currentStage.title}</Stack.Title>
       <View style={{ width: '100%', maxWidth: layout.readingWidth, gap: spacing.lg }}>
         <View style={{ gap: spacing.sm }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
             <ThemedText variant="caption" tone="accent">
-              {stage.eyebrow}
+              {currentStage.eyebrow}
             </ThemedText>
             <ThemedText variant="caption" tone="faint" style={{ fontVariant: ['tabular-nums'] }}>
               {progressLabel}
@@ -91,7 +92,7 @@ export function FirstEncounterStageScreen() {
           </View>
           <ProgressLine value={progressValue} />
           <ThemedText variant="callout" tone="muted">
-            {stage.can_do}
+            {currentStage.can_do}
           </ThemedText>
         </View>
 
@@ -115,7 +116,7 @@ export function FirstEncounterStageScreen() {
                 GUIDED STEP COMPLETE
               </ThemedText>
               <ThemedText variant="title">You rehearsed one small function.</ThemedText>
-              <ThemedText tone="muted">{stage.evidence_boundary}</ThemedText>
+              <ThemedText tone="muted">{currentStage.evidence_boundary}</ThemedText>
             </View>
             <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
               <ThemedText variant="caption" tone="current">
@@ -133,7 +134,7 @@ export function FirstEncounterStageScreen() {
             key={task.id}
             task={task}
             onComplete={advanceTask}
-            actionLabel={taskIndex + 1 === stage.tasks.length ? 'Finish guided step' : 'Continue'}
+            actionLabel={taskIndex + 1 === currentStage.tasks.length ? 'Finish guided step' : 'Continue'}
           />
         ) : null}
       </View>

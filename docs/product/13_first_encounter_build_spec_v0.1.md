@@ -31,10 +31,11 @@ flowchart TD
   B --> C["RUS-02: Café request"]
   C --> D["RUS-03: Repair the interaction"]
   D --> E["Mission: new café variation"]
-  E --> F["Evidence card + 24h return"]
+  E --> F["Later: explicit 24h return"]
 ```
 
 `RUS-00` is a literacy prerequisite, not a gamified side quest. Cyrillic must be treated as a real script; Latin look-alikes with different sounds are assessed explicitly.
+The 24-hour return is a visible product interval for a reference build, not a claim that one interval is optimal for every learner.
 
 ## 4. Canonical content set
 

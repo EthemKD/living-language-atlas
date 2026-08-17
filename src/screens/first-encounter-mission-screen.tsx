@@ -1,116 +1,39 @@
 import { useRouter } from 'expo-router';
-import Stack from 'expo-router/stack';
-import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
 
-import { GuidedTask } from '@/components/guided-task';
-import { PrimaryAction } from '@/components/primary-action';
-import { ProgressLine } from '@/components/progress-line';
-import { ThemedText } from '@/components/themed-text';
 import { firstEncounter } from '@/content/first-encounter';
 import { canOpenFirstEncounterMission, completeFirstEncounterMission, useFirstEncounterProgress } from '@/domain/first-encounter-state';
-import { useTheme } from '@/theme';
+import { FirstEncounterRehearsalFlow } from '@/screens/first-encounter-rehearsal-flow';
 
 export function FirstEncounterMissionScreen() {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
-  const [stepIndex, setStepIndex] = useState(0);
-  const [isRehearsingAgain, setIsRehearsingAgain] = useState(false);
-  const { colors, spacing, layout } = useTheme();
   const mission = firstEncounter.mission;
-  const unlocked = canOpenFirstEncounterMission();
-  const complete = stepIndex >= mission.steps.length;
-  const showSummary = complete || (progress.missionRehearsed && !isRehearsingAgain);
-  const step = mission.steps[stepIndex];
-
-  function advanceMission() {
-    const nextStepIndex = Math.min(stepIndex + 1, mission.steps.length);
-    if (nextStepIndex >= mission.steps.length) completeFirstEncounterMission();
-    setStepIndex(nextStepIndex);
-  }
-
-  function finishMission() {
-    completeFirstEncounterMission();
-    setIsRehearsingAgain(false);
-    router.replace('/atlas');
-  }
-
-  function startRehearsalAgain() {
-    setStepIndex(0);
-    setIsRehearsingAgain(true);
-  }
+  const unavailable = canOpenFirstEncounterMission()
+    ? undefined
+    : {
+        eyebrow: 'NOT READY YET',
+        title: 'Build the four supports first.',
+        detail: 'This rehearsal is intentionally locked until its script, greeting, request and repair steps are available.',
+        actionLabel: 'Return to First Encounter',
+        onAction: () => router.replace('/atlas'),
+      };
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      keyboardShouldPersistTaps="handled"
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ alignItems: 'center', paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}>
-      <Stack.Title>{mission.title}</Stack.Title>
-      <View style={{ width: '100%', maxWidth: layout.readingWidth, gap: spacing.lg }}>
-        <View style={{ gap: spacing.sm }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
-            <ThemedText variant="caption" tone="current">
-              {mission.eyebrow}
-            </ThemedText>
-            <ThemedText variant="caption" tone="faint" style={{ fontVariant: ['tabular-nums'] }}>
-              {showSummary
-                ? `${mission.steps.length} / ${mission.steps.length}`
-                : unlocked
-                  ? `${stepIndex + 1} / ${mission.steps.length}`
-                  : 'LOCKED'}
-            </ThemedText>
-          </View>
-          <ThemedText variant="heading">{mission.setting}</ThemedText>
-          <ThemedText variant="callout" tone="muted">
-            {mission.changed_detail}
-          </ThemedText>
-          <ProgressLine value={showSummary ? 1 : unlocked ? stepIndex / mission.steps.length : 0} tone="current" />
-        </View>
-
-        {!unlocked ? (
-          <View style={{ gap: spacing.lg }}>
-            <View style={{ gap: spacing.xs }}>
-              <ThemedText variant="caption" tone="current">
-                NOT READY YET
-              </ThemedText>
-              <ThemedText variant="title">Build the four supports first.</ThemedText>
-              <ThemedText tone="muted">
-                This rehearsal is intentionally locked until its script, greeting, request and repair steps are available.
-              </ThemedText>
-            </View>
-            <PrimaryAction label="Return to First Encounter" onPress={() => router.replace('/atlas')} />
-          </View>
-        ) : showSummary ? (
-          <View style={{ gap: spacing.lg }}>
-            <View style={{ gap: spacing.xs }}>
-              <ThemedText variant="caption" tone="accent">
-                REHEARSAL TRACE COMPLETE
-              </ThemedText>
-              <ThemedText variant="title">You handled a changed café detail and a repair event.</ThemedText>
-              <ThemedText tone="muted">{mission.evidence_boundary}</ThemedText>
-            </View>
-            <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.success, paddingLeft: spacing.md }}>
-              <ThemedText variant="caption" tone="accent">
-                WHAT THE TRACE SHOWS
-              </ThemedText>
-              <ThemedText variant="callout" tone="muted">
-                Guided retrieval of a formal greeting, name, changed drink order, slower-speech repair and polite closing.
-              </ThemedText>
-            </View>
-            <PrimaryAction label="Return to Atlas" onPress={finishMission} />
-            {progress.missionRehearsed ? <PrimaryAction label="Rehearse this scene again" variant="quiet" onPress={startRehearsalAgain} /> : null}
-          </View>
-        ) : step ? (
-          <GuidedTask
-            key={step.id}
-            task={step}
-            onComplete={advanceMission}
-            actionLabel={stepIndex + 1 === mission.steps.length ? 'Finish rehearsal' : 'Continue scene'}
-            phrasePresentation="retrieve"
-          />
-        ) : null}
-      </View>
-    </ScrollView>
+    <FirstEncounterRehearsalFlow
+      rehearsal={mission}
+      unavailable={unavailable}
+      persistedComplete={progress.missionRehearsed}
+      summary={{
+        eyebrow: 'REHEARSAL TRACE COMPLETE',
+        title: 'You handled a changed café detail and a repair event.',
+        detail: mission.evidence_boundary,
+        trace: 'Guided retrieval of a formal greeting, name, changed drink order, slower-speech repair and polite closing.',
+      }}
+      exitLabel="Return to Atlas"
+      onSequenceComplete={() => {
+        completeFirstEncounterMission();
+      }}
+      onExit={() => router.replace('/atlas')}
+    />
   );
 }

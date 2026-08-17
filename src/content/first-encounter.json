@@ -4,7 +4,7 @@
   "interface_language": "English",
   "target_language": "Russian",
   "content_evidence_card": {
-    "content_version": "0.2.0",
+    "content_version": "0.3.0",
     "target_skill_id": "rus.a0.first-encounter",
     "author": "Living Language Atlas product seed",
     "language_reviewer": null,
@@ -311,6 +311,83 @@
         "retry_hint": "Thank the person before closing the encounter.",
         "target_skill_id": "rus.a0.close.formal",
         "tokens": ["До свидания.", "Спасибо."],
+        "correct_token_order": ["Спасибо.", "До свидания."]
+      }
+    ]
+  },
+  "return_mission": {
+    "id": "RUS-M02",
+    "title": "Return to the counter",
+    "eyebrow": "DELAYED RETRIEVAL",
+    "setting": "The same café, one later visit",
+    "duration": "4 min",
+    "available_after_hours": 24,
+    "required_mission_id": "RUS-M01",
+    "changed_detail": "Tea becomes coffee again, and the repair shifts from slower speech to naming that you do not understand.",
+    "source_registry_ids": [
+      "COE-CEFR-A1-QUALITATIVE",
+      "PUSHKIN-A1-ELEMENTARY",
+      "SPBU-RUSSIAN-A1-PLUS-PART-1",
+      "LEKTORIUM-TPU-RKI-A1"
+    ],
+    "learning_design_source_registry_ids": [
+      "KARPICKE-ROEDIGER-RETRIEVAL-2008",
+      "CEPEDA-SPACING-2008"
+    ],
+    "evidence_boundary": "This records one later, deterministic retrieval trace. A 24-hour return is a product interval, not proof of permanent retention or a universally optimal schedule.",
+    "steps": [
+      {
+        "id": "return-greet",
+        "kind": "choice",
+        "title": "Keep the formal tone",
+        "prompt": "You return to the counter. Which line opens the interaction formally?",
+        "source_line": "Здравствуйте.",
+        "translation": "Hello. (formal)",
+        "retry_hint": "Return to the greeting that works for a first formal interaction.",
+        "target_skill_id": "rus.a0.greet.formal.return",
+        "choices": [
+          { "id": "formal-hello", "label": "Здравствуйте.", "correct": true },
+          { "id": "name", "label": "Меня зовут Марко.", "correct": false },
+          { "id": "close", "label": "Спасибо. До свидания.", "correct": false }
+        ]
+      },
+      {
+        "id": "return-order-coffee",
+        "kind": "build",
+        "title": "Reverse the drink change",
+        "prompt": "Coffee is available again. Build: A coffee for me, please.",
+        "source_line": "Мне, пожалуйста, кофе.",
+        "translation": "A coffee for me, please.",
+        "retry_hint": "Bring back the same polite request frame, then use the available drink.",
+        "target_skill_id": "rus.a0.order-drink.return",
+        "tokens": ["пожалуйста,", "кофе.", "Мне,"],
+        "correct_token_order": ["Мне,", "пожалуйста,", "кофе."]
+      },
+      {
+        "id": "return-not-understand",
+        "kind": "choice",
+        "title": "Name the new problem",
+        "prompt": "You miss the price completely. Which phrase says that you do not understand?",
+        "source_line": "Я не понимаю.",
+        "translation": "I do not understand.",
+        "retry_hint": "This time the problem is not speed; name the comprehension problem directly.",
+        "target_skill_id": "rus.a0.repair.not-understand.return",
+        "choices": [
+          { "id": "not-understand", "label": "Я не понимаю.", "correct": true },
+          { "id": "repeat", "label": "Повторите, пожалуйста.", "correct": false },
+          { "id": "menu", "label": "Можно меню, пожалуйста?", "correct": false }
+        ]
+      },
+      {
+        "id": "return-close",
+        "kind": "build",
+        "title": "Close without a prompt card",
+        "prompt": "You have your coffee. Build a thank-you and goodbye.",
+        "source_line": "Спасибо. До свидания.",
+        "translation": "Thank you. Goodbye.",
+        "retry_hint": "Thank the person before closing the interaction.",
+        "target_skill_id": "rus.a0.close.formal.return",
+        "tokens": ["Спасибо.", "До свидания."],
         "correct_token_order": ["Спасибо.", "До свидания."]
       }
     ]

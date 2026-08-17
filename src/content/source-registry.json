@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1.0",
-  "purpose": "Trace what supports curriculum scope, skill boundaries and source-selection decisions without copying course material or pretending that a linked source reviewed this app.",
+  "purpose": "Trace what supports curriculum scope, learning-sequence decisions and source-selection boundaries without copying course material or pretending that a linked source reviewed this app.",
   "sources": [
     {
       "id": "COE-CEFR-A1-QUALITATIVE",
@@ -69,6 +69,40 @@
         "a substitute for qualified review of each learner-visible string"
       ],
       "use_mode": "scope_only"
+    },
+    {
+      "id": "KARPICKE-ROEDIGER-RETRIEVAL-2008",
+      "publisher": "Science / American Association for the Advancement of Science",
+      "authority_type": "peer-reviewed primary research",
+      "url": "https://www.science.org/doi/10.1126/science.1152408",
+      "accessed_on": "2026-08-17",
+      "supports": [
+        "retrieval practice can strengthen delayed retention more than additional studying in the reported foreign-language-vocabulary experiment",
+        "a correct immediate response alone should not be treated as permanent learning"
+      ],
+      "does_not_support": [
+        "a universal 24-hour interval",
+        "a proficiency, fluency or efficacy promise for this app",
+        "using research results as phrase-level Russian-language review"
+      ],
+      "use_mode": "learning_design_only"
+    },
+    {
+      "id": "CEPEDA-SPACING-2008",
+      "publisher": "Psychological Science / Association for Psychological Science",
+      "authority_type": "peer-reviewed primary research",
+      "url": "https://doi.org/10.1111/j.1467-9280.2008.02209.x",
+      "accessed_on": "2026-08-17",
+      "supports": [
+        "spacing effects depend on the relationship between practice interval and later test delay",
+        "a later return should be modeled as a distinct event rather than silently merged into initial completion"
+      ],
+      "does_not_support": [
+        "a universally optimal schedule for every learner",
+        "a claim that one delayed rehearsal proves durable retention",
+        "Russian-language accuracy or assessment validation"
+      ],
+      "use_mode": "learning_design_only"
     }
   ]
 }

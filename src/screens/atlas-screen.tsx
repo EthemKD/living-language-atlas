@@ -4,10 +4,25 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter, type EncounterStage } from '@/content/first-encounter';
-import { canOpenFirstEncounterMission, canOpenFirstEncounterStage, useFirstEncounterProgress } from '@/domain/first-encounter-state';
+import {
+  canOpenFirstEncounterMission,
+  canOpenFirstEncounterStage,
+  getFirstEncounterReturnStatus,
+  useFirstEncounterProgress,
+} from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
 type RouteState = 'complete' | 'current' | 'locked';
+
+function formatAvailableAt(timestamp: number | null) {
+  if (!timestamp) return 'after the first rehearsal';
+
+  return new Intl.DateTimeFormat('en', {
+    weekday: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(timestamp));
+}
 
 function StageRow({ stage, state, onPress }: { stage: EncounterStage; state: RouteState; onPress: () => void }) {
   const { colors, spacing, radii, layout } = useTheme();
@@ -63,8 +78,36 @@ export function AtlasScreen() {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
   const { colors, spacing, radii, layout } = useTheme();
-  const completedCount = progress.completedStageIds.length + Number(progress.missionRehearsed);
+  const completedCount = progress.completedStageIds.length + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
   const missionOpen = canOpenFirstEncounterMission();
+  const returnStatus = getFirstEncounterReturnStatus();
+  const returnOpen = returnStatus === 'ready' || returnStatus === 'complete';
+  const returnMission = firstEncounter.return_mission;
+  const returnState =
+    progress.storageState === 'loading'
+      ? {
+          label: 'RESTORING DEVICE PROGRESS',
+          detail: 'Checking whether a later retrieval has been scheduled on this device.',
+        }
+      : returnStatus === 'locked'
+        ? {
+            label: 'UNLOCKS AFTER FIRST REHEARSAL',
+            detail: 'Finish the changed-context café scene before a later retrieval can be scheduled.',
+          }
+        : returnStatus === 'waiting'
+          ? {
+              label: `RETURN AT ${formatAvailableAt(progress.returnMissionAvailableAt).toUpperCase()}`,
+              detail: 'A real interval separates this retrieval from the first rehearsal. The schedule is visible and stored on this device.',
+            }
+          : returnStatus === 'complete'
+            ? {
+                label: 'LATER RETRIEVAL LOGGED',
+                detail: 'You can replay this later scene whenever you want; it does not add a language level or fluency score.',
+              }
+            : {
+                label: 'READY FOR A LATER RETRIEVAL',
+                detail: 'The return is open: retrieve the same functions after an actual interval, with optional phrase support.',
+              };
   const storageStatus = {
     loading: {
       label: 'RESTORING DEVICE PROGRESS',
@@ -99,13 +142,13 @@ export function AtlasScreen() {
                 {completedCount}
               </ThemedText>
               <ThemedText variant="caption" tone="faint">
-                OF 5
+                OF 6
               </ThemedText>
             </View>
           </View>
-          <ProgressLine value={completedCount / 5} tone="current" />
+          <ProgressLine value={completedCount / 6} tone="current" />
           <ThemedText variant="caption" tone="muted">
-            English interface · about 20–30 minutes · no level score attached
+            English interface · two rehearsals with a 24-hour return · no level score attached
           </ThemedText>
         </View>
 
@@ -168,6 +211,41 @@ export function AtlasScreen() {
           </ThemedText>
           <ThemedText variant="caption" tone={missionOpen ? 'accent' : 'faint'}>
             {progress.missionRehearsed ? 'REHEARSED' : missionOpen ? 'READY WHEN YOU ARE' : 'UNLOCKS AFTER FOUR GUIDED STEPS'}
+          </ThemedText>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !returnOpen }}
+          disabled={!returnOpen}
+          onPress={() => router.push('/atlas/encounter/return')}
+          style={({ pressed }) => ({
+            gap: spacing.xs,
+            padding: spacing.lg,
+            borderWidth: 1,
+            borderColor: returnOpen ? colors.success : colors.separator,
+            borderRadius: radii.large,
+            borderCurve: 'continuous',
+            backgroundColor: returnOpen ? colors.surfaceRaised : colors.surface,
+            opacity: returnOpen ? (pressed ? 0.72 : 1) : 0.52,
+          })}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
+            <ThemedText variant="caption" tone={returnOpen ? 'accent' : 'faint'}>
+              {returnMission.eyebrow}
+            </ThemedText>
+            <ThemedText variant="caption" tone="faint">
+              {returnMission.duration}
+            </ThemedText>
+          </View>
+          <ThemedText variant="heading">{returnMission.title}</ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            {returnMission.changed_detail}
+          </ThemedText>
+          <ThemedText variant="caption" tone={returnOpen ? 'accent' : 'faint'}>
+            {returnState.label}
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            {returnState.detail}
           </ThemedText>
         </Pressable>
 

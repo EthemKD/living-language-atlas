@@ -10,10 +10,10 @@ one changed detail. It also contains evidence-led practice, a source-bound Studi
 ## What works now
 
 - Native `Atlas`, `Practice`, `Studio` and `You` tabs on iOS and Android
-- An authored `First Encounter` learning loop: four guided support stages plus a changed-context café rehearsal
-- 17 deterministic, source-bound learning tasks with explicit skill IDs, review gate and evidence boundaries
+- An authored `First Encounter` learning loop: four guided support stages, a changed-context café rehearsal and a later retrieval scene
+- 21 deterministic, source-bound learning tasks: 17 in the initial route and four in a separate 24-hour delayed-retrieval return
 - An in-app reading lens with optional transliteration; it is clearly labelled as a reference aid, not pronunciation scoring
-- Durable on-device progress for the First Encounter route, with no voice, conversation, identity or sensitive data stored
+- Durable on-device progress and a visible later-retrieval schedule, with no voice, conversation, identity or sensitive data stored
 - A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries, retained as a
   longer-horizon curriculum reference rather than a fake unlock tree
 - Deterministic practice checks for three current/due skill bundles
@@ -24,7 +24,8 @@ one changed detail. It also contains evidence-led practice, a source-bound Studi
 Content is explicitly a reference draft. The First Encounter strings, their eventual audio, and all assessment claims
 remain qualified-Russian-review gated; the app does not claim CEFR or TORFL certification. Its curriculum scope is
 traceable in `src/content/source-registry.json` to the Council of Europe plus Russian-language university/institute
-materials; those links constrain scope and are not presented as individual phrase approval.
+materials. The later-retrieval design also cites primary memory research, while explicitly refusing to call 24 hours a
+universal optimum. Those links constrain scope and are not presented as individual phrase approval.
 
 ## Run it
 

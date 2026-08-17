@@ -60,6 +60,12 @@ export type FirstEncounterMission = {
   steps: EncounterTask[];
 };
 
+export type FirstEncounterReturnMission = Omit<FirstEncounterMission, 'required_stage_ids'> & {
+  available_after_hours: number;
+  required_mission_id: string;
+  learning_design_source_registry_ids: string[];
+};
+
 export type FirstEncounterContent = {
   schema_version: string;
   status: 'reference_draft_language_review_required';
@@ -79,6 +85,7 @@ export type FirstEncounterContent = {
   };
   stages: EncounterStage[];
   mission: FirstEncounterMission;
+  return_mission: FirstEncounterReturnMission;
 };
 
 export const firstEncounter = firstEncounterData as FirstEncounterContent;
