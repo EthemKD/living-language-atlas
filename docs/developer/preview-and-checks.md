@@ -43,3 +43,9 @@ npm run check
 
 It executes the content contracts, design-system audit, Node tests, TypeScript check and Expo lint. The GitHub **quality**
 workflow runs the same gate for every main-branch push.
+
+## Inspecting safe resume
+
+To see the W2 recovery slice, open an unlocked First Encounter stage from Atlas, finish one task, leave the screen, and
+open the same stage again. The route shows the saved task boundary and offers `Resume` or `Start from the beginning`.
+This is an on-device local save, not account sync; the status line makes storage failure visible.
