@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { GuidedTask, type GuidedTaskCompletion } from '@/components/guided-task';
+import { EvidenceDebrief } from '@/components/evidence-debrief';
 import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
@@ -148,6 +149,7 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
                 {nextStage ? `${nextStage.title} · ${nextStage.duration}` : 'First encounter at the café · 7 min'}
               </ThemedText>
             </View>
+            <EvidenceDebrief tasks={currentStage.tasks} taskTraces={progress.taskTraces} />
             <PrimaryAction label={nextStage ? `Continue to ${nextStage.title}` : 'Start changed-context rehearsal'} onPress={finishStage} />
             {alreadyComplete ? <PrimaryAction label="Rehearse this step again" variant="quiet" onPress={startRehearsalAgain} /> : null}
           </View>
