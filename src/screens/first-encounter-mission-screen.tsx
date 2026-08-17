@@ -1,7 +1,12 @@
 import { useRouter } from 'expo-router';
 
 import { firstEncounter } from '@/content/first-encounter';
-import { canOpenFirstEncounterMission, completeFirstEncounterMission, useFirstEncounterProgress } from '@/domain/first-encounter-state';
+import {
+  canOpenFirstEncounterMission,
+  completeFirstEncounterMission,
+  recordFirstEncounterTaskTrace,
+  useFirstEncounterProgress,
+} from '@/domain/first-encounter-state';
 import { FirstEncounterRehearsalFlow } from '@/screens/first-encounter-rehearsal-flow';
 
 export function FirstEncounterMissionScreen() {
@@ -30,6 +35,13 @@ export function FirstEncounterMissionScreen() {
         trace: 'Guided retrieval of a formal greeting, name, changed drink order, slower-speech repair and polite closing.',
       }}
       exitLabel="Return to Atlas"
+      onTaskComplete={(task, completion) => {
+        recordFirstEncounterTaskTrace({
+          taskId: task.id,
+          retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
+          incorrectCheckCount: completion.incorrectCheckCount,
+        });
+      }}
       onSequenceComplete={() => {
         completeFirstEncounterMission();
       }}

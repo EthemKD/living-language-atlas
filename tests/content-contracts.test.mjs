@@ -67,4 +67,12 @@ test('First Encounter keeps its reviewed-content boundary and changed-context re
   assert.equal(encounter.return_mission.required_mission_id, encounter.mission.id);
   assert.equal(encounter.return_mission.available_after_hours, 24);
   assert.equal(encounter.return_mission.learning_design_source_registry_ids.length, 2);
+
+  const taskIds = [
+    ...encounter.stages.flatMap((stage) => stage.tasks.map((task) => task.id)),
+    ...encounter.mission.steps.map((step) => step.id),
+    ...encounter.return_mission.steps.map((step) => step.id),
+  ];
+  assert.equal(taskIds.length, 21);
+  assert.equal(new Set(taskIds).size, taskIds.length);
 });

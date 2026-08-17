@@ -34,14 +34,14 @@ export function YouScreen() {
     progress.completedStageIds.length + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
   const storageCopy = {
     loading: 'Restoring this device’s saved rehearsal state.',
-    ready: 'This device stores only stage completion and the later-retrieval schedule.',
+    ready: 'This device stores route completion, fixed task trace, and the later-retrieval schedule.',
     unavailable: 'Device storage is currently unavailable, so the route may not survive an app restart.',
   }[progress.storageState];
 
   function confirmReset() {
     Alert.alert(
       'Reset this device’s First Encounter route?',
-      'This clears only the local guided-stage and retrieval schedule for this reference build. It does not affect any account because this build has none.',
+      'This clears only the local guided-stage, task trace and retrieval schedule for this reference build. It does not affect any account because this build has none.',
       [
         { text: 'Keep progress', style: 'cancel' },
         { text: 'Reset route', style: 'destructive', onPress: resetFirstEncounterProgress },
@@ -66,7 +66,7 @@ export function YouScreen() {
         </View>
 
         <View style={{ flexDirection: 'row', gap: spacing.xl, flexWrap: 'wrap' }}>
-          <View style={{ minWidth: 136, gap: spacing.xxs }}>
+          <View style={{ minWidth: layout.metricMinWidth, gap: spacing.xxs }}>
             <ThemedText variant="display" style={{ fontVariant: ['tabular-nums'] }}>
               {completedCount}
             </ThemedText>
@@ -74,7 +74,7 @@ export function YouScreen() {
               TRACE EVENTS OF 6
             </ThemedText>
           </View>
-          <View style={{ minWidth: 136, gap: spacing.xxs }}>
+          <View style={{ minWidth: layout.metricMinWidth, gap: spacing.xxs }}>
             <ThemedText variant="display" style={{ fontVariant: ['tabular-nums'] }}>
               {progress.completedStageIds.length}
             </ThemedText>
@@ -104,6 +104,12 @@ export function YouScreen() {
             value={laterReturnLabel(laterReturn)}
             detail="The later scene is intentionally a distinct trace event rather than a hidden bonus point."
           />
+          <RecordRow
+            label="Task trace"
+            value={`${progress.taskTraces.length} fixed tasks logged`}
+            detail="A task record can show completion passages, whether optional retrieval support was revealed, and deterministic rechecks."
+          />
+          <PrimaryAction label="Inspect rehearsal trace" variant="quiet" onPress={() => router.push('/you/trace')} />
         </View>
 
         <View style={{ gap: spacing.xs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>

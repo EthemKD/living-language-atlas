@@ -2,7 +2,7 @@ import Stack from 'expo-router/stack';
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { GuidedTask } from '@/components/guided-task';
+import { GuidedTask, type GuidedTaskCompletion } from '@/components/guided-task';
 import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
@@ -40,6 +40,7 @@ type FirstEncounterRehearsalFlowProps = {
   persistedComplete: boolean;
   summary: RehearsalSummary;
   exitLabel: string;
+  onTaskComplete: (task: EncounterTask, completion: GuidedTaskCompletion) => void;
   onSequenceComplete: () => void;
   onExit: () => void;
 };
@@ -50,6 +51,7 @@ export function FirstEncounterRehearsalFlow({
   persistedComplete,
   summary,
   exitLabel,
+  onTaskComplete,
   onSequenceComplete,
   onExit,
 }: FirstEncounterRehearsalFlowProps) {
@@ -140,7 +142,10 @@ export function FirstEncounterRehearsalFlow({
           <GuidedTask
             key={step.id}
             task={step}
-            onComplete={advance}
+            onComplete={(completion) => {
+              onTaskComplete(step, completion);
+              advance();
+            }}
             actionLabel={stepIndex + 1 === rehearsal.steps.length ? 'Finish rehearsal' : 'Continue scene'}
             phrasePresentation="retrieve"
           />

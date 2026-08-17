@@ -11,6 +11,7 @@ type PhraseLensProps = {
   explanation?: string;
   presentation?: 'reference' | 'retrieve';
   translationVisible?: boolean;
+  onRevealSupportedPhrase?: () => void;
 };
 
 export function PhraseLens({
@@ -19,6 +20,7 @@ export function PhraseLens({
   explanation,
   presentation = 'reference',
   translationVisible = true,
+  onRevealSupportedPhrase,
 }: PhraseLensProps) {
   const [phraseVisible, setPhraseVisible] = useState(presentation === 'reference');
   const [assistVisible, setAssistVisible] = useState(false);
@@ -67,7 +69,10 @@ export function PhraseLens({
         {!phraseVisible ? (
           <Pressable
             accessibilityRole="button"
-            onPress={() => setPhraseVisible(true)}
+            onPress={() => {
+              setPhraseVisible(true);
+              onRevealSupportedPhrase?.();
+            }}
             style={({ pressed }) => ({
               minHeight: layout.touchTarget,
               justifyContent: 'center',

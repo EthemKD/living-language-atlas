@@ -7,9 +7,14 @@ import { ThemedText } from '@/components/themed-text';
 import type { EncounterTask } from '@/content/first-encounter';
 import { useTheme } from '@/theme';
 
+export type GuidedTaskCompletion = {
+  retrievalPhraseRevealed: boolean;
+  incorrectCheckCount: number;
+};
+
 type GuidedTaskProps = {
   task: EncounterTask;
-  onComplete: () => void;
+  onComplete: (completion: GuidedTaskCompletion) => void;
   actionLabel?: string;
   phrasePresentation?: 'reference' | 'retrieve';
 };
@@ -23,6 +28,8 @@ export function GuidedTask({
   const [selectedChoiceId, setSelectedChoiceId] = useState<string>();
   const [selectedTokenIndexes, setSelectedTokenIndexes] = useState<number[]>([]);
   const [checked, setChecked] = useState(false);
+  const [retrievalPhraseRevealed, setRetrievalPhraseRevealed] = useState(false);
+  const [incorrectCheckCount, setIncorrectCheckCount] = useState(0);
   const { colors, spacing, radii, layout } = useTheme();
 
   const selectedChoice = task.kind === 'choice' ? task.choices.find((choice) => choice.id === selectedChoiceId) : undefined;
@@ -52,6 +59,15 @@ export function GuidedTask({
     setChecked(false);
   }
 
+  function checkResponse() {
+    if (!solved) setIncorrectCheckCount((currentCount) => currentCount + 1);
+    setChecked(true);
+  }
+
+  function completeTask() {
+    onComplete({ retrievalPhraseRevealed, incorrectCheckCount });
+  }
+
   return (
     <View style={{ gap: spacing.lg }}>
       <View style={{ gap: spacing.xs }}>
@@ -67,6 +83,7 @@ export function GuidedTask({
         translation={task.translation}
         explanation={task.kind === 'notice' ? task.explanation : undefined}
         presentation={phrasePresentation}
+        onRevealSupportedPhrase={() => setRetrievalPhraseRevealed(true)}
       />
 
       {task.kind === 'choice' ? (
@@ -174,15 +191,15 @@ export function GuidedTask({
         </View>
       ) : null}
 
-      {task.kind === 'notice' ? <PrimaryAction label="I see it" onPress={onComplete} /> : null}
+      {task.kind === 'notice' ? <PrimaryAction label="I see it" onPress={completeTask} /> : null}
       {task.kind !== 'notice' && !(solved && checked) ? (
         <PrimaryAction
           label={checked ? 'Try another response' : 'Check response'}
           disabled={!canCheck}
-          onPress={checked ? resetAttempt : () => setChecked(true)}
+          onPress={checked ? resetAttempt : checkResponse}
         />
       ) : null}
-      {task.kind !== 'notice' && solved && checked ? <PrimaryAction label={actionLabel} onPress={onComplete} /> : null}
+      {task.kind !== 'notice' && solved && checked ? <PrimaryAction label={actionLabel} onPress={completeTask} /> : null}
     </View>
   );
 }

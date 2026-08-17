@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useSyncExternalStore } from 'react';
 
-import { firstEncounter } from '@/content/first-encounter';
+import { findFirstEncounterTask, firstEncounter } from '@/content/first-encounter';
 
 const storageKey = 'living-language-atlas/first-encounter-progress/v1';
 const returnDelayMs = firstEncounter.return_mission.available_after_hours * 60 * 60 * 1000;
@@ -9,12 +9,22 @@ const returnDelayMs = firstEncounter.return_mission.available_after_hours * 60 *
 export type FirstEncounterStorageState = 'loading' | 'ready' | 'unavailable';
 export type FirstEncounterReturnStatus = 'locked' | 'waiting' | 'ready' | 'complete';
 
+export type FirstEncounterTaskTrace = {
+  taskId: string;
+  completions: number;
+  retrievalPhraseRevealed: boolean;
+  incorrectCheckCount: number;
+};
+
+export type FirstEncounterTaskTraceInput = Omit<FirstEncounterTaskTrace, 'completions'>;
+
 export type FirstEncounterProgress = {
   completedStageIds: readonly string[];
   missionRehearsed: boolean;
   missionRehearsedAt: number | null;
   returnMissionAvailableAt: number | null;
   returnMissionRehearsed: boolean;
+  taskTraces: readonly FirstEncounterTaskTrace[];
   storageState: FirstEncounterStorageState;
 };
 
@@ -24,12 +34,14 @@ let progress: FirstEncounterProgress = {
   missionRehearsedAt: null,
   returnMissionAvailableAt: null,
   returnMissionRehearsed: false,
+  taskTraces: [],
   storageState: 'loading',
 };
 
 const subscribers = new Set<() => void>();
 let hydration: Promise<void> | undefined;
 let localMutationBeforeHydration = false;
+let persistenceQueue: Promise<void> = Promise.resolve();
 
 function publish(nextProgress: FirstEncounterProgress) {
   progress = nextProgress;
@@ -56,12 +68,37 @@ function defaultProgress(storageState: FirstEncounterStorageState): FirstEncount
     missionRehearsedAt: null,
     returnMissionAvailableAt: null,
     returnMissionRehearsed: false,
+    taskTraces: [],
     storageState,
   };
 }
 
 function isTimestamp(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
+function normalizeTaskTraces(value: unknown): FirstEncounterTaskTrace[] {
+  if (!Array.isArray(value)) return [];
+
+  const tracesByTaskId = new Map<string, FirstEncounterTaskTrace>();
+  for (const candidate of value) {
+    if (!isRecord(candidate) || typeof candidate.taskId !== 'string' || !findFirstEncounterTask(candidate.taskId)) continue;
+    if (!isNonNegativeInteger(candidate.completions) || candidate.completions < 1) continue;
+    if (typeof candidate.retrievalPhraseRevealed !== 'boolean' || !isNonNegativeInteger(candidate.incorrectCheckCount)) continue;
+
+    tracesByTaskId.set(candidate.taskId, {
+      taskId: candidate.taskId,
+      completions: candidate.completions,
+      retrievalPhraseRevealed: candidate.retrievalPhraseRevealed,
+      incorrectCheckCount: candidate.incorrectCheckCount,
+    });
+  }
+
+  return [...tracesByTaskId.values()];
 }
 
 function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounterProgress, 'storageState'> {
@@ -98,6 +135,7 @@ function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounter
       missionRehearsedAt,
       returnMissionAvailableAt,
       returnMissionRehearsed: missionRehearsed && parsed.returnMissionRehearsed === true,
+      taskTraces: normalizeTaskTraces(parsed.taskTraces),
     };
   } catch {
     return defaultProgress('ready');
@@ -106,17 +144,30 @@ function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounter
 
 function persist(nextProgress: FirstEncounterProgress) {
   const payload = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     completedStageIds: nextProgress.completedStageIds,
     missionRehearsed: nextProgress.missionRehearsed,
     missionRehearsedAt: nextProgress.missionRehearsedAt,
     returnMissionAvailableAt: nextProgress.returnMissionAvailableAt,
     returnMissionRehearsed: nextProgress.returnMissionRehearsed,
+    taskTraces: nextProgress.taskTraces,
   };
 
-  void AsyncStorage.setItem(storageKey, JSON.stringify(payload)).catch(() => {
-    publish({ ...progress, storageState: 'unavailable' });
-  });
+  persistenceQueue = persistenceQueue
+    .catch(() => undefined)
+    .then(() => AsyncStorage.setItem(storageKey, JSON.stringify(payload)))
+    .catch(() => {
+      publish({ ...progress, storageState: 'unavailable' });
+    });
+}
+
+function clearPersistedProgress(nextProgress: FirstEncounterProgress) {
+  persistenceQueue = persistenceQueue
+    .catch(() => undefined)
+    .then(() => AsyncStorage.removeItem(storageKey))
+    .catch(() => {
+      publish({ ...nextProgress, storageState: 'unavailable' });
+    });
 }
 
 function updateProgress(nextProgress: Omit<FirstEncounterProgress, 'storageState'>) {
@@ -176,6 +227,7 @@ export function completeFirstEncounterStage(stageId: string) {
     missionRehearsedAt: progress.missionRehearsedAt,
     returnMissionAvailableAt: progress.returnMissionAvailableAt,
     returnMissionRehearsed: progress.returnMissionRehearsed,
+    taskTraces: progress.taskTraces,
   });
   return true;
 }
@@ -192,6 +244,7 @@ export function completeFirstEncounterMission() {
     missionRehearsedAt,
     returnMissionAvailableAt: progress.returnMissionAvailableAt ?? missionRehearsedAt + returnDelayMs,
     returnMissionRehearsed: progress.returnMissionRehearsed,
+    taskTraces: progress.taskTraces,
   });
   return true;
 }
@@ -218,6 +271,30 @@ export function completeFirstEncounterReturnMission() {
     missionRehearsedAt: progress.missionRehearsedAt,
     returnMissionAvailableAt: progress.returnMissionAvailableAt,
     returnMissionRehearsed: true,
+    taskTraces: progress.taskTraces,
+  });
+  return true;
+}
+
+export function recordFirstEncounterTaskTrace(input: FirstEncounterTaskTraceInput) {
+  if (!findFirstEncounterTask(input.taskId) || !isNonNegativeInteger(input.incorrectCheckCount)) return false;
+
+  const currentTrace = progress.taskTraces.find((trace) => trace.taskId === input.taskId);
+  const nextTrace: FirstEncounterTaskTrace = {
+    taskId: input.taskId,
+    completions: (currentTrace?.completions ?? 0) + 1,
+    retrievalPhraseRevealed: input.retrievalPhraseRevealed,
+    incorrectCheckCount: input.incorrectCheckCount,
+  };
+  const taskTraces = [...progress.taskTraces.filter((trace) => trace.taskId !== input.taskId), nextTrace];
+
+  updateProgress({
+    completedStageIds: progress.completedStageIds,
+    missionRehearsed: progress.missionRehearsed,
+    missionRehearsedAt: progress.missionRehearsedAt,
+    returnMissionAvailableAt: progress.returnMissionAvailableAt,
+    returnMissionRehearsed: progress.returnMissionRehearsed,
+    taskTraces,
   });
   return true;
 }
@@ -227,9 +304,7 @@ export function resetFirstEncounterProgress() {
   const next = defaultProgress(progress.storageState);
   publish(next);
 
-  void AsyncStorage.removeItem(storageKey).catch(() => {
-    publish({ ...next, storageState: 'unavailable' });
-  });
+  clearPersistedProgress(next);
 }
 
 export function canOpenFirstEncounterStage(stageId: string) {

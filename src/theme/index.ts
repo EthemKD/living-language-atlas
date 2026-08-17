@@ -76,7 +76,7 @@ export const typography = {
   code: textStyle({ fontFamily: fonts.mono, fontSize: 15, lineHeight: 22, fontWeight: '500' }),
 } as const;
 
-export const layout = { maxContentWidth: 760, touchTarget: 44, readingWidth: 620 } as const;
+export const layout = { maxContentWidth: 760, touchTarget: 44, readingWidth: 620, metricMinWidth: 136 } as const;
 export const shadows = {
   floating: '0 8px 24px rgba(23, 24, 43, 0.12)',
   pressed: '0 2px 8px rgba(23, 24, 43, 0.08)',

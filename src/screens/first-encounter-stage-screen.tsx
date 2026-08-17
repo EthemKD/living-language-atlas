@@ -3,7 +3,7 @@ import Stack from 'expo-router/stack';
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { GuidedTask } from '@/components/guided-task';
+import { GuidedTask, type GuidedTaskCompletion } from '@/components/guided-task';
 import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
@@ -11,6 +11,7 @@ import { findFirstEncounterStage, firstEncounterStageAfter } from '@/content/fir
 import {
   canOpenFirstEncounterStage,
   completeFirstEncounterStage,
+  recordFirstEncounterTaskTrace,
   useFirstEncounterProgress,
 } from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
@@ -65,7 +66,15 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
       : 'LOCKED';
   const progressValue = showSummary ? 1 : unlocked ? taskIndex / currentStage.tasks.length : 0;
 
-  function advanceTask() {
+  function advanceTask(completion: GuidedTaskCompletion) {
+    if (task) {
+      recordFirstEncounterTaskTrace({
+        taskId: task.id,
+        retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
+        incorrectCheckCount: completion.incorrectCheckCount,
+      });
+    }
+
     const nextTaskIndex = Math.min(taskIndex + 1, currentStage.tasks.length);
     if (nextTaskIndex >= currentStage.tasks.length) completeFirstEncounterStage(currentStage.id);
     setTaskIndex(nextTaskIndex);

@@ -18,7 +18,7 @@ one changed detail. It also contains evidence-led practice, a source-bound Studi
   longer-horizon curriculum reference rather than a fake unlock tree
 - A state-aware Practice tab plus Recall Lens, which uses only phrases already open in the learner's route
 - A source-bound Phrase Desk rather than a fake connected AI chat surface
-- An inspectable local learning record and in-app Source Notes that distinguish scope evidence from phrase approval
+- An inspectable local learning record: fixed task passages, retrieval-support reveals and deterministic rechecks stay distinct from a score; in-app Source Notes distinguish scope evidence from phrase approval
 - Automated content-contract tests and a design-system drift audit
 
 Content is explicitly a reference draft. The First Encounter strings, their eventual audio, and all assessment claims

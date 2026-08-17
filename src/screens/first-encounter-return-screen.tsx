@@ -4,6 +4,7 @@ import { firstEncounter } from '@/content/first-encounter';
 import {
   completeFirstEncounterReturnMission,
   getFirstEncounterReturnStatus,
+  recordFirstEncounterTaskTrace,
   useFirstEncounterProgress,
 } from '@/domain/first-encounter-state';
 import { FirstEncounterRehearsalFlow } from '@/screens/first-encounter-rehearsal-flow';
@@ -62,6 +63,13 @@ export function FirstEncounterReturnScreen() {
         trace: 'One later retrieval of a formal greeting, changed drink order, direct repair and polite closing. It is not proof of permanent retention.',
       }}
       exitLabel="Return to Atlas"
+      onTaskComplete={(task, completion) => {
+        recordFirstEncounterTaskTrace({
+          taskId: task.id,
+          retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
+          incorrectCheckCount: completion.incorrectCheckCount,
+        });
+      }}
       onSequenceComplete={() => {
         completeFirstEncounterReturnMission();
       }}

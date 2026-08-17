@@ -90,8 +90,18 @@ export type FirstEncounterContent = {
 
 export const firstEncounter = firstEncounterData as FirstEncounterContent;
 
+export const firstEncounterTasks: readonly EncounterTask[] = [
+  ...firstEncounter.stages.flatMap((stage) => stage.tasks),
+  ...firstEncounter.mission.steps,
+  ...firstEncounter.return_mission.steps,
+];
+
 export function findFirstEncounterStage(stageId: string | undefined) {
   return firstEncounter.stages.find((stage) => stage.id === stageId);
+}
+
+export function findFirstEncounterTask(taskId: string) {
+  return firstEncounterTasks.find((task) => task.id === taskId);
 }
 
 export function firstEncounterStageAfter(stageId: string) {
