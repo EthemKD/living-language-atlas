@@ -9,6 +9,7 @@ import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { findFirstEncounterStage, firstEncounterStageAfter } from '@/content/first-encounter';
+import evidenceLedger from '@/content/first-encounter-evidence.json';
 import {
   canOpenFirstEncounterStage,
   completeFirstEncounterStage,
@@ -69,6 +70,12 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   const complete = taskIndex >= currentStage.tasks.length;
   const showSummary = complete || (alreadyComplete && !isRehearsingAgain);
   const savedStepIndex = Math.min(getLessonSessionStep(lessonSession.session), currentStage.tasks.length - 1);
+  const evidenceLevels = [...new Set(
+    currentStage.tasks.flatMap((currentTask) => {
+      const card = evidenceLedger.cards.find((candidate) => candidate.content_id === currentTask.id);
+      return card?.evidence_levels ?? [];
+    }),
+  )];
   const canResume =
     lessonSession.storageState === 'ready' &&
     unlocked &&
@@ -236,6 +243,9 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
             taskCount={currentStage.tasks.length}
             objective={currentStage.can_do}
             evidenceBoundary={currentStage.evidence_boundary}
+            targetSkillId={currentStage.target_skill_id}
+            evidenceLevels={evidenceLevels.join('  -  ')}
+            sourceRegistryIds={currentStage.source_registry_ids.join('  -  ')}
             onStart={() => setLessonStarted(true)}
           />
         ) : task ? (
@@ -258,10 +268,24 @@ type LessonPreflightProps = {
   taskCount: number;
   objective: string;
   evidenceBoundary: string;
+  targetSkillId: string;
+  evidenceLevels: string;
+  sourceRegistryIds: string;
   onStart: () => void;
 };
 
-function LessonPreflight({ title, eyebrow, duration, taskCount, objective, evidenceBoundary, onStart }: LessonPreflightProps) {
+function LessonPreflight({
+  title,
+  eyebrow,
+  duration,
+  taskCount,
+  objective,
+  evidenceBoundary,
+  targetSkillId,
+  evidenceLevels,
+  sourceRegistryIds,
+  onStart,
+}: LessonPreflightProps) {
   const { colors, spacing } = useTheme();
 
   return (
@@ -278,8 +302,11 @@ function LessonPreflight({ title, eyebrow, duration, taskCount, objective, evide
 
       <View style={{ borderTopWidth: 1, borderTopColor: colors.separator }}>
         <PreflightRow label="OBJECTIVE" value={objective} />
+        <PreflightRow label="TARGET SKILL" value={targetSkillId} />
+        <PreflightRow label="EVIDENCE PATH" value={evidenceLevels || 'Not declared in the item ledger'} />
         <PreflightRow label="EVIDENCE LIMIT" value={evidenceBoundary} />
         <PreflightRow label="FORMAT" value={`${taskCount} text tasks  -  ${duration}  -  support stays optional`} />
+        <PreflightRow label="SOURCE BOUNDARY" value={sourceRegistryIds} />
         <PreflightRow label="CONTENT GATE" value="Reference draft  -  qualified Russian review still required" tone="current" />
         <PreflightRow label="AUDIO" value="Not included  -  traceable source and reviewer sign-off are still open" tone="current" />
         <PreflightRow label="LOCAL RECOVERY" value="Bundled text and task logic work locally; progress saves at completed task boundaries." />
