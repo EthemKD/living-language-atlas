@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "status": "reference_draft_language_review_required",
+  "missions": [
+    {
+      "id": "D03-M01",
+      "district_id": "D03",
+      "bundle_ids": ["D03-S01", "D03-S02", "D03-S03", "D03-S04"],
+      "title": "Find the platform",
+      "setting": "rail station",
+      "briefing": "The departure board changes one detail. Ask where, follow a short direction, then confirm the new platform.",
+      "changed_detail": "The platform changes from three to five.",
+      "steps": [
+        {
+          "id": "orient",
+          "kind": "observe",
+          "title": "Notice the changed detail",
+          "prompt": "The board now shows platform 5. Keep the destination and number separate.",
+          "evidence_level": "E0"
+        },
+        {
+          "id": "ask",
+          "kind": "choose",
+          "title": "Ask where",
+          "prompt": "Choose the line that asks where platform five is.",
+          "source_line": "Где платформа номер пять?",
+          "translation": "Where is platform number five?",
+          "choices": [
+            { "id": "ask-correct", "label": "Где платформа номер пять?", "correct": true },
+            { "id": "ask-ticket", "label": "Мне нужен билет.", "correct": false },
+            { "id": "ask-cashier", "label": "Где касса?", "correct": false }
+          ],
+          "evidence_level": "E1"
+        },
+        {
+          "id": "follow",
+          "kind": "interpret",
+          "title": "Follow the bounded direction",
+          "prompt": "Act on one linked direction without translating every word.",
+          "source_line": "Прямо, потом направо.",
+          "translation": "Straight ahead, then right.",
+          "choices": [
+            { "id": "follow-correct", "label": "Straight, then right", "correct": true },
+            { "id": "follow-left", "label": "Straight, then left", "correct": false },
+            { "id": "follow-back", "label": "Go back", "correct": false }
+          ],
+          "evidence_level": "E1"
+        },
+        {
+          "id": "confirm",
+          "kind": "produce",
+          "title": "Confirm before moving on",
+          "prompt": "Use the frame to confirm platform five. Reveal support only if you need it.",
+          "source_line": "Это платформа номер пять?",
+          "translation": "Is this platform number five?",
+          "evidence_level": "E2"
+        },
+        {
+          "id": "transfer",
+          "kind": "adapt",
+          "title": "Handle the changed number",
+          "prompt": "The board changes again: platform seven. Adapt the confirmation line without an answer reveal.",
+          "source_line": "Это платформа номер семь?",
+          "translation": "Is this platform number seven?",
+          "evidence_level": "E3"
+        }
+      ]
+    }
+  ]
+}

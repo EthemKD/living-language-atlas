@@ -1,0 +1,30 @@
+name: Language content review
+description: Review an exact version of a language-learning content object.
+title: "[Content review]: "
+labels: [content, review-required]
+body:
+  - type: input
+    id: ids
+    attributes:
+      label: Content IDs and version
+      placeholder: D03-M01, D03-S02 · schema 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: reviewer
+    attributes:
+      label: Required reviewer
+      options: [Russian as a foreign language, Assessment/psychometrics, Safety, Privacy, Legal/copyright]
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Exact artifacts and claims under review
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision, conditions and expiry
+      description: Complete only when an accountable reviewer signs the exact version.

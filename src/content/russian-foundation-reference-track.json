@@ -1,0 +1,1021 @@
+{
+  "schema_version": "0.1",
+  "status": "architecture_hypothesis_expert_review_required",
+  "generated_at": "2026-08-17",
+  "interface_language": "en",
+  "target_language": "ru",
+  "claim_boundary": "Not a finished curriculum, CEFR certification, TORFL preparation promise, or proficiency score.",
+  "evidence_ladder": [
+    {
+      "id": "E0",
+      "label": "Encountered",
+      "observation_contract": "The learner saw or heard the target in context.",
+      "promotion_boundary": "Never changes ability state by itself.",
+      "traceability": "Source and exposure are logged."
+    },
+    {
+      "id": "E1",
+      "label": "Recognized",
+      "observation_contract": "The learner distinguished meaning/form across more than one item family with declared support.",
+      "promotion_boundary": "Promotion rule must be calibrated; no one-item pass.",
+      "traceability": "Attempt family, support and content version are logged."
+    },
+    {
+      "id": "E2",
+      "label": "Produced with support",
+      "observation_contract": "The learner spoke or wrote the function with a declared scaffold or fallback.",
+      "promotion_boundary": "Speech uncertainty stays visible; typed output is labeled separately.",
+      "traceability": "Mode, support tier and evaluator are logged."
+    },
+    {
+      "id": "E3",
+      "label": "Transferred",
+      "observation_contract": "The learner handled a changed detail without answer reveal in a new scene.",
+      "promotion_boundary": "Required before a functional can-do is shown.",
+      "traceability": "Changed variable and repair use are logged."
+    },
+    {
+      "id": "E4",
+      "label": "Returned",
+      "observation_contract": "The learner repeated the function after a delay with new surface details.",
+      "promotion_boundary": "Required before stable language; decay rules await calibration.",
+      "traceability": "Elapsed time, variants and prior support are logged."
+    }
+  ],
+  "districts": [
+    {
+      "id": "D01",
+      "arc": "ARRIVE",
+      "title": "Decode & Repair",
+      "promise": "Orient through high-value Cyrillic, sound landmarks and immediate communication repair.",
+      "bundles": [
+        {
+          "id": "D01-S01",
+          "title": "Recognize survival print",
+          "original_can_do": "Use a small set of high-value Cyrillic labels, names and signs to orient with visual support.",
+          "primary_mode": "Interpretive reading",
+          "function": "identify and match",
+          "form_focus_hypothesis": "print letter groups; upper/lower case; known words",
+          "sound_focus_hypothesis": "letter–sound anchors; stress marking",
+          "contexts": "signs · labels · names",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D01-S02",
+          "title": "Hear sound landmarks",
+          "original_can_do": "Distinguish selected Russian sound patterns in short known words when replay and context are available.",
+          "primary_mode": "Interpretive listening",
+          "function": "identify and discriminate",
+          "form_focus_hypothesis": "known word forms; audio/text alignment",
+          "sound_focus_hypothesis": "stress; hard/soft contrast introduction; ы/и introduction",
+          "contexts": "names · places · short labels",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D01-S03",
+          "title": "Enter known text",
+          "original_can_do": "Type or select a short known word and recover from layout, case or spelling mismatch.",
+          "primary_mode": "Presentational writing",
+          "function": "enter and verify",
+          "form_focus_hypothesis": "Cyrillic keyboard; capitalization; simple copying",
+          "sound_focus_hypothesis": "sound-to-letter checking",
+          "contexts": "form fields · search · short labels",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D01-S04",
+          "title": "Repair immediately",
+          "original_can_do": "Signal non-understanding and request repetition, slower speech or spelling in a bounded exchange.",
+          "primary_mode": "Interpersonal",
+          "function": "repair and clarify",
+          "form_focus_hypothesis": "fixed repair frames; polite request marker",
+          "sound_focus_hypothesis": "question intonation; chunking",
+          "contexts": "desk · lesson · voice interaction",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D01-M01",
+          "title": "Find the right sign",
+          "setting": "station concourse",
+          "changed_detail": "Two signs share a familiar-looking letter",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D01-M02",
+          "title": "Enter a name correctly",
+          "setting": "reception kiosk",
+          "changed_detail": "The keyboard layout changes",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D01-M03",
+          "title": "Repair the first exchange",
+          "setting": "information desk",
+          "changed_detail": "The reply is too fast and must be repeated",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D02",
+      "arc": "ARRIVE",
+      "title": "Meet & Identify",
+      "promise": "Open, sustain and close a first social exchange without pretending to hold a free conversation.",
+      "bundles": [
+        {
+          "id": "D02-S01",
+          "title": "Choose a greeting",
+          "original_can_do": "Select and produce a greeting suited to a familiar setting and time cue.",
+          "primary_mode": "Interpersonal",
+          "function": "open interaction",
+          "form_focus_hypothesis": "greeting formulas; time cues",
+          "sound_focus_hypothesis": "word stress; greeting intonation",
+          "contexts": "reception · class · neighbour",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D02-S02",
+          "title": "Introduce basic identity",
+          "original_can_do": "Give a name and one or two rehearsed identity details with optional visual support.",
+          "primary_mode": "Presentational speaking",
+          "function": "identify self",
+          "form_focus_hypothesis": "personal pronouns; nominative identity frames",
+          "sound_focus_hypothesis": "name stress; chunk boundaries",
+          "contexts": "class · registration · voice note",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D02-S03",
+          "title": "Exchange identity details",
+          "original_can_do": "Ask and answer basic questions about name, origin and languages in a short turn sequence.",
+          "primary_mode": "Interpersonal",
+          "function": "ask and answer",
+          "form_focus_hypothesis": "кто/как/откуда; present-tense high-frequency frames",
+          "sound_focus_hypothesis": "question intonation",
+          "contexts": "reception · partner card · group",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D02-S04",
+          "title": "Close politely",
+          "original_can_do": "Thank, acknowledge and close a brief interaction using an appropriate fixed expression.",
+          "primary_mode": "Interpersonal",
+          "function": "acknowledge and close",
+          "form_focus_hypothesis": "politeness formulas; register cue",
+          "sound_focus_hypothesis": "finality intonation",
+          "contexts": "desk · neighbour · lesson",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D02-M01",
+          "title": "Meet at reception",
+          "setting": "hostel or office reception",
+          "changed_detail": "The other person greets first",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D02-M02",
+          "title": "Introduce yourself twice",
+          "setting": "class then neighbour encounter",
+          "changed_detail": "The level of formality changes",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D02-M03",
+          "title": "Leave a short introduction",
+          "setting": "voice note",
+          "changed_detail": "One requested detail is missing",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D03",
+      "arc": "MOVE",
+      "title": "Locate & Navigate",
+      "promise": "Find a place, understand a bounded direction and confirm the destination.",
+      "bundles": [
+        {
+          "id": "D03-S01",
+          "title": "Identify familiar places",
+          "original_can_do": "Recognize high-frequency place words and match them to a map, sign or spoken cue.",
+          "primary_mode": "Interpretive",
+          "function": "identify location",
+          "form_focus_hypothesis": "place nouns; basic prepositions",
+          "sound_focus_hypothesis": "unstressed vowel awareness",
+          "contexts": "map · signs · announcements",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D03-S02",
+          "title": "Ask where",
+          "original_can_do": "Ask for the location of a known place and signal the intended destination.",
+          "primary_mode": "Interpersonal",
+          "function": "request location",
+          "form_focus_hypothesis": "где/куда; в/на; polite frame",
+          "sound_focus_hypothesis": "question focus",
+          "contexts": "street · station · building",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D03-S03",
+          "title": "Follow bounded directions",
+          "original_can_do": "Act on one or two linked direction cues supported by a map or landmark.",
+          "primary_mode": "Interpretive listening",
+          "function": "follow instructions",
+          "form_focus_hypothesis": "imperative recognition; direction adverbs; sequence",
+          "sound_focus_hypothesis": "chunking; consonant clusters",
+          "contexts": "map · corridor · street",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D03-S04",
+          "title": "Confirm destination",
+          "original_can_do": "Repeat or check a destination, number or stop and repair a mismatch.",
+          "primary_mode": "Interpersonal",
+          "function": "confirm and repair",
+          "form_focus_hypothesis": "это…?; номер; negation/correction",
+          "sound_focus_hypothesis": "confirmation intonation",
+          "contexts": "transport · ticket desk · entrance",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D03-M01",
+          "title": "Find the platform",
+          "setting": "rail station",
+          "changed_detail": "The first platform number is changed",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D03-M02",
+          "title": "Ask for the entrance",
+          "setting": "public building",
+          "changed_detail": "There are two entrances",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D03-M03",
+          "title": "Confirm the stop",
+          "setting": "bus or tram",
+          "changed_detail": "The announcement is partially missed",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D04",
+      "arc": "NEED",
+      "title": "Get & Choose",
+      "promise": "Identify an item, ask whether it is available, choose and complete a small transaction.",
+      "bundles": [
+        {
+          "id": "D04-S01",
+          "title": "Recognize item and quantity",
+          "original_can_do": "Identify a small set of items, quantities and prices from speech, labels or a simple menu.",
+          "primary_mode": "Interpretive",
+          "function": "identify and select",
+          "form_focus_hypothesis": "noun phrases; numbers; quantity units",
+          "sound_focus_hypothesis": "number stress; reduction in known items",
+          "contexts": "menu · label · counter",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D04-S02",
+          "title": "Ask availability and price",
+          "original_can_do": "Ask whether a known item is available and request or confirm its price.",
+          "primary_mode": "Interpersonal",
+          "function": "inquire",
+          "form_focus_hypothesis": "есть/нет; сколько; price frames",
+          "sound_focus_hypothesis": "question intonation",
+          "contexts": "shop · café · market",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D04-S03",
+          "title": "Make a bounded request",
+          "original_can_do": "Request one or more known items and state one simple preference or restriction.",
+          "primary_mode": "Interpersonal",
+          "function": "request and specify",
+          "form_focus_hypothesis": "request frame; accusative candidates; без + form as chunk",
+          "sound_focus_hypothesis": "polite chunking",
+          "contexts": "café · bakery · kiosk",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D04-S04",
+          "title": "Handle an alternative",
+          "original_can_do": "Respond when the item, quantity or option changes and close the transaction.",
+          "primary_mode": "Interpersonal",
+          "function": "accept/reject/confirm",
+          "form_focus_hypothesis": "да/нет; другой; negation; payment chunks",
+          "sound_focus_hypothesis": "contrastive focus",
+          "contexts": "counter · checkout · market",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D04-M01",
+          "title": "Order one item",
+          "setting": "small café",
+          "changed_detail": "The server asks a follow-up question",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D04-M02",
+          "title": "Choose an alternative",
+          "setting": "bakery",
+          "changed_detail": "The requested item is unavailable",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D04-M03",
+          "title": "Check and pay",
+          "setting": "market stall",
+          "changed_detail": "The quantity or price must be confirmed",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D05",
+      "arc": "MOVE",
+      "title": "Time & Plans",
+      "promise": "Understand a familiar time cue, arrange a simple plan and recover from a change.",
+      "bundles": [
+        {
+          "id": "D05-S01",
+          "title": "Read familiar time cues",
+          "original_can_do": "Extract a day, date or clock time from a simple schedule, message or announcement.",
+          "primary_mode": "Interpretive",
+          "function": "locate time information",
+          "form_focus_hypothesis": "numbers; days; date/time formats",
+          "sound_focus_hypothesis": "number grouping; stress",
+          "contexts": "timetable · opening hours · message",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D05-S02",
+          "title": "Ask and state when",
+          "original_can_do": "Ask when a familiar event happens and give a rehearsed day or time response.",
+          "primary_mode": "Interpersonal",
+          "function": "ask/state time",
+          "form_focus_hypothesis": "когда; во сколько; time expressions",
+          "sound_focus_hypothesis": "question focus",
+          "contexts": "meeting · service · lesson",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D05-S03",
+          "title": "Propose and respond",
+          "original_can_do": "Propose a simple time, accept it or decline with a short alternative.",
+          "primary_mode": "Interpersonal",
+          "function": "arrange",
+          "form_focus_hypothesis": "давайте; можно; future chunks; negation",
+          "sound_focus_hypothesis": "proposal/acceptance intonation",
+          "contexts": "message · call · in person",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D05-S04",
+          "title": "Sequence a routine",
+          "original_can_do": "State a short ordered routine using familiar present-tense actions and time anchors.",
+          "primary_mode": "Presentational",
+          "function": "sequence",
+          "form_focus_hypothesis": "present tense; sequence markers; adverbs",
+          "sound_focus_hypothesis": "connected phrase rhythm",
+          "contexts": "daily routine · travel day · study plan",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D05-M01",
+          "title": "Read the timetable",
+          "setting": "transit or event board",
+          "changed_detail": "The expected time is no longer available",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D05-M02",
+          "title": "Arrange a meeting",
+          "setting": "message then short call",
+          "changed_detail": "The other person proposes a different time",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D05-M03",
+          "title": "Update the plan",
+          "setting": "calendar message",
+          "changed_detail": "The location remains the same but the day changes",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D06",
+      "arc": "BELONG",
+      "title": "Home & Everyday Life",
+      "promise": "Describe a familiar space and routine, request a household need and report a basic problem.",
+      "bundles": [
+        {
+          "id": "D06-S01",
+          "title": "Locate familiar objects",
+          "original_can_do": "Say or understand where a familiar object is in a known room with visual support.",
+          "primary_mode": "Interpersonal",
+          "function": "locate",
+          "form_focus_hypothesis": "в/на + location candidates; demonstratives",
+          "sound_focus_hypothesis": "preposition+noun chunking",
+          "contexts": "room · desk · kitchen",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D06-S02",
+          "title": "Describe a simple space",
+          "original_can_do": "Give a short description of a familiar room using a small controlled set of nouns and qualities.",
+          "primary_mode": "Presentational",
+          "function": "describe",
+          "form_focus_hypothesis": "есть; adjective agreement candidates; coordination",
+          "sound_focus_hypothesis": "phrase stress",
+          "contexts": "home · hotel · shared flat",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D06-S03",
+          "title": "State a basic routine",
+          "original_can_do": "Describe a short daily routine and respond to a question about when or where it happens.",
+          "primary_mode": "Interpersonal",
+          "function": "describe routine",
+          "form_focus_hypothesis": "present-tense verbs; time/place anchors",
+          "sound_focus_hypothesis": "verb endings awareness",
+          "contexts": "morning · study · evening",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D06-S04",
+          "title": "Report a practical problem",
+          "original_can_do": "State that a familiar thing is missing, unavailable or not working and answer one clarifying question.",
+          "primary_mode": "Interpersonal",
+          "function": "report and clarify",
+          "form_focus_hypothesis": "нет; не работает as chunk; где/что",
+          "sound_focus_hypothesis": "negative focus",
+          "contexts": "room · reception · home",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D06-M01",
+          "title": "Show where things are",
+          "setting": "room or shared flat",
+          "changed_detail": "One object is moved",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D06-M02",
+          "title": "Request a household item",
+          "setting": "hotel or shared home",
+          "changed_detail": "The first option is not available",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D06-M03",
+          "title": "Report a simple problem",
+          "setting": "reception message",
+          "changed_detail": "The listener asks where the problem is",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D07",
+      "arc": "BELONG",
+      "title": "People & Relationships",
+      "promise": "Identify familiar people, describe a few relevant traits and explain simple belonging or contact information.",
+      "bundles": [
+        {
+          "id": "D07-S01",
+          "title": "Identify familiar people",
+          "original_can_do": "Match a familiar person or role to basic information in a short text, photo caption or exchange.",
+          "primary_mode": "Interpretive",
+          "function": "identify",
+          "form_focus_hypothesis": "person/role nouns; pronouns",
+          "sound_focus_hypothesis": "name and number clarity",
+          "contexts": "photo · list · introduction",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D07-S02",
+          "title": "Describe one person",
+          "original_can_do": "Give two or three basic relevant details about a familiar person using controlled language.",
+          "primary_mode": "Presentational",
+          "function": "describe",
+          "form_focus_hypothesis": "adjective agreement candidates; age chunk; occupation",
+          "sound_focus_hypothesis": "phrase stress",
+          "contexts": "photo · introduction · message",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D07-S03",
+          "title": "Express belonging",
+          "original_can_do": "Indicate a simple family, possession or association relation and understand a reciprocal question.",
+          "primary_mode": "Interpersonal",
+          "function": "relate",
+          "form_focus_hypothesis": "possessives; genitive candidates in fixed relations",
+          "sound_focus_hypothesis": "linking and reduction",
+          "contexts": "home · group · contact card",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D07-S04",
+          "title": "Exchange contact details",
+          "original_can_do": "Give, request and correct a short phone, handle or email detail with confirmation.",
+          "primary_mode": "Interpersonal",
+          "function": "exchange and correct",
+          "form_focus_hypothesis": "numbers; spelling; correction frames",
+          "sound_focus_hypothesis": "digit grouping; letter naming",
+          "contexts": "form · message · voice",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D07-M01",
+          "title": "Match people to details",
+          "setting": "photo and contact cards",
+          "changed_detail": "Two people share the same first name",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D07-M02",
+          "title": "Introduce someone",
+          "setting": "small gathering",
+          "changed_detail": "The listener asks one extra detail",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D07-M03",
+          "title": "Leave contact information",
+          "setting": "short form or voice note",
+          "changed_detail": "A number must be corrected",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D08",
+      "arc": "CHOOSE",
+      "title": "Preferences & Reasons",
+      "promise": "Express a preference, compare familiar options and give one simple reason.",
+      "bundles": [
+        {
+          "id": "D08-S01",
+          "title": "Recognize expressed preferences",
+          "original_can_do": "Identify a basic like, dislike or choice in a short familiar message or exchange.",
+          "primary_mode": "Interpretive",
+          "function": "identify stance",
+          "form_focus_hypothesis": "нравится/люблю as controlled frames; negation",
+          "sound_focus_hypothesis": "contrastive stress",
+          "contexts": "menu · plan · media",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D08-S02",
+          "title": "State a preference",
+          "original_can_do": "State a like, dislike or preferred option and respond to the same question.",
+          "primary_mode": "Interpersonal",
+          "function": "express preference",
+          "form_focus_hypothesis": "preference frames; object-form candidates",
+          "sound_focus_hypothesis": "focus and politeness",
+          "contexts": "food · activity · place",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D08-S03",
+          "title": "Compare familiar options",
+          "original_can_do": "Make or understand one simple comparison using a controlled quality or practical criterion.",
+          "primary_mode": "Interpersonal",
+          "function": "compare and choose",
+          "form_focus_hypothesis": "лучше/больше/меньше as chunks; adjectives",
+          "sound_focus_hypothesis": "comparative focus",
+          "contexts": "prices · times · places",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D08-S04",
+          "title": "Give one simple reason",
+          "original_can_do": "Support a familiar choice with one brief reason and understand a reciprocal reason.",
+          "primary_mode": "Interpersonal",
+          "function": "justify",
+          "form_focus_hypothesis": "потому что; simple clause linking",
+          "sound_focus_hypothesis": "clause boundary",
+          "contexts": "plan · recommendation · purchase",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D08-M01",
+          "title": "Choose together",
+          "setting": "café or activity list",
+          "changed_detail": "The preferred option is unavailable",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D08-M02",
+          "title": "Recommend one option",
+          "setting": "short message",
+          "changed_detail": "The receiver has a stated restriction",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D08-M03",
+          "title": "Explain a change of mind",
+          "setting": "conversation",
+          "changed_detail": "A new detail changes the choice",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D09",
+      "arc": "CARE",
+      "title": "Health & Immediate Needs",
+      "promise": "State a basic condition or urgent need and understand a bounded instruction without overpromising medical language.",
+      "bundles": [
+        {
+          "id": "D09-S01",
+          "title": "Recognize basic state language",
+          "original_can_do": "Identify a small set of high-frequency body, comfort and immediate-need cues in context.",
+          "primary_mode": "Interpretive",
+          "function": "identify state",
+          "form_focus_hypothesis": "state words; мне + state as chunk",
+          "sound_focus_hypothesis": "stress in high-value words",
+          "contexts": "pharmacy · message · instruction",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D09-S02",
+          "title": "State a basic problem",
+          "original_can_do": "State one simple physical or practical problem and answer a bounded where/what question.",
+          "primary_mode": "Interpersonal",
+          "function": "report condition",
+          "form_focus_hypothesis": "у меня/мне as chunks; negation; body/place words",
+          "sound_focus_hypothesis": "clarity over accent scoring",
+          "contexts": "pharmacy · reception · phone",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D09-S03",
+          "title": "Ask for appropriate help",
+          "original_can_do": "Request a known type of help, item or next step and signal urgency without exaggeration.",
+          "primary_mode": "Interpersonal",
+          "function": "request help",
+          "form_focus_hypothesis": "нужно/можно; request and urgency chunks",
+          "sound_focus_hypothesis": "polite/urgent intonation contrast",
+          "contexts": "desk · pharmacy · public place",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D09-S04",
+          "title": "Follow a simple safety instruction",
+          "original_can_do": "Understand and confirm one short instruction supported by context, signage or gesture.",
+          "primary_mode": "Interpretive + interpersonal",
+          "function": "follow and confirm",
+          "form_focus_hypothesis": "imperative recognition; sequence; negation",
+          "sound_focus_hypothesis": "command vs request contour",
+          "contexts": "sign · announcement · desk",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D09-M01",
+          "title": "Ask for basic help",
+          "setting": "pharmacy or reception",
+          "changed_detail": "The listener asks where or since when",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D09-M02",
+          "title": "Follow one instruction",
+          "setting": "service desk or recorded message",
+          "changed_detail": "The first instruction cannot be completed",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D09-M03",
+          "title": "Change the plan safely",
+          "setting": "appointment message",
+          "changed_detail": "The time changes and confirmation is required",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D10",
+      "arc": "MOVE",
+      "title": "Services & Transactions",
+      "promise": "Use schedules, documents and simple service exchanges while recovering from a mismatch.",
+      "bundles": [
+        {
+          "id": "D10-S01",
+          "title": "Extract service details",
+          "original_can_do": "Find the relevant name, date, time, destination or condition in a short service text.",
+          "primary_mode": "Interpretive reading",
+          "function": "locate information",
+          "form_focus_hypothesis": "numbers/dates; document labels; negation",
+          "sound_focus_hypothesis": "digit/date clarity",
+          "contexts": "ticket · booking · notice",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D10-S02",
+          "title": "Request a service",
+          "original_can_do": "State a bounded booking, ticket or collection need and answer predictable follow-up questions.",
+          "primary_mode": "Interpersonal",
+          "function": "request and specify",
+          "form_focus_hypothesis": "мне нужен/нужна as candidate; destination/time chunks",
+          "sound_focus_hypothesis": "chunking under load",
+          "contexts": "desk · phone · counter",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D10-S03",
+          "title": "Complete basic details",
+          "original_can_do": "Provide or enter a small set of identity, date and contact fields and verify them.",
+          "primary_mode": "Presentational writing",
+          "function": "enter and verify",
+          "form_focus_hypothesis": "names; dates; numbers; capitalization",
+          "sound_focus_hypothesis": "spelling and number grouping",
+          "contexts": "form · kiosk · message",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D10-S04",
+          "title": "Repair a service mismatch",
+          "original_can_do": "Identify one incorrect detail, state the correction and confirm the updated result.",
+          "primary_mode": "Interpersonal",
+          "function": "correct and confirm",
+          "form_focus_hypothesis": "не…, а…; это не…; correct-detail frames",
+          "sound_focus_hypothesis": "contrastive focus",
+          "contexts": "booking · ticket · delivery",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D10-M01",
+          "title": "Buy or collect a ticket",
+          "setting": "ticket desk or machine",
+          "changed_detail": "The preferred time is sold out",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D10-M02",
+          "title": "Check the details",
+          "setting": "booking or check-in",
+          "changed_detail": "One name, date or destination is wrong",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D10-M03",
+          "title": "Resolve a small service mismatch",
+          "setting": "counter or message",
+          "changed_detail": "The record and the learner’s information differ",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D11",
+      "arc": "LEARN",
+      "title": "Learn & Clarify",
+      "promise": "Control the learning interaction: ask what something means, request a model and leave a short trace.",
+      "bundles": [
+        {
+          "id": "D11-S01",
+          "title": "Follow a learning instruction",
+          "original_can_do": "Understand and act on a short familiar learning instruction with an icon, example or gesture.",
+          "primary_mode": "Interpretive",
+          "function": "follow task direction",
+          "form_focus_hypothesis": "imperative recognition; task vocabulary",
+          "sound_focus_hypothesis": "instruction chunking",
+          "contexts": "lesson · app · partner",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D11-S02",
+          "title": "Ask for meaning or form",
+          "original_can_do": "Ask what a selected word or phrase means and how it is said, written or stressed.",
+          "primary_mode": "Interpersonal",
+          "function": "clarify language",
+          "form_focus_hypothesis": "что значит; как сказать/написать as chunks",
+          "sound_focus_hypothesis": "question focus; spelling",
+          "contexts": "lesson · Studio · partner",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D11-S03",
+          "title": "Request and compare examples",
+          "original_can_do": "Ask for one more example and notice a meaningful contrast between two approved examples.",
+          "primary_mode": "Mediation",
+          "function": "elicit and compare",
+          "form_focus_hypothesis": "ещё; example frames; contrast language",
+          "sound_focus_hypothesis": "contrastive stress",
+          "contexts": "note · explanation · dialogue",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D11-S04",
+          "title": "Record a short learning trace",
+          "original_can_do": "Create a short usable note with the target form, meaning cue and optional audio link.",
+          "primary_mode": "Presentational writing",
+          "function": "summarize for self",
+          "form_focus_hypothesis": "short labels; punctuation; stress mark convention",
+          "sound_focus_hypothesis": "sound-text alignment",
+          "contexts": "notebook · saved correction · review",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D11-M01",
+          "title": "Ask what it means",
+          "setting": "lesson or partner exchange",
+          "changed_detail": "The first explanation is still too complex",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D11-M02",
+          "title": "Request a model",
+          "setting": "voice or text practice",
+          "changed_detail": "The example uses an unfamiliar word",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D11-M03",
+          "title": "Save a usable note",
+          "setting": "personal notebook",
+          "changed_detail": "The note must include sound or stress information",
+          "status": "expert_review_required"
+        }
+      ]
+    },
+    {
+      "id": "D12",
+      "arc": "CONNECT",
+      "title": "Connect & Participate",
+      "promise": "Take part in a short bounded social plan across message and live interaction, with safe exits and repair.",
+      "bundles": [
+        {
+          "id": "D12-S01",
+          "title": "Understand a short invitation",
+          "original_can_do": "Identify who, what, when and where in a simple familiar invitation or plan message.",
+          "primary_mode": "Interpretive",
+          "function": "extract plan",
+          "form_focus_hypothesis": "question words; time/place; invitation chunks",
+          "sound_focus_hypothesis": "message phrasing and stress",
+          "contexts": "message · event card · voice note",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D12-S02",
+          "title": "Accept or decline appropriately",
+          "original_can_do": "Respond to a familiar invitation, accept or decline, and include one necessary detail.",
+          "primary_mode": "Interpersonal writing",
+          "function": "respond",
+          "form_focus_hypothesis": "accept/decline formulas; reason or alternative",
+          "sound_focus_hypothesis": "politeness contour in voice",
+          "contexts": "chat · message · live",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D12-S03",
+          "title": "Coordinate one changing detail",
+          "original_can_do": "Ask, answer and correct one time, place or preference detail across a short turn sequence.",
+          "primary_mode": "Interpersonal",
+          "function": "coordinate and repair",
+          "form_focus_hypothesis": "when/where/preference; not-X-but-Y correction",
+          "sound_focus_hypothesis": "turn-taking cues",
+          "contexts": "chat · call · in person",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D12-S04",
+          "title": "Participate with boundaries",
+          "original_can_do": "Complete a short structured exchange, use repair when needed and exit or report safely.",
+          "primary_mode": "Interpersonal",
+          "function": "participate and close",
+          "form_focus_hypothesis": "turn cues; repair; close; safety language",
+          "sound_focus_hypothesis": "comprehensibility and pacing",
+          "contexts": "partner mission · simulated scene",
+          "status": "expert_review_required"
+        }
+      ],
+      "missions": [
+        {
+          "id": "D12-M01",
+          "title": "Respond to an invitation",
+          "setting": "short message",
+          "changed_detail": "One plan detail is unclear",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D12-M02",
+          "title": "Coordinate one detail",
+          "setting": "bounded chat",
+          "changed_detail": "The proposed time or place changes",
+          "status": "expert_review_required"
+        },
+        {
+          "id": "D12-M03",
+          "title": "Complete the foundation route",
+          "setting": "structured partner or simulated session",
+          "changed_detail": "A repair, preference and plan change all occur",
+          "status": "expert_review_required"
+        }
+      ]
+    }
+  ],
+  "source_boundaries": [
+    {
+      "id": "SRC-01",
+      "owner": "Council of Europe",
+      "resource": "CEFR Companion Volume (2020)",
+      "url": "https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume-and-its-language-versions",
+      "permitted_role": "Mode/descriptors framework and alignment vocabulary",
+      "prohibited_use": "Use for architecture and validation; do not imply certification or copy large descriptor sets",
+      "status": "Reviewed for architecture"
+    },
+    {
+      "id": "SRC-02",
+      "owner": "Pushkin Institute",
+      "resource": "TRKI / TEU A1 level description",
+      "url": "https://www.pushkin.institute/certificates/trki/",
+      "permitted_role": "Russian A1 benchmark; reading, writing, lexico-grammar, listening, speaking coverage",
+      "prohibited_use": "Benchmark coverage only; not a curriculum and not our score",
+      "status": "Reviewed for architecture"
+    },
+    {
+      "id": "SRC-03",
+      "owner": "Pushkin Institute",
+      "resource": "TEU A1 public sample test",
+      "url": "https://pushkin.institute/testirovanie/demo/trki/%D0%A2%D0%AD%D0%A3.pdf",
+      "permitted_role": "Observe assessment modes and task families",
+      "prohibited_use": "Do not copy, paraphrase too closely or train product items from test content",
+      "status": "Benchmark only"
+    },
+    {
+      "id": "SRC-04",
+      "owner": "NCSSFL-ACTFL",
+      "resource": "2026 Can-Do Statements guidance",
+      "url": "https://www.actfl.org/educator-resources/ncssfl-actfl-can-do-statements",
+      "permitted_role": "Key concept: performance over time and across situations; examples are not a curriculum",
+      "prohibited_use": "Commercial use or sale is prohibited; no descriptor/example text may be copied into this product",
+      "status": "Restricted reference"
+    },
+    {
+      "id": "SRC-05",
+      "owner": "Future licensed source",
+      "resource": "Russian frequency/dispersion data",
+      "url": "TBD",
+      "permitted_role": "Vocabulary selection across genres and regions",
+      "prohibited_use": "Do not use an unlicensed scraped list as curriculum truth",
+      "status": "Missing"
+    },
+    {
+      "id": "SRC-06",
+      "owner": "Future licensed source",
+      "resource": "Contemporary spoken/written corpus samples",
+      "url": "TBD",
+      "permitted_role": "Natural examples, register and collocation validation",
+      "prohibited_use": "No raw personal data; license and representativeness required",
+      "status": "Missing"
+    },
+    {
+      "id": "SRC-07",
+      "owner": "Commissioned contributors",
+      "resource": "Native/RFL audio recordings",
+      "url": "TBD",
+      "permitted_role": "Reference audio and listening variants",
+      "prohibited_use": "Release, compensation, retention and synthetic-voice disclosure required",
+      "status": "Missing"
+    },
+    {
+      "id": "SRC-08",
+      "owner": "Product research",
+      "resource": "Learner error and comprehension studies",
+      "url": "TBD",
+      "permitted_role": "Calibrate order, difficulty, feedback and evidence rules",
+      "prohibited_use": "Consent, minimization and no premature proficiency claim",
+      "status": "Missing"
+    }
+  ]
+}
