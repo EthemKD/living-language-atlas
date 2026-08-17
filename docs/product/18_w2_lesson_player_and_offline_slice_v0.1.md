@@ -23,6 +23,10 @@ lesson and must not lose the route or be silently returned to an earlier task.
 - Storage failure is visible as `LOCAL SAVE UNAVAILABLE`; the UI does not pretend that recovery is guaranteed.
 - The screen labels the lesson `OFFLINE-SAFE LESSON` only when no active local save is needed; it never implies server sync.
 
+The Atlas now renders the six First Encounter nodes as one connected route: four support lessons, one changed-context
+transfer and one delayed return. Each node uses the real local state (`complete`, `current`, `locked` or `scheduled`) and
+opens only when its prerequisite is actually available.
+
 ## Deliberate boundaries
 
 - This does not add audio, speech recognition, AI feedback, or new Russian learner content.
