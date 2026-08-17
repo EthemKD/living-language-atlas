@@ -3,22 +3,24 @@
 An Expo SDK 57 reference build for a mobile language-learning product that separates habit, skill evidence and economy.
 The interface is English-first; Russian is the first content track.
 
-This repository is a working product slice, not a generated landing page. It contains native iOS/Android navigation,
-a 12-district mission atlas, an interactive real-life mission, evidence-led practice, a source-bound Studio and an
-inspectable learner record.
+This repository is a working product slice, not a generated landing page. Its primary path is a small, deterministic
+First Encounter: read the mission script, introduce yourself, make a café request, repair a missed reply, then handle
+one changed detail. It also contains evidence-led practice, a source-bound Studio and an inspectable learner record.
 
 ## What works now
 
 - Native `Atlas`, `Practice`, `Studio` and `You` tabs on iOS and Android
-- A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries
-- Interactive `D03-M01 · Find the platform` flow with observe, choose, interpret, produce and transfer beats
+- An authored `First Encounter` learning loop: four guided support stages plus a changed-context café rehearsal
+- 17 deterministic, source-bound learning tasks with explicit skill IDs, review gate and evidence boundaries
+- A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries, retained as a
+  longer-horizon curriculum reference rather than a fake unlock tree
 - Deterministic practice checks for three current/due skill bundles
 - Source-bound Studio planning that does not pretend an AI model is connected
 - Separate habit, evidence and practice-credit displays
 - Automated content-contract tests and a design-system drift audit
 
-Content is explicitly a reference draft. Russian-language accuracy and assessment claims remain expert-review gated;
-the app does not claim CEFR or TORFL certification.
+Content is explicitly a reference draft. The First Encounter strings, their eventual audio, and all assessment claims
+remain qualified-Russian-review gated; the app does not claim CEFR or TORFL certification.
 
 ## Run it
 
