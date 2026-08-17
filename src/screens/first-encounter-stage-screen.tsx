@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Stack from 'expo-router/stack';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { GuidedTask } from '@/components/guided-task';
@@ -17,25 +17,38 @@ import { useTheme } from '@/theme';
 
 export function FirstEncounterStageScreen() {
   const params = useLocalSearchParams<{ 'stage-id': string }>();
+  const stage = findFirstEncounterStage(params['stage-id']);
+
+  if (!stage) {
+    return (
+      <UnknownStage />
+    );
+  }
+
+  return <FirstEncounterStageContent key={stage.id} stageId={stage.id} />;
+}
+
+function UnknownStage() {
+  const { spacing } = useTheme();
+
+  return (
+    <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{ padding: spacing.lg }}>
+        <Stack.Title>Skill unavailable</Stack.Title>
+        <ThemedText variant="heading">This learning step is not in the reference build.</ThemedText>
+    </ScrollView>
+  );
+}
+
+function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
-  const stage = findFirstEncounterStage(params['stage-id']);
+  const stage = findFirstEncounterStage(stageId);
   const [taskIndex, setTaskIndex] = useState(0);
   const [isRehearsingAgain, setIsRehearsingAgain] = useState(false);
   const { colors, spacing, layout } = useTheme();
 
-  useEffect(() => {
-    setTaskIndex(0);
-    setIsRehearsingAgain(false);
-  }, [stage?.id]);
-
   if (!stage) {
-    return (
-      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{ padding: spacing.lg }}>
-        <Stack.Title>Skill unavailable</Stack.Title>
-        <ThemedText variant="heading">This learning step is not in the reference build.</ThemedText>
-      </ScrollView>
-    );
+    return null;
   }
 
   const currentStage = stage;

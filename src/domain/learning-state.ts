@@ -14,7 +14,7 @@ export const prototypeLearner = {
     { bundleId: 'D02-S03', level: 'E2', lastObserved: 'yesterday' },
     { bundleId: 'D03-S01', level: 'E1', lastObserved: 'today' },
     { bundleId: 'D03-S02', level: 'E1', lastObserved: 'today' },
-  ] satisfies Array<{ bundleId: string; level: EvidenceLevel; lastObserved: string }>,
+  ] satisfies { bundleId: string; level: EvidenceLevel; lastObserved: string }[],
 } as const;
 
 export function getDistrictState(district: District): DistrictState {

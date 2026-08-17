@@ -7,7 +7,7 @@ import { useTheme } from '@/theme';
 
 type StudioOperation = 'Explain' | 'Drill' | 'Role-play';
 
-const operations: Array<{ id: StudioOperation; detail: string }> = [
+const operations: { id: StudioOperation; detail: string }[] = [
   { id: 'Explain', detail: 'Meaning, form and contrast' },
   { id: 'Drill', detail: 'A five-minute retrieval set' },
   { id: 'Role-play', detail: 'A bounded scene with one change' },

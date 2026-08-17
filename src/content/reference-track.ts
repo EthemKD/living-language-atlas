@@ -38,15 +38,15 @@ export type ReferenceTrack = {
   interface_language: string;
   target_language: string;
   claim_boundary: string;
-  evidence_ladder: Array<{
+  evidence_ladder: {
     id: EvidenceLevel;
     label: string;
     observation_contract: string;
     promotion_boundary: string;
     traceability: string;
-  }>;
+  }[];
   districts: District[];
-  source_boundaries: Array<{
+  source_boundaries: {
     id: string;
     owner: string;
     resource: string;
@@ -54,7 +54,7 @@ export type ReferenceTrack = {
     permitted_role: string;
     prohibited_use: string;
     status: string;
-  }>;
+  }[];
 };
 
 export type DemoMissionStep = {
@@ -64,7 +64,7 @@ export type DemoMissionStep = {
   prompt: string;
   source_line?: string;
   translation?: string;
-  choices?: Array<{ id: string; label: string; correct: boolean }>;
+  choices?: { id: string; label: string; correct: boolean }[];
   evidence_level: EvidenceLevel;
 };
 

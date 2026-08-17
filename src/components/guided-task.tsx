@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { PrimaryAction } from '@/components/primary-action';
@@ -41,10 +41,10 @@ export function GuidedTask({
   const solved = task.kind === 'notice' || choiceCorrect || buildCorrect;
   const canCheck =
     task.kind === 'choice' ? Boolean(selectedChoiceId) : task.kind === 'build' ? builtTokens.length === task.tokens.length : false;
-  const feedback = useMemo(() => {
-    if (!checked || task.kind === 'notice' || solved) return undefined;
-    return task.retry_hint ?? 'Keep the target function in view, then try the next variation.';
-  }, [checked, solved, task]);
+  const feedback =
+    !checked || task.kind === 'notice' || solved
+      ? undefined
+      : (task.retry_hint ?? 'Keep the target function in view, then try the next variation.');
 
   function resetAttempt() {
     setSelectedChoiceId(undefined);
