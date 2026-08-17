@@ -56,6 +56,7 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   const [taskIndex, setTaskIndex] = useState(0);
   const [isRehearsingAgain, setIsRehearsingAgain] = useState(false);
   const [resumeNoticeDismissed, setResumeNoticeDismissed] = useState(false);
+  const [lessonStarted, setLessonStarted] = useState(false);
   const { colors, spacing, layout } = useTheme();
 
   if (!stage) {
@@ -79,6 +80,8 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   const nextStage = firstEncounterStageAfter(currentStage.id);
   const progressLabel = showSummary
     ? `${currentStage.tasks.length} / ${currentStage.tasks.length}`
+    : !lessonStarted && !canResume && unlocked
+      ? 'READY'
     : unlocked
       ? `${taskIndex + 1} / ${currentStage.tasks.length}`
       : 'LOCKED';
@@ -125,17 +128,20 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
     setTaskIndex(0);
     setIsRehearsingAgain(true);
     setResumeNoticeDismissed(true);
+    setLessonStarted(false);
   }
 
   function resumeSavedLesson() {
     setTaskIndex(savedStepIndex);
     setResumeNoticeDismissed(true);
+    setLessonStarted(true);
   }
 
   function restartSavedLesson() {
     clearLessonSession(currentStage.id);
     setTaskIndex(0);
     setResumeNoticeDismissed(true);
+    setLessonStarted(false);
   }
 
   const saveStatus =
@@ -222,6 +228,16 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
             <PrimaryAction label={nextStage ? `Continue to ${nextStage.title}` : 'Start changed-context rehearsal'} onPress={finishStage} />
             {alreadyComplete ? <PrimaryAction label="Rehearse this step again" variant="quiet" onPress={startRehearsalAgain} /> : null}
           </View>
+        ) : !lessonStarted ? (
+          <LessonPreflight
+            title={currentStage.title}
+            eyebrow={currentStage.eyebrow}
+            duration={currentStage.duration}
+            taskCount={currentStage.tasks.length}
+            objective={currentStage.can_do}
+            evidenceBoundary={currentStage.evidence_boundary}
+            onStart={() => setLessonStarted(true)}
+          />
         ) : task ? (
           <GuidedTask
             key={task.id}
@@ -232,5 +248,59 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
         ) : null}
       </View>
     </ScrollView>
+  );
+}
+
+type LessonPreflightProps = {
+  title: string;
+  eyebrow: string;
+  duration: string;
+  taskCount: number;
+  objective: string;
+  evidenceBoundary: string;
+  onStart: () => void;
+};
+
+function LessonPreflight({ title, eyebrow, duration, taskCount, objective, evidenceBoundary, onStart }: LessonPreflightProps) {
+  const { colors, spacing } = useTheme();
+
+  return (
+    <View style={{ gap: spacing.lg }}>
+      <View style={{ gap: spacing.xs }}>
+        <ThemedText variant="caption" tone="current">
+          LESSON PREFLIGHT  -  {eyebrow}
+        </ThemedText>
+        <ThemedText variant="title">Know the job before the first task.</ThemedText>
+        <ThemedText tone="muted">
+          This short reference lesson is bounded by one objective, one evidence limit and a visible recovery path.
+        </ThemedText>
+      </View>
+
+      <View style={{ borderTopWidth: 1, borderTopColor: colors.separator }}>
+        <PreflightRow label="OBJECTIVE" value={objective} />
+        <PreflightRow label="EVIDENCE LIMIT" value={evidenceBoundary} />
+        <PreflightRow label="FORMAT" value={`${taskCount} text tasks  -  ${duration}  -  support stays optional`} />
+        <PreflightRow label="CONTENT GATE" value="Reference draft  -  qualified Russian review still required" tone="current" />
+        <PreflightRow label="AUDIO" value="Not included  -  traceable source and reviewer sign-off are still open" tone="current" />
+        <PreflightRow label="LOCAL RECOVERY" value="Bundled text and task logic work locally; progress saves at completed task boundaries." />
+      </View>
+
+      <PrimaryAction label={`Start lesson  -  ${title}`} onPress={onStart} />
+    </View>
+  );
+}
+
+function PreflightRow({ label, value, tone = 'muted' }: { label: string; value: string; tone?: 'muted' | 'current' }) {
+  const { colors, spacing } = useTheme();
+
+  return (
+    <View style={{ gap: spacing.xxs, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.separator }}>
+      <ThemedText variant="caption" tone={tone}>
+        {label}
+      </ThemedText>
+      <ThemedText variant="callout" tone="muted">
+        {value}
+      </ThemedText>
+    </View>
   );
 }
