@@ -16,6 +16,7 @@ one changed detail. It also contains evidence-led practice, a source-bound Studi
 - Durable on-device progress and a visible later-retrieval schedule, with no voice, conversation, identity or sensitive data stored
 - Resumable First Encounter lesson sessions: completed task boundaries are saved locally, with explicit resume/restart and visible storage failure
 - A lesson preflight that states the objective, evidence boundary, review gate, unavailable audio and local recovery behavior before the first task
+- A connected six-node First Encounter route that makes support, transfer and delayed return visible as one stateful path
 - A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries, retained as a
   longer-horizon curriculum reference rather than a fake unlock tree
 - An inspectable Atlas horizon for those 12 districts, with one runnable D03 reference mission and explicit outline-only
