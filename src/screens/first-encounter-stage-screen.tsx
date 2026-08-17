@@ -15,6 +15,13 @@ import {
   recordFirstEncounterTaskTrace,
   useFirstEncounterProgress,
 } from '@/domain/first-encounter-state';
+import {
+  clearLessonSession,
+  formatLessonSavedAt,
+  getLessonSessionStep,
+  saveLessonSession,
+  useLessonSession,
+} from '@/domain/lesson-session';
 import { useTheme } from '@/theme';
 
 export function FirstEncounterStageScreen() {
@@ -44,9 +51,11 @@ function UnknownStage() {
 function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
+  const lessonSession = useLessonSession(stageId);
   const stage = findFirstEncounterStage(stageId);
   const [taskIndex, setTaskIndex] = useState(0);
   const [isRehearsingAgain, setIsRehearsingAgain] = useState(false);
+  const [resumeNoticeDismissed, setResumeNoticeDismissed] = useState(false);
   const { colors, spacing, layout } = useTheme();
 
   if (!stage) {
@@ -58,6 +67,14 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   const unlocked = canOpenFirstEncounterStage(currentStage.id);
   const complete = taskIndex >= currentStage.tasks.length;
   const showSummary = complete || (alreadyComplete && !isRehearsingAgain);
+  const savedStepIndex = Math.min(getLessonSessionStep(lessonSession.session), currentStage.tasks.length - 1);
+  const canResume =
+    lessonSession.storageState === 'ready' &&
+    unlocked &&
+    !alreadyComplete &&
+    lessonSession.session?.status === 'active' &&
+    savedStepIndex > 0 &&
+    !resumeNoticeDismissed;
   const task = currentStage.tasks[taskIndex];
   const nextStage = firstEncounterStageAfter(currentStage.id);
   const progressLabel = showSummary
@@ -79,7 +96,17 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
     }
 
     const nextTaskIndex = Math.min(taskIndex + 1, currentStage.tasks.length);
-    if (nextTaskIndex >= currentStage.tasks.length) completeFirstEncounterStage(currentStage.id);
+    const completedStepIds = currentStage.tasks.slice(0, nextTaskIndex).map((currentTask) => currentTask.id);
+    if (nextTaskIndex >= currentStage.tasks.length) {
+      completeFirstEncounterStage(currentStage.id);
+      saveLessonSession(currentStage.id, {
+        stepIndex: nextTaskIndex,
+        completedStepIds,
+        status: 'complete',
+      });
+    } else {
+      saveLessonSession(currentStage.id, { stepIndex: nextTaskIndex, completedStepIds });
+    }
     setTaskIndex(nextTaskIndex);
   }
 
@@ -94,9 +121,31 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
   }
 
   function startRehearsalAgain() {
+    clearLessonSession(currentStage.id);
     setTaskIndex(0);
     setIsRehearsingAgain(true);
+    setResumeNoticeDismissed(true);
   }
+
+  function resumeSavedLesson() {
+    setTaskIndex(savedStepIndex);
+    setResumeNoticeDismissed(true);
+  }
+
+  function restartSavedLesson() {
+    clearLessonSession(currentStage.id);
+    setTaskIndex(0);
+    setResumeNoticeDismissed(true);
+  }
+
+  const saveStatus =
+    lessonSession.storageState === 'loading'
+      ? 'CHECKING LOCAL SAVE'
+      : lessonSession.storageState === 'unavailable'
+        ? 'LOCAL SAVE UNAVAILABLE'
+        : lessonSession.session?.status === 'active'
+          ? `SAVED ON DEVICE  -  ${formatLessonSavedAt(lessonSession.session.lastSavedAt).toUpperCase()}`
+          : 'OFFLINE-SAFE LESSON';
 
   return (
     <ScrollView
@@ -119,6 +168,9 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
           <ThemedText variant="callout" tone="muted">
             {currentStage.can_do}
           </ThemedText>
+          <ThemedText variant="caption" tone={lessonSession.storageState === 'unavailable' ? 'danger' : 'faint'}>
+            {saveStatus}
+          </ThemedText>
         </View>
 
         {!unlocked ? (
@@ -134,6 +186,21 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
             </View>
             <PrimaryAction label="Return to First Encounter" onPress={() => router.replace('/atlas')} />
           </View>
+        ) : canResume ? (
+          <View style={{ gap: spacing.lg }}>
+            <View style={{ gap: spacing.xs }}>
+              <ThemedText variant="caption" tone="current">
+                SAFE RESUME
+              </ThemedText>
+              <ThemedText variant="title">This lesson was saved on this device.</ThemedText>
+              <ThemedText tone="muted">
+                The last completed task is preserved locally. Resume at step {savedStepIndex + 1} of {currentStage.tasks.length},
+                or restart this reference lesson from the beginning.
+              </ThemedText>
+            </View>
+            <PrimaryAction label={`Resume  -  ${savedStepIndex + 1} / ${currentStage.tasks.length}`} onPress={resumeSavedLesson} />
+            <PrimaryAction label="Start from the beginning" variant="quiet" onPress={restartSavedLesson} />
+          </View>
         ) : showSummary ? (
           <View style={{ gap: spacing.lg }}>
             <View style={{ gap: spacing.xs }}>
@@ -148,7 +215,7 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
                 NEXT
               </ThemedText>
               <ThemedText variant="bodyStrong">
-                {nextStage ? `${nextStage.title} · ${nextStage.duration}` : 'First encounter at the café · 7 min'}
+                {nextStage ? `${nextStage.title}  -  ${nextStage.duration}` : 'First encounter at the cafe  -  7 min'}
               </ThemedText>
             </View>
             <EvidenceDebrief tasks={currentStage.tasks} taskTraces={progress.taskTraces} />
