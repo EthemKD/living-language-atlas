@@ -17,7 +17,7 @@ one changed detail. It also contains evidence-led practice, a source-bound Studi
 - A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries, retained as a
   longer-horizon curriculum reference rather than a fake unlock tree
 - A state-aware Practice tab plus Recall Lens, which uses only phrases already open in the learner's route
-- A source-bound Phrase Desk rather than a fake connected AI chat surface
+- A source-bound Phrase Desk rather than a fake connected AI chat surface, including a non-persisted exact-copy Cyrillic rehearsal for phrases already open in the route
 - An inspectable local learning record: fixed task passages, retrieval-support reveals and deterministic rechecks stay distinct from a score; in-app Source Notes distinguish scope evidence from phrase approval
 - Automated content-contract tests and a design-system drift audit
 

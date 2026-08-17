@@ -6,13 +6,20 @@ import { ActionRow } from '@/components/action-row';
 import { PhraseLens } from '@/components/phrase-lens';
 import { PrimaryAction } from '@/components/primary-action';
 import { ThemedText } from '@/components/themed-text';
-import { firstEncounterPhraseEntries, type FirstEncounterPhraseEntry } from '@/content/first-encounter-phrases';
+import {
+  firstEncounterPhraseEntries,
+  firstEncounterPhrasesAvailableForRecall,
+  type FirstEncounterPhraseEntry,
+} from '@/content/first-encounter-phrases';
+import { useFirstEncounterProgress } from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
 export function StudioScreen() {
   const router = useRouter();
+  const progress = useFirstEncounterProgress();
   const [selectedId, setSelectedId] = useState(firstEncounterPhraseEntries[0]?.id ?? '');
-  const selected = firstEncounterPhraseEntries.find((entry) => entry.id === selectedId) ?? firstEncounterPhraseEntries[0];
+  const availableEntries = firstEncounterPhrasesAvailableForRecall(progress);
+  const selected = availableEntries.find((entry) => entry.id === selectedId) ?? availableEntries[0];
   const { colors, spacing, layout } = useTheme();
 
   if (!selected) return null;
@@ -58,17 +65,23 @@ export function StudioScreen() {
           </View>
           <PhraseLens sourceLine={selected.sourceLine} translation={selected.translation} />
           <PrimaryAction label="Open its guided route" onPress={() => openRoute(selected)} />
+          <PrimaryAction
+            label="Rehearse with a Cyrillic keyboard"
+            variant="quiet"
+            onPress={() => router.push({ pathname: '/studio/copy/[phrase-id]', params: { 'phrase-id': selected.id } })}
+          />
           <ThemedText variant="caption" tone="faint">
-            Reading assistance is optional and explicitly not pronunciation scoring. Audio, speech evaluation and
-            generated explanations are not active in this reference build.
+            Reading assistance is optional and explicitly not pronunciation scoring. The typed copy stays only in its
+            open rehearsal session and is not a writing score. Audio, speech evaluation and generated explanations are
+            not active in this reference build.
           </ThemedText>
         </View>
 
         <View>
           <ThemedText variant="caption" tone="faint" style={{ paddingBottom: spacing.xs }}>
-            CURRENT SOURCE SET · {firstEncounterPhraseEntries.length} DISTINCT LINES
+            OPEN SOURCE SET · {availableEntries.length} OF {firstEncounterPhraseEntries.length} DISTINCT LINES
           </ThemedText>
-          {firstEncounterPhraseEntries.map((entry) => (
+          {availableEntries.map((entry) => (
             <ActionRow
               key={entry.id}
               eyebrow={entry.origin}
@@ -86,8 +99,8 @@ export function StudioScreen() {
             CONTENT BOUNDARY
           </ThemedText>
           <ThemedText variant="callout" tone="muted">
-            The desk can surface approved-in-context reference strings. It cannot invent a lesson, validate open-ended
-            writing, assess a voice or decide that a learner has reached a language level.
+            The desk can surface opened, in-context reference strings and run an exact-copy check. It cannot invent a
+            lesson, validate open-ended writing, assess a voice or decide that a learner has reached a language level.
           </ThemedText>
         </View>
       </View>

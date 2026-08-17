@@ -45,6 +45,10 @@ function buildPhraseEntries() {
 
 export const firstEncounterPhraseEntries = buildPhraseEntries();
 
+export function findFirstEncounterPhraseEntry(entryId: string | undefined) {
+  return firstEncounterPhraseEntries.find((entry) => entry.id === entryId);
+}
+
 export function firstEncounterPhrasesAvailableForRecall({
   completedStageIds,
   missionRehearsed,
