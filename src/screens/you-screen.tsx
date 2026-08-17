@@ -107,7 +107,7 @@ export function YouScreen() {
           <RecordRow
             label="Task trace"
             value={`${progress.taskTraces.length} fixed tasks logged`}
-            detail="A task record can show completion passages, whether optional retrieval support was revealed, and deterministic rechecks."
+            detail="A task record separates accepted passages from support-only unscored passages, plus reveals and deterministic rechecks."
           />
           <PrimaryAction label="Inspect rehearsal trace" variant="quiet" onPress={() => router.push('/you/trace')} />
         </View>

@@ -8,12 +8,14 @@ const returnDelayMs = firstEncounter.return_mission.available_after_hours * 60 *
 
 export type FirstEncounterStorageState = 'loading' | 'ready' | 'unavailable';
 export type FirstEncounterReturnStatus = 'locked' | 'waiting' | 'ready' | 'complete';
+export type FirstEncounterTaskOutcome = 'accepted' | 'unscored';
 
 export type FirstEncounterTaskTrace = {
   taskId: string;
   completions: number;
   retrievalPhraseRevealed: boolean;
   incorrectCheckCount: number;
+  outcome: FirstEncounterTaskOutcome;
 };
 
 export type FirstEncounterTaskTraceInput = Omit<FirstEncounterTaskTrace, 'completions'>;
@@ -89,12 +91,14 @@ function normalizeTaskTraces(value: unknown): FirstEncounterTaskTrace[] {
     if (!isRecord(candidate) || typeof candidate.taskId !== 'string' || !findFirstEncounterTask(candidate.taskId)) continue;
     if (!isNonNegativeInteger(candidate.completions) || candidate.completions < 1) continue;
     if (typeof candidate.retrievalPhraseRevealed !== 'boolean' || !isNonNegativeInteger(candidate.incorrectCheckCount)) continue;
+    const outcome: FirstEncounterTaskOutcome = candidate.outcome === 'unscored' ? 'unscored' : 'accepted';
 
     tracesByTaskId.set(candidate.taskId, {
       taskId: candidate.taskId,
       completions: candidate.completions,
       retrievalPhraseRevealed: candidate.retrievalPhraseRevealed,
       incorrectCheckCount: candidate.incorrectCheckCount,
+      outcome,
     });
   }
 
@@ -144,7 +148,7 @@ function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounter
 
 function persist(nextProgress: FirstEncounterProgress) {
   const payload = {
-    schemaVersion: 3,
+    schemaVersion: 4,
     completedStageIds: nextProgress.completedStageIds,
     missionRehearsed: nextProgress.missionRehearsed,
     missionRehearsedAt: nextProgress.missionRehearsedAt,
@@ -277,7 +281,11 @@ export function completeFirstEncounterReturnMission() {
 }
 
 export function recordFirstEncounterTaskTrace(input: FirstEncounterTaskTraceInput) {
-  if (!findFirstEncounterTask(input.taskId) || !isNonNegativeInteger(input.incorrectCheckCount)) return false;
+  if (
+    !findFirstEncounterTask(input.taskId) ||
+    !isNonNegativeInteger(input.incorrectCheckCount) ||
+    !['accepted', 'unscored'].includes(input.outcome)
+  ) return false;
 
   const currentTrace = progress.taskTraces.find((trace) => trace.taskId === input.taskId);
   const nextTrace: FirstEncounterTaskTrace = {
@@ -285,6 +293,7 @@ export function recordFirstEncounterTaskTrace(input: FirstEncounterTaskTraceInpu
     completions: (currentTrace?.completions ?? 0) + 1,
     retrievalPhraseRevealed: input.retrievalPhraseRevealed,
     incorrectCheckCount: input.incorrectCheckCount,
+    outcome: input.outcome,
   };
   const taskTraces = [...progress.taskTraces.filter((trace) => trace.taskId !== input.taskId), nextTrace];
 

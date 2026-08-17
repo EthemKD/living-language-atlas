@@ -11,6 +11,7 @@ import { useTheme } from '@/theme';
 export type GuidedTaskCompletion = {
   retrievalPhraseRevealed: boolean;
   incorrectCheckCount: number;
+  outcome: 'accepted' | 'unscored';
 };
 
 type GuidedTaskProps = {
@@ -31,6 +32,7 @@ export function GuidedTask({
   const [checked, setChecked] = useState(false);
   const [retrievalPhraseRevealed, setRetrievalPhraseRevealed] = useState(false);
   const [incorrectCheckCount, setIncorrectCheckCount] = useState(0);
+  const [unscored, setUnscored] = useState(false);
   const { colors, spacing, radii, layout } = useTheme();
   const evidenceCard = evidenceLedger.cards.find((card) => card.content_id === task.id);
 
@@ -49,9 +51,10 @@ export function GuidedTask({
     builtTokens.every((token, index) => token === task.correct_token_order[index]);
   const solved = task.kind === 'notice' || choiceCorrect || buildCorrect;
   const canCheck =
-    task.kind === 'choice' ? Boolean(selectedChoiceId) : task.kind === 'build' ? builtTokens.length === task.tokens.length : false;
+    !unscored &&
+    (task.kind === 'choice' ? Boolean(selectedChoiceId) : task.kind === 'build' ? builtTokens.length === task.tokens.length : false);
   const feedback =
-    !checked || task.kind === 'notice' || solved
+    unscored || !checked || task.kind === 'notice' || solved
       ? undefined
       : (task.retry_hint ?? 'Keep the target function in view, then try the next variation.');
 
@@ -66,8 +69,13 @@ export function GuidedTask({
     setChecked(true);
   }
 
-  function completeTask() {
-    onComplete({ retrievalPhraseRevealed, incorrectCheckCount });
+  function completeTask(outcome: GuidedTaskCompletion['outcome'] = 'accepted') {
+    onComplete({ retrievalPhraseRevealed, incorrectCheckCount, outcome });
+  }
+
+  function continueUnscored() {
+    setUnscored(true);
+    setRetrievalPhraseRevealed(true);
   }
 
   return (
@@ -93,6 +101,7 @@ export function GuidedTask({
         translation={task.translation}
         explanation={task.kind === 'notice' ? task.explanation : undefined}
         presentation={phrasePresentation}
+        revealSupportedPhrase={unscored}
         onRevealSupportedPhrase={() => setRetrievalPhraseRevealed(true)}
       />
 
@@ -190,7 +199,7 @@ export function GuidedTask({
         </View>
       ) : null}
 
-      {solved && checked ? (
+      {solved && checked && !unscored ? (
         <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.success, paddingLeft: spacing.md }}>
           <ThemedText variant="caption" tone="accent">
             GUIDED ATTEMPT LOGGED
@@ -201,15 +210,33 @@ export function GuidedTask({
         </View>
       ) : null}
 
+      {unscored ? (
+        <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+          <ThemedText variant="caption" tone="current">
+            UNSCORED · SUPPORT PATH
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            You chose to continue with the supported phrase. This passage is logged for transparency, but it does not add
+            skill evidence or mark the response correct.
+          </ThemedText>
+        </View>
+      ) : null}
+
       {task.kind === 'notice' ? <PrimaryAction label="I see it" onPress={completeTask} /> : null}
-      {task.kind !== 'notice' && !(solved && checked) ? (
+      {task.kind !== 'notice' && !unscored && !(solved && checked) ? (
         <PrimaryAction
           label={checked ? 'Try another response' : 'Check response'}
           disabled={!canCheck}
           onPress={checked ? resetAttempt : checkResponse}
         />
       ) : null}
-      {task.kind !== 'notice' && solved && checked ? <PrimaryAction label={actionLabel} onPress={completeTask} /> : null}
+      {task.kind !== 'notice' && !unscored && !solved ? (
+        <PrimaryAction label="Use support · continue unscored" variant="quiet" onPress={continueUnscored} />
+      ) : null}
+      {task.kind !== 'notice' && unscored ? (
+        <PrimaryAction label="Continue without scoring" onPress={() => completeTask('unscored')} />
+      ) : null}
+      {task.kind !== 'notice' && !unscored && solved && checked ? <PrimaryAction label={actionLabel} onPress={completeTask} /> : null}
     </View>
   );
 }

@@ -33,11 +33,13 @@ export function EvidenceDebrief({ tasks, taskTraces }: EvidenceDebriefProps) {
             key={task.id}
             level={card?.evidence_levels.join(' · ') ?? 'UNMAPPED'}
             detail={card?.function ?? task.title}
-            status={trace ? 'RECORDED' : 'NOT RECORDED'}
+            status={trace ? (trace.outcome === 'unscored' ? 'UNSCORED' : 'RECORDED') : 'NOT RECORDED'}
             traceDetail={
               trace
-                ? `${trace.completions} logged · latest attempt ${trace.incorrectCheckCount} retry check${
-                    trace.incorrectCheckCount === 1 ? '' : 's'
+                ? `${trace.completions} logged · latest ${
+                    trace.outcome === 'unscored'
+                      ? 'support path, not skill evidence'
+                      : `${trace.incorrectCheckCount} retry check${trace.incorrectCheckCount === 1 ? '' : 's'}`
                   } · ${trace.retrievalPhraseRevealed ? 'support revealed' : 'support not revealed'}`
                 : 'No device trace yet.'
             }
@@ -56,7 +58,7 @@ function EvidenceDebriefRow({
 }: {
   level: string;
   detail: string;
-  status: 'RECORDED' | 'NOT RECORDED';
+  status: 'RECORDED' | 'UNSCORED' | 'NOT RECORDED';
   traceDetail: string;
 }) {
   const { colors, spacing } = useTheme();
@@ -67,7 +69,7 @@ function EvidenceDebriefRow({
         <ThemedText variant="caption" tone="accent">
           {level}
         </ThemedText>
-        <ThemedText variant="caption" tone={status === 'RECORDED' ? 'accent' : 'faint'}>
+        <ThemedText variant="caption" tone={status === 'RECORDED' ? 'accent' : status === 'UNSCORED' ? 'current' : 'faint'}>
           {status}
         </ThemedText>
       </View>

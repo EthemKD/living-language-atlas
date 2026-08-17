@@ -11,6 +11,7 @@ type PhraseLensProps = {
   explanation?: string;
   presentation?: 'reference' | 'retrieve';
   translationVisible?: boolean;
+  revealSupportedPhrase?: boolean;
   onRevealSupportedPhrase?: () => void;
 };
 
@@ -20,6 +21,7 @@ export function PhraseLens({
   explanation,
   presentation = 'reference',
   translationVisible = true,
+  revealSupportedPhrase = false,
   onRevealSupportedPhrase,
 }: PhraseLensProps) {
   const [phraseVisible, setPhraseVisible] = useState(presentation === 'reference');
@@ -27,6 +29,7 @@ export function PhraseLens({
   const [explanationVisible, setExplanationVisible] = useState(false);
   const { colors, spacing, radii, layout } = useTheme();
   const readingAssist = getReadingAssist(sourceLine);
+  const isPhraseVisible = phraseVisible || revealSupportedPhrase;
 
   return (
     <View
@@ -40,10 +43,10 @@ export function PhraseLens({
         backgroundColor: colors.surfaceRaised,
       }}>
       <View style={{ gap: spacing.xxs }}>
-        <ThemedText variant="caption" tone={phraseVisible ? 'accent' : 'current'}>
-          {phraseVisible ? 'RUSSIAN · REFERENCE DRAFT' : 'RETRIEVAL · SUPPORT AVAILABLE'}
+        <ThemedText variant="caption" tone={isPhraseVisible ? 'accent' : 'current'}>
+          {isPhraseVisible ? 'RUSSIAN · REFERENCE DRAFT' : 'RETRIEVAL · SUPPORT AVAILABLE'}
         </ThemedText>
-        {phraseVisible ? (
+        {isPhraseVisible ? (
           <>
             <ThemedText variant="phrase" selectable>
               {sourceLine}
@@ -66,7 +69,7 @@ export function PhraseLens({
       </View>
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
-        {!phraseVisible ? (
+        {!isPhraseVisible ? (
           <Pressable
             accessibilityRole="button"
             onPress={() => {
@@ -88,7 +91,7 @@ export function PhraseLens({
             </ThemedText>
           </Pressable>
         ) : null}
-        {phraseVisible && readingAssist ? (
+        {isPhraseVisible && readingAssist ? (
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ expanded: assistVisible }}
@@ -108,7 +111,7 @@ export function PhraseLens({
             </ThemedText>
           </Pressable>
         ) : null}
-        {phraseVisible && explanation ? (
+        {isPhraseVisible && explanation ? (
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ expanded: explanationVisible }}
@@ -130,7 +133,7 @@ export function PhraseLens({
         ) : null}
       </View>
 
-      {phraseVisible && assistVisible && readingAssist ? (
+      {isPhraseVisible && assistVisible && readingAssist ? (
         <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
           <ThemedText variant="caption" tone="current">
             READING AID · NOT PRONUNCIATION SCORING
@@ -141,7 +144,7 @@ export function PhraseLens({
         </View>
       ) : null}
 
-      {phraseVisible && explanationVisible && explanation ? (
+      {isPhraseVisible && explanationVisible && explanation ? (
         <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.accent, paddingLeft: spacing.md }}>
           <ThemedText variant="caption" tone="accent">
             WHY THIS PHRASE

@@ -73,6 +73,7 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
         taskId: task.id,
         retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
         incorrectCheckCount: completion.incorrectCheckCount,
+        outcome: completion.outcome,
       });
     }
 

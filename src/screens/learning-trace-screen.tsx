@@ -27,14 +27,15 @@ function traceDetail(trace: FirstEncounterTaskTrace | undefined, routeComplete: 
   const completionLabel = trace.completions === 1 ? '1 passage' : `${trace.completions} passages`;
   const supportLabel = trace.retrievalPhraseRevealed ? 'phrase support revealed' : 'no retrieval reveal';
   const recheckLabel = trace.incorrectCheckCount === 0 ? 'no deterministic recheck' : `${trace.incorrectCheckCount} deterministic recheck${trace.incorrectCheckCount === 1 ? '' : 's'}`;
-  return `${completionLabel} · ${supportLabel} · ${recheckLabel}`;
+  const outcomeLabel = trace.outcome === 'unscored' ? 'latest passage unscored' : 'latest passage accepted';
+  return `${completionLabel} · ${outcomeLabel} · ${supportLabel} · ${recheckLabel}`;
 }
 
 function TraceItem({ task, trace, routeComplete }: { task: EncounterTask; trace: FirstEncounterTaskTrace | undefined; routeComplete: boolean }) {
   const { colors, spacing, radii } = useTheme();
-  const status = trace ? 'LOGGED' : routeComplete ? 'ROUTE ONLY' : 'NOT YET';
-  const statusTone = trace ? 'accent' : routeComplete ? 'current' : 'faint';
-  const markerColor = trace ? colors.success : routeComplete ? colors.current : colors.routeDormant;
+  const status = trace ? (trace.outcome === 'unscored' ? 'UNSCORED' : 'LOGGED') : routeComplete ? 'ROUTE ONLY' : 'NOT YET';
+  const statusTone = trace?.outcome === 'unscored' ? 'current' : trace ? 'accent' : routeComplete ? 'current' : 'faint';
+  const markerColor = trace?.outcome === 'unscored' ? colors.current : trace ? colors.success : routeComplete ? colors.current : colors.routeDormant;
 
   return (
     <View style={{ flexDirection: 'row', gap: spacing.sm, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.separator }}>
@@ -100,6 +101,7 @@ export function LearningTraceScreen() {
   const { colors, spacing, layout } = useTheme();
   const tracesByTaskId = new Map(progress.taskTraces.map((trace) => [trace.taskId, trace]));
   const loggedTaskCount = progress.taskTraces.length;
+  const unscoredTaskCount = progress.taskTraces.filter((trace) => trace.outcome === 'unscored').length;
   const completedRouteCount =
     progress.completedStageIds.length + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
   const groups: readonly TraceGroup[] = [
@@ -171,9 +173,15 @@ export function LearningTraceScreen() {
             RECORDING BOUNDARY
           </ThemedText>
           <ThemedText variant="callout" tone="muted">
-            A logged item is evidence that this fixed activity was completed on this device. It is not a CEFR result,
-            proficiency estimate, pronunciation judgement, or proof of lasting retention.
+            A logged item is a fixed activity trace on this device. Accepted and support-only passages are separated;
+            an unscored passage is not skill evidence, a CEFR result, proficiency estimate, pronunciation judgement, or
+            proof of lasting retention.
           </ThemedText>
+          {unscoredTaskCount > 0 ? (
+            <ThemedText variant="caption" tone="current">
+              {unscoredTaskCount} task{unscoredTaskCount === 1 ? '' : 's'} continued through the support path and remain unscored.
+            </ThemedText>
+          ) : null}
         </View>
 
         <View style={{ gap: spacing.xl }}>

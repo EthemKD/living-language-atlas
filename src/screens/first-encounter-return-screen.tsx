@@ -70,6 +70,7 @@ export function FirstEncounterReturnScreen() {
           taskId: task.id,
           retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
           incorrectCheckCount: completion.incorrectCheckCount,
+          outcome: completion.outcome,
         });
       }}
       onSequenceComplete={() => {
