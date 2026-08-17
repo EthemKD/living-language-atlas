@@ -1,152 +1,137 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
+import { ActionRow } from '@/components/action-row';
+import { PhraseLens } from '@/components/phrase-lens';
 import { PrimaryAction } from '@/components/primary-action';
 import { ThemedText } from '@/components/themed-text';
+import { firstEncounter, type EncounterTask } from '@/content/first-encounter';
 import { useTheme } from '@/theme';
 
-type StudioOperation = 'Explain' | 'Drill' | 'Role-play';
+type SourceRoute = { kind: 'stage'; stageId: string } | { kind: 'mission' } | { kind: 'return' };
 
-const operations: { id: StudioOperation; detail: string }[] = [
-  { id: 'Explain', detail: 'Meaning, form and contrast' },
-  { id: 'Drill', detail: 'A five-minute retrieval set' },
-  { id: 'Role-play', detail: 'A bounded scene with one change' },
-];
-
-const planCopy: Record<StudioOperation, string[]> = {
-  Explain: ['Anchor the exact source', 'Explain only the selected form', 'Contrast one nearby alternative', 'Check understanding'],
-  Drill: ['Keep the source attached', 'Retrieve with support', 'Retrieve without support', 'Change one detail', 'Schedule a return'],
-  'Role-play': ['Declare the setting and roles', 'Set one communicative goal', 'Allow repair', 'Change one scene variable', 'Log support used'],
+type PhraseDeskEntry = {
+  id: string;
+  sourceLine: string;
+  translation: string;
+  title: string;
+  target: string;
+  origin: string;
+  route: SourceRoute;
 };
 
+function sourceEntries() {
+  const entries: PhraseDeskEntry[] = [];
+  const seenSourceLines = new Set<string>();
+  const addTasks = (tasks: EncounterTask[], origin: string, route: SourceRoute) => {
+    for (const task of tasks) {
+      if (seenSourceLines.has(task.source_line)) continue;
+      seenSourceLines.add(task.source_line);
+      entries.push({
+        id: task.id,
+        sourceLine: task.source_line,
+        translation: task.translation,
+        title: task.title,
+        target: task.target_skill_id,
+        origin,
+        route,
+      });
+    }
+  };
+
+  for (const stage of firstEncounter.stages) {
+    addTasks(stage.tasks, stage.title, { kind: 'stage', stageId: stage.id });
+  }
+  addTasks(firstEncounter.mission.steps, firstEncounter.mission.title, { kind: 'mission' });
+  addTasks(firstEncounter.return_mission.steps, firstEncounter.return_mission.title, { kind: 'return' });
+
+  return entries;
+}
+
+const phraseDeskEntries = sourceEntries();
+
 export function StudioScreen() {
-  const [source, setSource] = useState('');
-  const [operation, setOperation] = useState<StudioOperation>('Explain');
-  const [built, setBuilt] = useState(false);
-  const { colors, spacing, radii, layout, typography } = useTheme();
+  const router = useRouter();
+  const [selectedId, setSelectedId] = useState(phraseDeskEntries[0]?.id ?? '');
+  const selected = phraseDeskEntries.find((entry) => entry.id === selectedId) ?? phraseDeskEntries[0];
+  const { colors, spacing, layout } = useTheme();
+
+  if (!selected) return null;
+
+  function openRoute(entry: PhraseDeskEntry) {
+    if (entry.route.kind === 'stage') {
+      router.push({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': entry.route.stageId } });
+      return;
+    }
+    if (entry.route.kind === 'mission') {
+      router.push('/atlas/encounter/mission');
+      return;
+    }
+    router.push('/atlas/encounter/return');
+  }
 
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={{ alignItems: 'center', paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}>
       <View style={{ width: '100%', maxWidth: layout.maxContentWidth, gap: spacing.xl }}>
         <View style={{ gap: spacing.sm }}>
           <ThemedText variant="caption" tone="accent">
-            SOURCE-BOUND STUDIO
+            PHRASE DESK · FIRST ENCOUNTER
           </ThemedText>
-          <ThemedText variant="heading">Start from the exact thing you do not understand.</ThemedText>
+          <ThemedText variant="heading">Open the exact phrase before asking for more.</ThemedText>
           <ThemedText tone="muted">
-            Studio is an operation layer, not an empty chatbot. Every explanation, drill or scene must retain its source
-            and learning target.
+            This is a source desk, not a generic chatbot. Each line is already attached to one task, one learning
+            target and one route in the reference build.
           </ThemedText>
         </View>
 
-        <View style={{ gap: spacing.sm }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
-            <ThemedText variant="caption" tone="faint">
-              SOURCE
+        <View style={{ gap: spacing.md }}>
+          <View style={{ gap: spacing.xxs }}>
+            <ThemedText variant="caption" tone="current">
+              SELECTED SOURCE
             </ThemedText>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setSource('Это платформа номер пять?');
-                setBuilt(false);
-              }}>
-              <ThemedText variant="caption" tone="accent">
-                USE CURRENT MISSION
-              </ThemedText>
-            </Pressable>
+            <ThemedText variant="title">{selected.title}</ThemedText>
+            <ThemedText variant="callout" tone="muted">
+              First appears in {selected.origin} · target {selected.target.toUpperCase()}
+            </ThemedText>
           </View>
-          <TextInput
-            accessibilityLabel="Source text"
-            multiline
-            value={source}
-            onChangeText={(value) => {
-              setSource(value);
-              setBuilt(false);
-            }}
-            placeholder="Paste a phrase, sentence, transcript excerpt or your own attempt"
-            placeholderTextColor={colors.textFaint}
-            style={{
-              minHeight: 148,
-              padding: spacing.md,
-              borderWidth: 1,
-              borderColor: colors.separator,
-              borderRadius: radii.large,
-              borderCurve: 'continuous',
-              backgroundColor: colors.surfaceRaised,
-              color: colors.text,
-              textAlignVertical: 'top',
-              ...typography.body,
-            }}
-          />
-        </View>
-
-        <View style={{ gap: spacing.sm }}>
+          <PhraseLens sourceLine={selected.sourceLine} translation={selected.translation} />
+          <PrimaryAction label="Open its guided route" onPress={() => openRoute(selected)} />
           <ThemedText variant="caption" tone="faint">
-            OPERATION
+            Reading assistance is optional and explicitly not pronunciation scoring. Audio, speech evaluation and
+            generated explanations are not active in this reference build.
           </ThemedText>
-          <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
-            {operations.map((item) => {
-              const selected = operation === item.id;
-              return (
-                <Pressable
-                  key={item.id}
-                  accessibilityRole="radio"
-                  accessibilityLabel={`${item.id}: ${item.detail}`}
-                  accessibilityState={{ selected }}
-                  onPress={() => {
-                    setOperation(item.id);
-                    setBuilt(false);
-                  }}
-                  style={({ pressed }) => ({
-                    minHeight: layout.touchTarget,
-                    justifyContent: 'center',
-                    paddingHorizontal: spacing.md,
-                    borderRadius: radii.pill,
-                    borderCurve: 'continuous',
-                    backgroundColor: selected ? colors.accent : pressed ? colors.surface : colors.surfaceRaised,
-                  })}>
-                  <ThemedText variant="callout" tone={selected ? 'inverse' : 'default'}>
-                    {item.id}
-                  </ThemedText>
-                </Pressable>
-              );
-            })}
-          </View>
         </View>
 
-        <PrimaryAction label={`Build ${operation.toLowerCase()} plan`} disabled={!source.trim()} onPress={() => setBuilt(true)} />
+        <View>
+          <ThemedText variant="caption" tone="faint" style={{ paddingBottom: spacing.xs }}>
+            CURRENT SOURCE SET · {phraseDeskEntries.length} DISTINCT LINES
+          </ThemedText>
+          {phraseDeskEntries.map((entry) => (
+            <ActionRow
+              key={entry.id}
+              eyebrow={entry.origin}
+              title={entry.sourceLine}
+              detail={entry.translation}
+              meta={entry.id === selected.id ? 'OPEN' : undefined}
+              onPress={() => setSelectedId(entry.id)}
+              style={{ backgroundColor: entry.id === selected.id ? colors.accentSoft : 'transparent' }}
+            />
+          ))}
+        </View>
 
-        {built ? (
-          <View style={{ gap: spacing.md, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.lg }}>
-            <View style={{ gap: spacing.xxs }}>
-              <ThemedText variant="caption" tone="accent">
-                LOCAL PLAN PREVIEW
-              </ThemedText>
-              <ThemedText variant="heading">{operation} from this source</ThemedText>
-              <ThemedText variant="code" selectable numberOfLines={3}>
-                {source.trim()}
-              </ThemedText>
-            </View>
-            {planCopy[operation].map((step, index) => (
-              <View key={step} style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'baseline' }}>
-                <ThemedText variant="caption" tone="faint" style={{ minWidth: spacing.lg, fontVariant: ['tabular-nums'] }}>
-                  {String(index + 1).padStart(2, '0')}
-                </ThemedText>
-                <ThemedText variant="bodyStrong" style={{ flex: 1 }}>
-                  {step}
-                </ThemedText>
-              </View>
-            ))}
-            <ThemedText variant="caption" tone="faint">
-              No model output is fabricated here. AI execution stays off until source retention, privacy and evaluation
-              contracts are wired.
-            </ThemedText>
-          </View>
-        ) : null}
+        <View style={{ gap: spacing.xs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+          <ThemedText variant="caption" tone="current">
+            CONTENT BOUNDARY
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            The desk can surface approved-in-context reference strings. It cannot invent a lesson, validate open-ended
+            writing, assess a voice or decide that a learner has reached a language level.
+          </ThemedText>
+        </View>
       </View>
     </ScrollView>
   );

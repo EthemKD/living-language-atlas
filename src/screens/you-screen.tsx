@@ -2,12 +2,34 @@ import { ScrollView, View } from 'react-native';
 
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
-import { evidenceRank, getEvidenceRows, prototypeLearner } from '@/domain/learning-state';
+import { firstEncounter } from '@/content/first-encounter';
+import { getFirstEncounterReturnStatus, useFirstEncounterProgress } from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
+function laterReturnLabel(status: ReturnType<typeof getFirstEncounterReturnStatus>) {
+  switch (status) {
+    case 'complete':
+      return 'Later retrieval logged';
+    case 'ready':
+      return 'Later retrieval ready';
+    case 'waiting':
+      return 'Later retrieval scheduled';
+    default:
+      return 'Later retrieval not scheduled';
+  }
+}
+
 export function YouScreen() {
-  const evidenceRows = getEvidenceRows();
+  const progress = useFirstEncounterProgress();
   const { colors, spacing, layout } = useTheme();
+  const laterReturn = getFirstEncounterReturnStatus();
+  const completedCount =
+    progress.completedStageIds.length + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
+  const storageCopy = {
+    loading: 'Restoring this device’s saved rehearsal state.',
+    ready: 'This device stores only stage completion and the later-retrieval schedule.',
+    unavailable: 'Device storage is currently unavailable, so the route may not survive an app restart.',
+  }[progress.storageState];
 
   return (
     <ScrollView
@@ -17,73 +39,100 @@ export function YouScreen() {
       <View style={{ width: '100%', maxWidth: layout.maxContentWidth, gap: spacing.xl }}>
         <View style={{ gap: spacing.xs }}>
           <ThemedText variant="caption" tone="accent">
-            PROTOTYPE PROFILE · LOCAL DATA
+            YOUR LOCAL RECORD
           </ThemedText>
-          <ThemedText variant="heading">Russian foundation track</ThemedText>
-          <ThemedText tone="muted">English interface · evidence language stays literal and inspectable.</ThemedText>
+          <ThemedText variant="heading">First Encounter · Russian</ThemedText>
+          <ThemedText tone="muted">
+            English interface. This profile is a transparent route record, not a gamified portrait of you.
+          </ThemedText>
         </View>
 
         <View style={{ flexDirection: 'row', gap: spacing.xl, flexWrap: 'wrap' }}>
           <View style={{ minWidth: 136, gap: spacing.xxs }}>
             <ThemedText variant="display" style={{ fontVariant: ['tabular-nums'] }}>
-              {prototypeLearner.habitDays}
+              {completedCount}
             </ThemedText>
             <ThemedText variant="caption" tone="muted">
-              HABIT DAYS
+              TRACE EVENTS OF 6
             </ThemedText>
           </View>
           <View style={{ minWidth: 136, gap: spacing.xxs }}>
             <ThemedText variant="display" style={{ fontVariant: ['tabular-nums'] }}>
-              {prototypeLearner.practiceCredits}
+              {progress.completedStageIds.length}
             </ThemedText>
             <ThemedText variant="caption" tone="muted">
-              PRACTICE CREDITS
+              GUIDED SUPPORTS OF 4
             </ThemedText>
           </View>
         </View>
-        <ThemedText variant="caption" tone="faint">
-          Habit and credits never alter the evidence ladder.
-        </ThemedText>
+        <ProgressLine value={completedCount / 6} tone="current" />
 
         <View style={{ gap: spacing.sm }}>
           <ThemedText variant="caption" tone="faint">
-            SKILL EVIDENCE
+            WHAT THIS DEVICE HAS ACTUALLY SEEN
           </ThemedText>
-          {evidenceRows.map((row) => (
-            <View
-              key={row.bundleId}
-              style={{ gap: spacing.xs, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.separator }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
-                <View style={{ flex: 1, gap: spacing.xxs }}>
-                  <ThemedText variant="bodyStrong">{row.bundle?.title ?? row.bundleId}</ThemedText>
-                  <ThemedText variant="callout" tone="muted">
-                    {row.bundle?.original_can_do ?? 'Reference bundle'}
-                  </ThemedText>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <ThemedText variant="bodyStrong" tone="accent">
-                    {row.level}
-                  </ThemedText>
-                  <ThemedText variant="caption" tone="faint">
-                    {row.lastObserved}
-                  </ThemedText>
-                </View>
-              </View>
-              <ProgressLine value={evidenceRank(row.level) / 4} tone={row.level === 'E3' ? 'success' : 'accent'} />
-            </View>
-          ))}
+          <RecordRow
+            label="Guided support"
+            value={`${progress.completedStageIds.length} of 4 rehearsed`}
+            detail="Script cues, formal first contact, a café request and an interaction-repair phrase stay separate."
+          />
+          <RecordRow
+            label="Changed-context rehearsal"
+            value={progress.missionRehearsed ? 'Logged once' : 'Not yet logged'}
+            detail="This event only appears after the guided supports; it does not turn into a proficiency score."
+          />
+          <RecordRow
+            label="Delayed retrieval"
+            value={laterReturnLabel(laterReturn)}
+            detail="The later scene is intentionally a distinct trace event rather than a hidden bonus point."
+          />
         </View>
 
         <View style={{ gap: spacing.xs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
           <ThemedText variant="caption" tone="current">
-            CLAIM BOUNDARY
+            DATA BOUNDARY
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">{storageCopy}</ThemedText>
+          <ThemedText variant="caption" tone={progress.storageState === 'unavailable' ? 'danger' : 'faint'}>
+            No account, voice recording, conversation transcript, location, payment or social graph is part of this build.
+          </ThemedText>
+        </View>
+
+        <View style={{ gap: spacing.xs, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>
+          <ThemedText variant="caption" tone="faint">
+            CONTENT TRANSPARENCY
+          </ThemedText>
+          <ThemedText variant="bodyStrong">
+            Reference content v{firstEncounter.content_evidence_card.content_version} · language review pending
           </ThemedText>
           <ThemedText variant="callout" tone="muted">
-            “Seen”, “recognized”, “produced with support”, “transferred” and “returned” remain separate observations.
-            The reference build does not claim CEFR or TORFL certification.
+            This path is scoped against four public curriculum sources and its later-return design names two learning
+            research sources. Those links constrain scope; they do not approve individual Russian strings or certify a
+            learner.
+          </ThemedText>
+          <ThemedText variant="caption" tone="faint">
+            {firstEncounter.content_evidence_card.known_limits[0]}
           </ThemedText>
         </View>
       </View>
     </ScrollView>
+  );
+}
+
+function RecordRow({ label, value, detail }: { label: string; value: string; detail: string }) {
+  const { colors, spacing } = useTheme();
+
+  return (
+    <View style={{ gap: spacing.xxs, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.separator }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
+        <ThemedText variant="bodyStrong">{label}</ThemedText>
+        <ThemedText variant="caption" tone="accent">
+          {value.toUpperCase()}
+        </ThemedText>
+      </View>
+      <ThemedText variant="callout" tone="muted">
+        {detail}
+      </ThemedText>
+    </View>
   );
 }
