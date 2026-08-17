@@ -18,9 +18,10 @@ export type FirstEncounterTaskTrace = {
   incorrectCheckCount: number;
   outcome: FirstEncounterTaskOutcome;
   unscoredReason?: FirstEncounterUnscoredReason;
+  lastObservedAt: number | null;
 };
 
-export type FirstEncounterTaskTraceInput = Omit<FirstEncounterTaskTrace, 'completions'>;
+export type FirstEncounterTaskTraceInput = Omit<FirstEncounterTaskTrace, 'completions' | 'lastObservedAt'>;
 
 export type FirstEncounterProgress = {
   completedStageIds: readonly string[];
@@ -96,6 +97,7 @@ function normalizeTaskTraces(value: unknown): FirstEncounterTaskTrace[] {
     const outcome: FirstEncounterTaskOutcome = candidate.outcome === 'unscored' ? 'unscored' : 'accepted';
     const unscoredReason: FirstEncounterUnscoredReason | undefined =
       outcome === 'unscored' && candidate.unscoredReason === 'typed_fallback' ? 'typed_fallback' : outcome === 'unscored' ? 'support' : undefined;
+    const lastObservedAt = isTimestamp(candidate.lastObservedAt) ? candidate.lastObservedAt : null;
 
     tracesByTaskId.set(candidate.taskId, {
       taskId: candidate.taskId,
@@ -104,6 +106,7 @@ function normalizeTaskTraces(value: unknown): FirstEncounterTaskTrace[] {
       incorrectCheckCount: candidate.incorrectCheckCount,
       outcome,
       unscoredReason,
+      lastObservedAt,
     });
   }
 
@@ -153,7 +156,7 @@ function normalizeStoredProgress(serialized: string | null): Omit<FirstEncounter
 
 function persist(nextProgress: FirstEncounterProgress) {
   const payload = {
-    schemaVersion: 4,
+    schemaVersion: 5,
     completedStageIds: nextProgress.completedStageIds,
     missionRehearsed: nextProgress.missionRehearsed,
     missionRehearsedAt: nextProgress.missionRehearsedAt,
@@ -301,6 +304,7 @@ export function recordFirstEncounterTaskTrace(input: FirstEncounterTaskTraceInpu
     incorrectCheckCount: input.incorrectCheckCount,
     outcome: input.outcome,
     unscoredReason: input.outcome === 'unscored' ? input.unscoredReason : undefined,
+    lastObservedAt: Date.now(),
   };
   const taskTraces = [...progress.taskTraces.filter((trace) => trace.taskId !== input.taskId), nextTrace];
 

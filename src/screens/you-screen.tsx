@@ -3,6 +3,7 @@ import { Alert, ScrollView, View } from 'react-native';
 
 import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
+import { SkillEvidencePanel } from '@/components/skill-evidence-panel';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter } from '@/content/first-encounter';
 import {
@@ -10,6 +11,7 @@ import {
   resetFirstEncounterProgress,
   useFirstEncounterProgress,
 } from '@/domain/first-encounter-state';
+import { deriveSkillEvidence } from '@/domain/skill-evidence';
 import { useTheme } from '@/theme';
 
 function laterReturnLabel(status: ReturnType<typeof getFirstEncounterReturnStatus>) {
@@ -32,6 +34,7 @@ export function YouScreen() {
   const laterReturn = getFirstEncounterReturnStatus();
   const completedCount =
     progress.completedStageIds.length + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
+  const skillEvidence = deriveSkillEvidence(progress.taskTraces);
   const storageCopy = {
     loading: 'Restoring this device’s saved rehearsal state.',
     ready: 'This device stores route completion, fixed task trace, and the later-retrieval schedule.',
@@ -84,6 +87,8 @@ export function YouScreen() {
           </View>
         </View>
         <ProgressLine value={completedCount / 6} tone="current" />
+
+        <SkillEvidencePanel evidence={skillEvidence} />
 
         <View style={{ gap: spacing.sm }}>
           <ThemedText variant="caption" tone="faint">
