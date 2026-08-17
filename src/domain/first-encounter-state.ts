@@ -9,6 +9,7 @@ const returnDelayMs = firstEncounter.return_mission.available_after_hours * 60 *
 export type FirstEncounterStorageState = 'loading' | 'ready' | 'unavailable';
 export type FirstEncounterReturnStatus = 'locked' | 'waiting' | 'ready' | 'complete';
 export type FirstEncounterTaskOutcome = 'accepted' | 'unscored';
+export type FirstEncounterUnscoredReason = 'support' | 'typed_fallback';
 
 export type FirstEncounterTaskTrace = {
   taskId: string;
@@ -16,6 +17,7 @@ export type FirstEncounterTaskTrace = {
   retrievalPhraseRevealed: boolean;
   incorrectCheckCount: number;
   outcome: FirstEncounterTaskOutcome;
+  unscoredReason?: FirstEncounterUnscoredReason;
 };
 
 export type FirstEncounterTaskTraceInput = Omit<FirstEncounterTaskTrace, 'completions'>;
@@ -92,6 +94,8 @@ function normalizeTaskTraces(value: unknown): FirstEncounterTaskTrace[] {
     if (!isNonNegativeInteger(candidate.completions) || candidate.completions < 1) continue;
     if (typeof candidate.retrievalPhraseRevealed !== 'boolean' || !isNonNegativeInteger(candidate.incorrectCheckCount)) continue;
     const outcome: FirstEncounterTaskOutcome = candidate.outcome === 'unscored' ? 'unscored' : 'accepted';
+    const unscoredReason: FirstEncounterUnscoredReason | undefined =
+      outcome === 'unscored' && candidate.unscoredReason === 'typed_fallback' ? 'typed_fallback' : outcome === 'unscored' ? 'support' : undefined;
 
     tracesByTaskId.set(candidate.taskId, {
       taskId: candidate.taskId,
@@ -99,6 +103,7 @@ function normalizeTaskTraces(value: unknown): FirstEncounterTaskTrace[] {
       retrievalPhraseRevealed: candidate.retrievalPhraseRevealed,
       incorrectCheckCount: candidate.incorrectCheckCount,
       outcome,
+      unscoredReason,
     });
   }
 
@@ -284,7 +289,8 @@ export function recordFirstEncounterTaskTrace(input: FirstEncounterTaskTraceInpu
   if (
     !findFirstEncounterTask(input.taskId) ||
     !isNonNegativeInteger(input.incorrectCheckCount) ||
-    !['accepted', 'unscored'].includes(input.outcome)
+    !['accepted', 'unscored'].includes(input.outcome) ||
+    (input.outcome === 'unscored' && !['support', 'typed_fallback'].includes(input.unscoredReason ?? ''))
   ) return false;
 
   const currentTrace = progress.taskTraces.find((trace) => trace.taskId === input.taskId);
@@ -294,6 +300,7 @@ export function recordFirstEncounterTaskTrace(input: FirstEncounterTaskTraceInpu
     retrievalPhraseRevealed: input.retrievalPhraseRevealed,
     incorrectCheckCount: input.incorrectCheckCount,
     outcome: input.outcome,
+    unscoredReason: input.outcome === 'unscored' ? input.unscoredReason : undefined,
   };
   const taskTraces = [...progress.taskTraces.filter((trace) => trace.taskId !== input.taskId), nextTrace];
 

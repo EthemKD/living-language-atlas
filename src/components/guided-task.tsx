@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 
 import { PrimaryAction } from '@/components/primary-action';
 import { PhraseLens } from '@/components/phrase-lens';
@@ -8,10 +8,13 @@ import type { EncounterTask } from '@/content/first-encounter';
 import evidenceLedger from '@/content/first-encounter-evidence.json';
 import { useTheme } from '@/theme';
 
+export type GuidedTaskUnscoredReason = 'support' | 'typed_fallback';
+
 export type GuidedTaskCompletion = {
   retrievalPhraseRevealed: boolean;
   incorrectCheckCount: number;
   outcome: 'accepted' | 'unscored';
+  unscoredReason?: GuidedTaskUnscoredReason;
 };
 
 type GuidedTaskProps = {
@@ -32,9 +35,12 @@ export function GuidedTask({
   const [checked, setChecked] = useState(false);
   const [retrievalPhraseRevealed, setRetrievalPhraseRevealed] = useState(false);
   const [incorrectCheckCount, setIncorrectCheckCount] = useState(0);
-  const [unscored, setUnscored] = useState(false);
-  const { colors, spacing, radii, layout } = useTheme();
+  const [unscoredReason, setUnscoredReason] = useState<GuidedTaskUnscoredReason>();
+  const [typedFallback, setTypedFallback] = useState(false);
+  const [typedResponse, setTypedResponse] = useState('');
+  const { colors, spacing, radii, layout, typography } = useTheme();
   const evidenceCard = evidenceLedger.cards.find((card) => card.content_id === task.id);
+  const unscored = Boolean(unscoredReason);
 
   const selectedChoice = task.kind === 'choice' ? task.choices.find((choice) => choice.id === selectedChoiceId) : undefined;
   const choiceCorrect = selectedChoice?.correct === true;
@@ -52,9 +58,10 @@ export function GuidedTask({
   const solved = task.kind === 'notice' || choiceCorrect || buildCorrect;
   const canCheck =
     !unscored &&
+    !typedFallback &&
     (task.kind === 'choice' ? Boolean(selectedChoiceId) : task.kind === 'build' ? builtTokens.length === task.tokens.length : false);
   const feedback =
-    unscored || !checked || task.kind === 'notice' || solved
+    unscored || typedFallback || !checked || task.kind === 'notice' || solved
       ? undefined
       : (task.retry_hint ?? 'Keep the target function in view, then try the next variation.');
 
@@ -70,11 +77,16 @@ export function GuidedTask({
   }
 
   function completeTask(outcome: GuidedTaskCompletion['outcome'] = 'accepted') {
-    onComplete({ retrievalPhraseRevealed, incorrectCheckCount, outcome });
+    onComplete({
+      retrievalPhraseRevealed,
+      incorrectCheckCount,
+      outcome,
+      unscoredReason: outcome === 'unscored' ? (unscoredReason ?? 'support') : undefined,
+    });
   }
 
-  function continueUnscored() {
-    setUnscored(true);
+  function continueUnscored(reason: GuidedTaskUnscoredReason) {
+    setUnscoredReason(reason);
     setRetrievalPhraseRevealed(true);
   }
 
@@ -105,7 +117,42 @@ export function GuidedTask({
         onRevealSupportedPhrase={() => setRetrievalPhraseRevealed(true)}
       />
 
-      {task.kind === 'choice' ? (
+      {typedFallback && !unscored ? (
+        <View style={{ gap: spacing.sm }}>
+          <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+            <ThemedText variant="caption" tone="current">
+              TYPED FALLBACK · NOT EVALUATED
+            </ThemedText>
+            <ThemedText variant="callout" tone="muted">
+              Type what you would try. This reference build will not judge spelling or accept variants yet; it will only
+              keep the attempt transparent and unscored.
+            </ThemedText>
+          </View>
+          <TextInput
+            accessibilityLabel="Typed response fallback"
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={setTypedResponse}
+            placeholder="Type your response"
+            placeholderTextColor={colors.textFaint}
+            value={typedResponse}
+            style={{
+              minHeight: layout.touchTarget,
+              paddingHorizontal: spacing.md,
+              paddingVertical: spacing.sm,
+              borderWidth: 1,
+              borderColor: colors.separator,
+              borderRadius: radii.medium,
+              borderCurve: 'continuous',
+              backgroundColor: colors.surfaceRaised,
+              ...typography.body,
+              color: colors.text,
+            }}
+          />
+        </View>
+      ) : null}
+
+      {!typedFallback && !unscored && task.kind === 'choice' ? (
         <View accessibilityRole="radiogroup" style={{ gap: spacing.xs }}>
           {task.choices.map((choice) => {
             const selected = selectedChoiceId === choice.id;
@@ -135,7 +182,7 @@ export function GuidedTask({
         </View>
       ) : null}
 
-      {task.kind === 'build' ? (
+      {!typedFallback && !unscored && task.kind === 'build' ? (
         <View style={{ gap: spacing.md }}>
           <View
             accessibilityLabel="Built response"
@@ -213,30 +260,45 @@ export function GuidedTask({
       {unscored ? (
         <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
           <ThemedText variant="caption" tone="current">
-            UNSCORED · SUPPORT PATH
+            {unscoredReason === 'typed_fallback' ? 'UNSCORED · TYPED FALLBACK' : 'UNSCORED · SUPPORT PATH'}
           </ThemedText>
           <ThemedText variant="callout" tone="muted">
-            You chose to continue with the supported phrase. This passage is logged for transparency, but it does not add
-            skill evidence or mark the response correct.
+            {unscoredReason === 'typed_fallback'
+              ? 'Your typed attempt is kept only as a transparent local passage in this reference build. It is not evaluated and does not add skill evidence.'
+              : 'You chose to continue with the supported phrase. This passage is logged for transparency, but it does not add skill evidence or mark the response correct.'}
           </ThemedText>
         </View>
       ) : null}
 
       {task.kind === 'notice' ? <PrimaryAction label="I see it" onPress={completeTask} /> : null}
-      {task.kind !== 'notice' && !unscored && !(solved && checked) ? (
+      {task.kind !== 'notice' && !typedFallback && !unscored && !(solved && checked) ? (
         <PrimaryAction
           label={checked ? 'Try another response' : 'Check response'}
           disabled={!canCheck}
           onPress={checked ? resetAttempt : checkResponse}
         />
       ) : null}
-      {task.kind !== 'notice' && !unscored && !solved ? (
-        <PrimaryAction label="Use support · continue unscored" variant="quiet" onPress={continueUnscored} />
+      {task.kind !== 'notice' && !typedFallback && !unscored && !solved ? (
+        <>
+          <PrimaryAction label="Type a response instead" variant="quiet" onPress={() => setTypedFallback(true)} />
+          <PrimaryAction label="Use support · continue unscored" variant="quiet" onPress={() => continueUnscored('support')} />
+        </>
+      ) : null}
+      {task.kind !== 'notice' && typedFallback && !unscored ? (
+        <>
+          <PrimaryAction
+            label="Continue typed attempt · unscored"
+            disabled={!typedResponse.trim()}
+            onPress={() => continueUnscored('typed_fallback')}
+          />
+          <PrimaryAction label="Reveal support instead" variant="quiet" onPress={() => continueUnscored('support')} />
+          <PrimaryAction label="Use structured response instead" variant="quiet" onPress={() => setTypedFallback(false)} />
+        </>
       ) : null}
       {task.kind !== 'notice' && unscored ? (
         <PrimaryAction label="Continue without scoring" onPress={() => completeTask('unscored')} />
       ) : null}
-      {task.kind !== 'notice' && !unscored && solved && checked ? <PrimaryAction label={actionLabel} onPress={completeTask} /> : null}
+      {task.kind !== 'notice' && !typedFallback && !unscored && solved && checked ? <PrimaryAction label={actionLabel} onPress={completeTask} /> : null}
     </View>
   );
 }

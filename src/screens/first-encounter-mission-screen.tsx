@@ -43,6 +43,7 @@ export function FirstEncounterMissionScreen() {
           retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
           incorrectCheckCount: completion.incorrectCheckCount,
           outcome: completion.outcome,
+          unscoredReason: completion.unscoredReason,
         });
       }}
       onSequenceComplete={() => {

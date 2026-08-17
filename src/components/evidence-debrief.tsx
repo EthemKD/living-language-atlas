@@ -38,7 +38,9 @@ export function EvidenceDebrief({ tasks, taskTraces }: EvidenceDebriefProps) {
               trace
                 ? `${trace.completions} logged · latest ${
                     trace.outcome === 'unscored'
-                      ? 'support path, not skill evidence'
+                      ? trace.unscoredReason === 'typed_fallback'
+                        ? 'typed fallback, not skill evidence'
+                        : 'support path, not skill evidence'
                       : `${trace.incorrectCheckCount} retry check${trace.incorrectCheckCount === 1 ? '' : 's'}`
                   } · ${trace.retrievalPhraseRevealed ? 'support revealed' : 'support not revealed'}`
                 : 'No device trace yet.'

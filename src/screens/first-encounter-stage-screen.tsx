@@ -74,6 +74,7 @@ function FirstEncounterStageContent({ stageId }: { stageId: string }) {
         retrievalPhraseRevealed: completion.retrievalPhraseRevealed,
         incorrectCheckCount: completion.incorrectCheckCount,
         outcome: completion.outcome,
+        unscoredReason: completion.unscoredReason,
       });
     }
 

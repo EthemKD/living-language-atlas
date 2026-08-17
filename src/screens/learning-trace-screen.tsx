@@ -27,7 +27,10 @@ function traceDetail(trace: FirstEncounterTaskTrace | undefined, routeComplete: 
   const completionLabel = trace.completions === 1 ? '1 passage' : `${trace.completions} passages`;
   const supportLabel = trace.retrievalPhraseRevealed ? 'phrase support revealed' : 'no retrieval reveal';
   const recheckLabel = trace.incorrectCheckCount === 0 ? 'no deterministic recheck' : `${trace.incorrectCheckCount} deterministic recheck${trace.incorrectCheckCount === 1 ? '' : 's'}`;
-  const outcomeLabel = trace.outcome === 'unscored' ? 'latest passage unscored' : 'latest passage accepted';
+  const outcomeLabel =
+    trace.outcome === 'unscored'
+      ? `latest passage unscored${trace.unscoredReason === 'typed_fallback' ? ' · typed fallback' : ''}`
+      : 'latest passage accepted';
   return `${completionLabel} · ${outcomeLabel} · ${supportLabel} · ${recheckLabel}`;
 }
 
