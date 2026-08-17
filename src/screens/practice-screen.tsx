@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
 import { ActionRow } from '@/components/action-row';
+import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter } from '@/content/first-encounter';
@@ -12,6 +13,7 @@ import {
   getFirstEncounterReturnStatus,
   useFirstEncounterProgress,
 } from '@/domain/first-encounter-state';
+import { deriveSkillEvidence, skillEvidenceIdForTarget } from '@/domain/skill-evidence';
 import { useTheme } from '@/theme';
 
 function returnMeta(status: ReturnType<typeof getFirstEncounterReturnStatus>) {
@@ -57,6 +59,56 @@ export function PracticeScreen() {
   const completedCount = completedSupportCount + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
   const returnCopy = returnMeta(returnStatus);
   const recallCount = Math.min(firstEncounterPhrasesAvailableForRecall(progress).length, 5);
+  const skillEvidence = deriveSkillEvidence(progress.taskTraces);
+  const activeStageEvidence = firstOpenStage
+    ? skillEvidence.find((item) => item.id === skillEvidenceIdForTarget(firstOpenStage.target_skill_id))
+    : undefined;
+  const nextEvidence = firstOpenStage
+    ? {
+        eyebrow: 'NEXT EVIDENCE',
+        title: firstOpenStage.title,
+        detail: firstOpenStage.can_do,
+        note: activeStageEvidence?.gap ?? 'This guided support creates the next bounded rehearsal trace.',
+        label: `Continue · ${firstOpenStage.duration}`,
+        onPress: () => router.push({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': firstOpenStage.id } }),
+      }
+    : !progress.missionRehearsed
+      ? {
+          eyebrow: 'NEXT EVIDENCE',
+          title: 'Changed-context transfer',
+          detail: firstEncounter.mission.changed_detail,
+          note: missionOpen
+            ? 'The four guided supports are complete; this is the next independent rehearsal.'
+            : 'Finish the four guided supports before this transfer can open.',
+          label: 'Enter changed-context rehearsal',
+          onPress: missionOpen ? () => router.push('/atlas/encounter/mission') : undefined,
+        }
+      : returnStatus === 'ready'
+        ? {
+            eyebrow: 'NEXT EVIDENCE',
+            title: 'Delayed return',
+            detail: firstEncounter.return_mission.changed_detail,
+            note: 'The interval has elapsed; retrieve the same functions without turning this into a level score.',
+            label: 'Start later retrieval',
+            onPress: () => router.push('/atlas/encounter/return'),
+          }
+        : returnStatus === 'waiting'
+          ? {
+              eyebrow: 'EVIDENCE HOLD',
+              title: 'Delayed return is scheduled',
+              detail: returnCopy.detail,
+              note: 'The interval is part of the trace. Nothing needs to be forced early.',
+              label: undefined,
+              onPress: undefined,
+            }
+          : {
+              eyebrow: 'EVIDENCE REVIEW',
+              title: 'Review the route’s observable gaps',
+              detail: 'The route is complete. Open the evidence map to see what was observed and what was not.',
+              note: 'Completion stays separate from language level, fluency and accent claims.',
+              label: 'Open Evidence Map',
+              onPress: () => router.push('/you'),
+            };
 
   return (
     <ScrollView
@@ -74,6 +126,20 @@ export function PracticeScreen() {
             award a streak, language level, or fluency score.
           </ThemedText>
           <ProgressLine value={completedCount / 6} tone="current" />
+        </View>
+
+        <View style={{ gap: spacing.sm, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+          <ThemedText variant="caption" tone="current">
+            {nextEvidence.eyebrow}
+          </ThemedText>
+          <ThemedText variant="heading">{nextEvidence.title}</ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            {nextEvidence.detail}
+          </ThemedText>
+          <ThemedText variant="caption" tone="faint">
+            {nextEvidence.note}
+          </ThemedText>
+          {nextEvidence.label && nextEvidence.onPress ? <PrimaryAction label={nextEvidence.label} onPress={nextEvidence.onPress} /> : null}
         </View>
 
         <View>

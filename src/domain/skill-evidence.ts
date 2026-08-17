@@ -63,6 +63,10 @@ const definitions = [
   },
 ] as const;
 
+export function skillEvidenceIdForTarget(targetSkillId: string) {
+  return definitions.find((definition) => definition.matches(targetSkillId))?.id;
+}
+
 function isEvidenceLevel(value: string): value is EvidenceLevel {
   return value in evidenceRank;
 }
