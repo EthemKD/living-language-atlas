@@ -17,6 +17,7 @@ test('reference track retains its declared product counts and review gates', asy
     curriculumScopeSources: 4,
     learningDesignSources: 2,
     readingAssistItems: 14,
+    evidenceCards: 21,
   });
 });
 
@@ -75,4 +76,20 @@ test('First Encounter keeps its reviewed-content boundary and changed-context re
   ];
   assert.equal(taskIds.length, 21);
   assert.equal(new Set(taskIds).size, taskIds.length);
+});
+
+test('item-level evidence ledger keeps every task blocked and traceable', async () => {
+  const { encounter, evidenceLedger } = await loadContent();
+  const taskIds = [
+    ...encounter.stages.flatMap((stage) => stage.tasks.map((task) => task.id)),
+    ...encounter.mission.steps.map((step) => step.id),
+    ...encounter.return_mission.steps.map((step) => step.id),
+  ];
+
+  assert.equal(evidenceLedger.cards.length, taskIds.length);
+  assert.deepEqual(new Set(evidenceLedger.cards.map((card) => card.content_id)), new Set(taskIds));
+  assert.ok(evidenceLedger.cards.every((card) => card.publication_status === 'blocked_pending_russian_review'));
+  assert.ok(evidenceLedger.cards.every((card) => card.language_reviewer === null));
+  assert.ok(evidenceLedger.cards.every((card) => card.accepted_variants.length === 0));
+  assert.ok(evidenceLedger.cards.every((card) => card.evidence_levels.every((level) => /^E[0-4]$/.test(level))));
 });

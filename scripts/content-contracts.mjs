@@ -7,17 +7,18 @@ async function readJson(relativePath) {
 }
 
 export async function loadContent() {
-  const [track, demo, encounter, sourceRegistry, readingAssist] = await Promise.all([
+  const [track, demo, encounter, sourceRegistry, readingAssist, evidenceLedger] = await Promise.all([
     readJson('src/content/russian-foundation-reference-track.json'),
     readJson('src/content/demo-missions.json'),
     readJson('src/content/first-encounter.json'),
     readJson('src/content/source-registry.json'),
     readJson('src/content/reading-assist.json'),
+    readJson('src/content/first-encounter-evidence.json'),
   ]);
-  return { track, demo, encounter, sourceRegistry, readingAssist };
+  return { track, demo, encounter, sourceRegistry, readingAssist, evidenceLedger };
 }
 
-export function validateContent({ track, demo, encounter, sourceRegistry, readingAssist }) {
+export function validateContent({ track, demo, encounter, sourceRegistry, readingAssist, evidenceLedger }) {
   const errors = [];
   const bundles = track.districts.flatMap((district) => district.bundles);
   const missionSummaries = track.districts.flatMap((district) => district.missions);
@@ -125,6 +126,52 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
   const firstEncounterTasks = [...encounter.stages.flatMap((stage) => stage.tasks), ...encounter.mission.steps];
   const returnTasks = encounter.return_mission.steps;
   const allEncounterTasks = [...firstEncounterTasks, ...returnTasks];
+  const evidenceCards = Array.isArray(evidenceLedger.cards) ? evidenceLedger.cards : [];
+  if (evidenceLedger.status !== 'reference_item_review_required') {
+    errors.push('First Encounter item-level evidence must retain the review-required status.');
+  }
+  if (evidenceLedger.content_version !== encounter.content_evidence_card.content_version) {
+    errors.push('First Encounter item-level evidence must match the canonical content version.');
+  }
+  if (evidenceLedger.publication_status !== 'blocked_pending_russian_review') {
+    errors.push('First Encounter item-level evidence must remain blocked pending Russian review.');
+  }
+  if (evidenceCards.length !== allEncounterTasks.length) {
+    errors.push(`Expected one evidence card per First Encounter task (${allEncounterTasks.length}), found ${evidenceCards.length}.`);
+  }
+  const evidenceCardIds = evidenceCards.map((card) => card.content_id);
+  if (new Set(evidenceCardIds).size !== evidenceCardIds.length) errors.push('First Encounter evidence card IDs must be unique.');
+  const evidenceCardsById = new Map(evidenceCards.map((card) => [card.content_id, card]));
+  const allowedEvidenceLevels = new Set(['E0', 'E1', 'E2', 'E3', 'E4']);
+  for (const task of allEncounterTasks) {
+    const card = evidenceCardsById.get(task.id);
+    if (!card) {
+      errors.push(`${task.id} is missing its item-level evidence card.`);
+      continue;
+    }
+    if (card.target_skill_id !== task.target_skill_id) errors.push(`${task.id} evidence target does not match its task.`);
+    if (card.source_line !== task.source_line || card.translation !== task.translation) {
+      errors.push(`${task.id} evidence card must match the canonical source line and translation.`);
+    }
+    if (!card.function || !card.register_or_context) errors.push(`${task.id} evidence card needs a function and context.`);
+    if (!Array.isArray(card.evidence_levels) || card.evidence_levels.length === 0 || card.evidence_levels.some((level) => !allowedEvidenceLevels.has(level))) {
+      errors.push(`${task.id} evidence card has an invalid evidence level.`);
+    }
+    if (!Array.isArray(card.accepted_variants)) errors.push(`${task.id} evidence card must declare its accepted-variant list.`);
+    if (card.language_reviewer !== null || card.reviewed_on !== null || card.audio_source !== null) {
+      errors.push(`${task.id} evidence card cannot imply review or audio before promotion.`);
+    }
+    if (card.publication_status !== evidenceLedger.publication_status) errors.push(`${task.id} evidence card bypasses the publication block.`);
+    if (!Array.isArray(card.known_uncertainties) || card.known_uncertainties.length === 0) {
+      errors.push(`${task.id} evidence card must state a known uncertainty.`);
+    }
+    requireRegisteredSources(`${task.id} evidence`, card.source_registry_ids, curriculumUseModes);
+  }
+  for (const card of evidenceCards) {
+    if (!allEncounterTasks.some((task) => task.id === card.content_id)) {
+      errors.push(`${card.content_id || 'unknown'} evidence card is not attached to a First Encounter task.`);
+    }
+  }
   for (const task of allEncounterTasks) {
     if (!task.target_skill_id || !task.source_line || !task.translation) {
       errors.push(`${task.id} is missing source-bound learner content.`);
@@ -202,6 +249,7 @@ export function validateContent({ track, demo, encounter, sourceRegistry, readin
       curriculumScopeSources: curriculumScopeSources.length,
       learningDesignSources: learningDesignSources.length,
       readingAssistItems: readingAssist.items.length,
+      evidenceCards: evidenceCards.length,
     },
   };
 }

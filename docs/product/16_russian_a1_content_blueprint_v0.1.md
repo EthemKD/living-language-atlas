@@ -62,9 +62,9 @@ known_uncertainties[]
 publication_status
 ```
 
-The current JSON has the source line, translation, skill, source registry and global review card. It does not yet have a
-reviewed per-item accepted-variant ledger. Until that ledger exists, deterministic checking is only a prototype trace and
-must not be described as open-ended language evaluation.
+The reference build now carries one blocked card per task, joined against the canonical source line and translation. The
+cards deliberately keep `accepted_variants` empty and reviewer/audio fields null. Until those fields are reviewed, deterministic
+checking is only a prototype trace and must not be described as open-ended language evaluation.
 
 ## Reviewer checklist
 

@@ -2,6 +2,7 @@ import { Linking, ScrollView, View } from 'react-native';
 
 import { ActionRow } from '@/components/action-row';
 import { ThemedText } from '@/components/themed-text';
+import evidenceLedger from '@/content/first-encounter-evidence.json';
 import { sourceRegistry, type SourceRegistryEntry } from '@/content/source-registry';
 import { useTheme } from '@/theme';
 
@@ -47,6 +48,8 @@ export function SourceNotesScreen() {
   const { colors, spacing, layout } = useTheme();
   const scopeSources = sourceRegistry.sources.filter((source) => source.use_mode !== 'learning_design_only');
   const learningDesignSources = sourceRegistry.sources.filter((source) => source.use_mode === 'learning_design_only');
+  const blockedItemCount = evidenceLedger.cards.filter((card) => card.publication_status === 'blocked_pending_russian_review').length;
+  const reviewedItemCount = evidenceLedger.cards.filter((card) => card.language_reviewer !== null).length;
 
   return (
     <ScrollView
@@ -62,6 +65,19 @@ export function SourceNotesScreen() {
           <ThemedText tone="muted">
             These public sources constrain topic choice and learning-sequence design. They do not license copied course
             material, approve individual learner-facing Russian strings, or certify anyone’s ability.
+          </ThemedText>
+        </View>
+
+        <View style={{ gap: spacing.xs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+          <ThemedText variant="caption" tone="current">
+            ITEM-LEVEL CONTENT GATE
+          </ThemedText>
+          <ThemedText variant="bodyStrong">
+            {evidenceLedger.cards.length} task cards · {blockedItemCount} blocked · {reviewedItemCount} reviewer-signed
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            Each card names its target function, evidence level, source scope and uncertainty. Accepted variants, reviewer
+            identity and learner-ready audio stay empty until the exact Russian content version is reviewed.
           </ThemedText>
         </View>
 
