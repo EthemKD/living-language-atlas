@@ -1,203 +1,169 @@
-import { Link } from 'expo-router';
-import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
-import { referenceTrack, type District } from '@/content/reference-track';
-import { getDistrictState, prototypeLearner, type DistrictState } from '@/domain/learning-state';
+import { firstEncounter, type EncounterStage } from '@/content/first-encounter';
+import { canOpenFirstEncounterMission, canOpenFirstEncounterStage, useFirstEncounterProgress } from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
-const stateCopy: Record<DistrictState, string> = {
-  complete: 'Transferred',
-  current: 'Now',
-  available: 'Next',
-  locked: 'Later',
-};
+type RouteState = 'complete' | 'current' | 'locked';
 
-function DistrictRoute({ district, index }: { district: District; index: number }) {
-  const { colors, spacing, radii, layout, arcPalette } = useTheme();
-  const state = getDistrictState(district);
-  const markerColor =
-    state === 'complete'
-      ? colors.routeComplete
-      : state === 'current'
-        ? colors.routeCurrent
-        : colors.routeDormant;
-  const isCurrent = state === 'current';
+function StageRow({ stage, state, onPress }: { stage: EncounterStage; state: RouteState; onPress: () => void }) {
+  const { colors, spacing, radii, layout } = useTheme();
+  const isLocked = state === 'locked';
+  const isComplete = state === 'complete';
+  const markerColor = isComplete ? colors.success : isLocked ? colors.routeDormant : colors.current;
 
   return (
-    <View
-      accessibilityLabel={`${district.id}, ${district.title}, ${stateCopy[state]}`}
-      style={{ flexDirection: 'row', gap: spacing.md, minHeight: isCurrent ? 260 : 148 }}>
-      <View style={{ width: spacing.xl, alignItems: 'center' }}>
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            width: 3,
-            backgroundColor: markerColor,
-            opacity: state === 'locked' ? 0.35 : 0.82,
-          }}
-        />
-        <View
-          style={{
-            width: isCurrent ? spacing.xl : spacing.lg,
-            height: isCurrent ? spacing.xl : spacing.lg,
-            borderRadius: radii.pill,
-            borderWidth: isCurrent ? 6 : 4,
-            borderColor: colors.background,
-            backgroundColor: markerColor,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <ThemedText variant="caption" tone={state === 'locked' ? 'faint' : 'inverse'}>
-            {state === 'complete' ? '✓' : index + 1}
-          </ThemedText>
-        </View>
-      </View>
-
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isLocked }}
+      disabled={isLocked}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        minHeight: layout.touchTarget,
+        flexDirection: 'row',
+        gap: spacing.md,
+        paddingVertical: spacing.md,
+        opacity: isLocked ? 0.46 : pressed ? 0.72 : 1,
+      })}>
       <View
         style={{
-          flex: 1,
-          maxWidth: layout.readingWidth,
-          gap: spacing.sm,
-          paddingBottom: spacing.lg,
-          paddingLeft: index % 2 === 0 ? 0 : spacing.md,
-          opacity: state === 'locked' ? 0.5 : 1,
+          width: spacing.lg,
+          height: spacing.lg,
+          borderRadius: radii.pill,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: markerColor,
         }}>
-        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs }}>
-          <ThemedText variant="caption" style={{ color: arcPalette[district.arc] ?? colors.accent }}>
-            {district.arc}
-          </ThemedText>
-          <ThemedText variant="caption" tone={isCurrent ? 'current' : 'faint'}>
-            {stateCopy[state]}
+        <ThemedText variant="caption" tone="inverse">
+          {isComplete ? '✓' : stage.order + 1}
+        </ThemedText>
+      </View>
+      <View style={{ flex: 1, gap: spacing.xxs }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
+          <ThemedText variant="bodyStrong">{stage.title}</ThemedText>
+          <ThemedText variant="caption" tone={isComplete ? 'accent' : isLocked ? 'faint' : 'current'}>
+            {isComplete ? 'GUIDED' : isLocked ? 'LATER' : 'NOW'}
           </ThemedText>
         </View>
-        <ThemedText variant={isCurrent ? 'title' : 'heading'}>{district.title}</ThemedText>
         <ThemedText variant="callout" tone="muted">
-          {district.promise}
+          {stage.can_do}
         </ThemedText>
-
-        {isCurrent ? (
-          <View style={{ gap: spacing.xs, paddingTop: spacing.xs }}>
-            {district.missions.map((mission, missionIndex) => {
-              const isActive = mission.id === prototypeLearner.currentMissionId;
-              const marker = (
-                <View
-                  style={{
-                    width: spacing.lg,
-                    height: spacing.lg,
-                    borderRadius: radii.pill,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: isActive ? colors.current : colors.surface,
-                  }}>
-                  <ThemedText variant="caption" tone={isActive ? 'inverse' : 'faint'}>
-                    {missionIndex + 1}
-                  </ThemedText>
-                </View>
-              );
-              const missionBody = (
-                <Pressable
-                  accessibilityRole={isActive ? 'button' : undefined}
-                  accessibilityState={{ disabled: !isActive }}
-                  disabled={!isActive}
-                  style={({ pressed }) => ({
-                    minHeight: layout.touchTarget,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: spacing.sm,
-                    paddingVertical: spacing.xs,
-                    opacity: pressed ? 0.7 : 1,
-                  })}>
-                  {isActive ? <Link.AppleZoom>{marker}</Link.AppleZoom> : marker}
-                  <View style={{ flex: 1 }}>
-                    <ThemedText variant="bodyStrong" tone={isActive ? 'default' : 'muted'}>
-                      {mission.title}
-                    </ThemedText>
-                    <ThemedText variant="caption" tone="faint">
-                      {mission.setting}
-                    </ThemedText>
-                  </View>
-                  {isActive ? (
-                    <ThemedText variant="heading" tone="current" accessibilityElementsHidden>
-                      ›
-                    </ThemedText>
-                  ) : null}
-                </Pressable>
-              );
-
-              if (!isActive) return <View key={mission.id}>{missionBody}</View>;
-              return (
-                <Link
-                  key={mission.id}
-                  href={{ pathname: '/atlas/mission/[mission-id]', params: { 'mission-id': mission.id } }}
-                  asChild>
-                  <Link.Trigger>{missionBody}</Link.Trigger>
-                </Link>
-              );
-            })}
-          </View>
-        ) : null}
+        <ThemedText variant="caption" tone="faint">
+          {stage.duration} · {stage.eyebrow}
+        </ThemedText>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 export function AtlasScreen() {
-  const { width } = useWindowDimensions();
+  const router = useRouter();
+  const progress = useFirstEncounterProgress();
   const { colors, spacing, layout } = useTheme();
-  const compact = width < 430;
+  const completedCount = progress.completedStageIds.length + Number(progress.missionRehearsed);
+  const missionOpen = canOpenFirstEncounterMission();
 
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ alignItems: 'center', paddingHorizontal: compact ? spacing.md : spacing.lg }}>
-      <View style={{ width: '100%', maxWidth: layout.maxContentWidth, gap: spacing.xl, paddingBottom: spacing.xxl }}>
-        <View style={{ gap: spacing.sm, paddingTop: spacing.sm }}>
+      contentContainerStyle={{ alignItems: 'center', paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}>
+      <View style={{ width: '100%', maxWidth: layout.maxContentWidth, gap: spacing.xl }}>
+        <View style={{ gap: spacing.sm }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
             <View style={{ flex: 1, gap: spacing.xxs }}>
               <ThemedText variant="caption" tone="accent">
-                RUSSIAN · FOUNDATION REFERENCE TRACK
+                RUSSIAN · FIRST ENCOUNTER
               </ThemedText>
-              <ThemedText variant="heading">Ask where. Confirm before moving.</ThemedText>
+              <ThemedText variant="heading">Read the signs. Make one request. Repair the moment.</ThemedText>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
               <ThemedText variant="title" tone="current" style={{ fontVariant: ['tabular-nums'] }}>
-                03
+                {completedCount}
               </ThemedText>
               <ThemedText variant="caption" tone="faint">
-                OF 12
+                OF 5
               </ThemedText>
             </View>
           </View>
-          <ProgressLine value={2.5 / 12} tone="current" />
+          <ProgressLine value={completedCount / 5} tone="current" />
           <ThemedText variant="caption" tone="muted">
-            Habit, evidence and credits are tracked separately. This path advances on observed transfer, not XP.
+            English interface · about 20–30 minutes · no level score attached
           </ThemedText>
         </View>
 
-        <View accessibilityRole="summary" style={{ borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+        <View style={{ gap: spacing.xs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
           <ThemedText variant="caption" tone="current">
-            TODAY'S MISSION
+            THE ACTUAL JOB
           </ThemedText>
-          <ThemedText variant="bodyStrong">Find the platform</ThemedText>
+          <ThemedText variant="bodyStrong">Introduce yourself, order one drink, then recover if you lose the thread.</ThemedText>
           <ThemedText variant="callout" tone="muted">
-            Rail station · one changed number · 6–8 minutes
+            This path tests a small, changed-context rehearsal. It does not promise fluency, a native accent, or a CEFR level.
           </ThemedText>
         </View>
 
-        <View>
-          {referenceTrack.districts.map((district, index) => (
-            <DistrictRoute key={district.id} district={district} index={index} />
-          ))}
+        <View style={{ gap: spacing.xs }}>
+          <ThemedText variant="caption" tone="faint">
+            BUILD THE SUPPORTS
+          </ThemedText>
+          <View style={{ borderTopWidth: 1, borderTopColor: colors.separator }}>
+            {firstEncounter.stages.map((stage) => {
+              const complete = progress.completedStageIds.includes(stage.id);
+              const available = canOpenFirstEncounterStage(stage.id);
+              return (
+                <StageRow
+                  key={stage.id}
+                  stage={stage}
+                  state={complete ? 'complete' : available ? 'current' : 'locked'}
+                  onPress={() => router.push({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': stage.id } })}
+                />
+              );
+            })}
+          </View>
         </View>
 
-        <ThemedText variant="caption" tone="faint">
-          Content status: reference draft. Russian-language and assessment claims remain expert-review gated.
-        </ThemedText>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !missionOpen }}
+          disabled={!missionOpen}
+          onPress={() => router.push('/atlas/encounter/mission')}
+          style={({ pressed }) => ({
+            gap: spacing.xs,
+            padding: spacing.lg,
+            borderWidth: 1,
+            borderColor: missionOpen ? colors.current : colors.separator,
+            borderCurve: 'continuous',
+            backgroundColor: missionOpen ? colors.accentSoft : colors.surface,
+            opacity: missionOpen ? (pressed ? 0.72 : 1) : 0.52,
+          })}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
+            <ThemedText variant="caption" tone={missionOpen ? 'current' : 'faint'}>
+              CHANGED-CONTEXT REHEARSAL
+            </ThemedText>
+            <ThemedText variant="caption" tone="faint">
+              7 MIN
+            </ThemedText>
+          </View>
+          <ThemedText variant="heading">First encounter at the café</ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            Coffee becomes tea; the server speaks too quickly. The task is to keep the interaction alive.
+          </ThemedText>
+          <ThemedText variant="caption" tone={missionOpen ? 'accent' : 'faint'}>
+            {progress.missionRehearsed ? 'REHEARSED' : missionOpen ? 'READY WHEN YOU ARE' : 'UNLOCKS AFTER FOUR GUIDED STEPS'}
+          </ThemedText>
+        </Pressable>
+
+        <View style={{ gap: spacing.xs, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>
+          <ThemedText variant="caption" tone="faint">
+            CONTENT STATUS
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            Reference content only. A qualified Russian-language review and traceable audio are still required before learner publication.
+          </ThemedText>
+        </View>
       </View>
     </ScrollView>
   );

@@ -11,6 +11,8 @@ test('reference track retains its declared product counts and review gates', asy
     bundles: 48,
     missionSummaries: 36,
     demoMissions: 1,
+    firstEncounterStages: 4,
+    firstEncounterTasks: 17,
   });
 });
 
@@ -32,4 +34,18 @@ test('choice interactions have one and only one deterministic answer', async () 
   for (const step of choiceSteps) {
     assert.equal(step.choices.filter((choice) => choice.correct).length, 1, step.id);
   }
+});
+
+test('First Encounter keeps its reviewed-content boundary and changed-context repair path', async () => {
+  const { encounter } = await loadContent();
+  assert.equal(encounter.status, 'reference_draft_language_review_required');
+  assert.equal(encounter.content_evidence_card.language_reviewer, null);
+  assert.equal(encounter.content_evidence_card.audio_source, null);
+  assert.deepEqual(
+    encounter.stages.map((stage) => stage.id),
+    ['RUS-00', 'RUS-01', 'RUS-02', 'RUS-03'],
+  );
+  assert.deepEqual(encounter.mission.required_stage_ids, ['RUS-00', 'RUS-01', 'RUS-02', 'RUS-03']);
+  assert.ok(encounter.mission.steps.some((step) => step.target_skill_id.includes('repair')));
+  assert.match(encounter.mission.changed_detail, /tea/i);
 });

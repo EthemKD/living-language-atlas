@@ -7,14 +7,15 @@ async function readJson(relativePath) {
 }
 
 export async function loadContent() {
-  const [track, demo] = await Promise.all([
+  const [track, demo, encounter] = await Promise.all([
     readJson('src/content/russian-foundation-reference-track.json'),
     readJson('src/content/demo-missions.json'),
+    readJson('src/content/first-encounter.json'),
   ]);
-  return { track, demo };
+  return { track, demo, encounter };
 }
 
-export function validateContent({ track, demo }) {
+export function validateContent({ track, demo, encounter }) {
   const errors = [];
   const bundles = track.districts.flatMap((district) => district.bundles);
   const missionSummaries = track.districts.flatMap((district) => district.missions);
@@ -53,6 +54,55 @@ export function validateContent({ track, demo }) {
     }
   }
 
+  if (encounter.status !== 'reference_draft_language_review_required') {
+    errors.push('First Encounter content bypasses the language-review gate.');
+  }
+  if (encounter.content_evidence_card.review_status !== 'language_review_required') {
+    errors.push('First Encounter evidence card must retain the language-review requirement.');
+  }
+  if (encounter.content_evidence_card.language_reviewer !== null || encounter.content_evidence_card.audio_source !== null) {
+    errors.push('First Encounter cannot imply reviewed language or traceable audio before those fields are supplied.');
+  }
+
+  const expectedStageIds = ['RUS-00', 'RUS-01', 'RUS-02', 'RUS-03'];
+  if (encounter.stages.map((stage) => stage.id).join('|') !== expectedStageIds.join('|')) {
+    errors.push('First Encounter stages must remain ordered RUS-00 through RUS-03.');
+  }
+  for (const stage of encounter.stages) {
+    if (!stage.target_skill_id || !stage.can_do || !stage.evidence_boundary) {
+      errors.push(`${stage.id} is missing a skill or evidence boundary.`);
+    }
+    if (stage.tasks.length < 3) errors.push(`${stage.id} needs at least three authored learning tasks.`);
+  }
+
+  const encounterTasks = [...encounter.stages.flatMap((stage) => stage.tasks), ...encounter.mission.steps];
+  for (const task of encounterTasks) {
+    if (!task.target_skill_id || !task.source_line || !task.translation) {
+      errors.push(`${task.id} is missing source-bound learner content.`);
+    }
+    if (task.kind === 'choice' && task.choices.filter((choice) => choice.correct).length !== 1) {
+      errors.push(`${task.id} must have exactly one deterministic choice answer.`);
+    }
+    if (task.kind === 'build') {
+      if (task.tokens.length !== task.correct_token_order.length) {
+        errors.push(`${task.id} build task must use every token exactly once.`);
+      }
+      if (new Set(task.tokens).size !== task.tokens.length) {
+        errors.push(`${task.id} build tokens must be unique for deterministic selection.`);
+      }
+      if (task.correct_token_order.some((token) => !task.tokens.includes(token))) {
+        errors.push(`${task.id} build order references an unavailable token.`);
+      }
+    }
+  }
+
+  if (encounter.mission.required_stage_ids.join('|') !== expectedStageIds.join('|')) {
+    errors.push('The changed-context mission must remain gated by all four guided stages.');
+  }
+  if (!encounter.mission.steps.some((step) => step.target_skill_id.includes('repair'))) {
+    errors.push('The changed-context mission must retain a repair event.');
+  }
+
   return {
     errors,
     counts: {
@@ -60,6 +110,8 @@ export function validateContent({ track, demo }) {
       bundles: bundles.length,
       missionSummaries: missionSummaries.length,
       demoMissions: demo.missions.length,
+      firstEncounterStages: encounter.stages.length,
+      firstEncounterTasks: encounterTasks.length,
     },
   };
 }

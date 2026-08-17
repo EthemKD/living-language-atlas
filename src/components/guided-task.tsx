@@ -1,0 +1,194 @@
+import { useMemo, useState } from 'react';
+import { Pressable, View } from 'react-native';
+
+import { PrimaryAction } from '@/components/primary-action';
+import { ThemedText } from '@/components/themed-text';
+import type { EncounterTask } from '@/content/first-encounter';
+import { useTheme } from '@/theme';
+
+type GuidedTaskProps = {
+  task: EncounterTask;
+  onComplete: () => void;
+  actionLabel?: string;
+};
+
+export function GuidedTask({ task, onComplete, actionLabel = 'Continue' }: GuidedTaskProps) {
+  const [selectedChoiceId, setSelectedChoiceId] = useState<string>();
+  const [selectedTokenIndexes, setSelectedTokenIndexes] = useState<number[]>([]);
+  const [checked, setChecked] = useState(false);
+  const { colors, spacing, radii, layout } = useTheme();
+
+  const selectedChoice = task.kind === 'choice' ? task.choices.find((choice) => choice.id === selectedChoiceId) : undefined;
+  const choiceCorrect = selectedChoice?.correct === true;
+  const builtTokens =
+    task.kind === 'build'
+      ? selectedTokenIndexes.flatMap((index) => {
+          const token = task.tokens[index];
+          return token ? [token] : [];
+        })
+      : [];
+  const buildCorrect =
+    task.kind === 'build' &&
+    builtTokens.length === task.correct_token_order.length &&
+    builtTokens.every((token, index) => token === task.correct_token_order[index]);
+  const solved = task.kind === 'notice' || choiceCorrect || buildCorrect;
+  const canCheck =
+    task.kind === 'choice' ? Boolean(selectedChoiceId) : task.kind === 'build' ? builtTokens.length === task.tokens.length : false;
+  const feedback = useMemo(() => {
+    if (!checked || task.kind === 'notice' || solved) return undefined;
+    return task.retry_hint ?? 'Keep the target function in view, then try the next variation.';
+  }, [checked, solved, task]);
+
+  function resetAttempt() {
+    setSelectedChoiceId(undefined);
+    setSelectedTokenIndexes([]);
+    setChecked(false);
+  }
+
+  return (
+    <View style={{ gap: spacing.lg }}>
+      <View style={{ gap: spacing.xs }}>
+        <ThemedText variant="caption" tone="accent">
+          TARGET · {task.target_skill_id.toUpperCase()}
+        </ThemedText>
+        <ThemedText variant="title">{task.title}</ThemedText>
+        <ThemedText tone="muted">{task.prompt}</ThemedText>
+      </View>
+
+      <View
+        style={{
+          gap: spacing.xs,
+          borderLeftWidth: 3,
+          borderLeftColor: colors.accent,
+          paddingLeft: spacing.md,
+        }}>
+        <ThemedText variant="code" selectable>
+          {task.source_line}
+        </ThemedText>
+        <ThemedText variant="callout" tone="muted">
+          {task.translation}
+        </ThemedText>
+        {task.kind === 'notice' ? (
+          <ThemedText variant="callout" tone="muted">
+            {task.explanation}
+          </ThemedText>
+        ) : null}
+      </View>
+
+      {task.kind === 'choice' ? (
+        <View accessibilityRole="radiogroup" style={{ gap: spacing.xs }}>
+          {task.choices.map((choice) => {
+            const selected = selectedChoiceId === choice.id;
+            return (
+              <Pressable
+                key={choice.id}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                onPress={() => {
+                  setSelectedChoiceId(choice.id);
+                  setChecked(false);
+                }}
+                style={({ pressed }) => ({
+                  minHeight: layout.touchTarget,
+                  justifyContent: 'center',
+                  padding: spacing.md,
+                  borderWidth: selected ? 2 : 1,
+                  borderColor: selected ? colors.accent : colors.separator,
+                  borderRadius: radii.medium,
+                  borderCurve: 'continuous',
+                  backgroundColor: selected || pressed ? colors.accentSoft : colors.surfaceRaised,
+                })}>
+                <ThemedText variant="bodyStrong">{choice.label}</ThemedText>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
+
+      {task.kind === 'build' ? (
+        <View style={{ gap: spacing.md }}>
+          <View
+            accessibilityLabel="Built response"
+            style={{
+              minHeight: layout.touchTarget,
+              justifyContent: 'center',
+              padding: spacing.md,
+              borderWidth: 1,
+              borderColor: checked && !buildCorrect ? colors.danger : colors.separator,
+              borderRadius: radii.medium,
+              borderCurve: 'continuous',
+              backgroundColor: colors.surfaceRaised,
+            }}>
+            <ThemedText tone={builtTokens.length ? 'default' : 'faint'}>
+              {builtTokens.length ? builtTokens.join(' ') : 'Build your response below'}
+            </ThemedText>
+          </View>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
+            {task.tokens.map((token, index) => {
+              const selected = selectedTokenIndexes.includes(index);
+              return (
+                <Pressable
+                  key={`${task.id}-${token}`}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: selected }}
+                  disabled={selected}
+                  onPress={() => {
+                    setSelectedTokenIndexes((current) => [...current, index]);
+                    setChecked(false);
+                  }}
+                  style={({ pressed }) => ({
+                    minHeight: layout.touchTarget,
+                    justifyContent: 'center',
+                    paddingHorizontal: spacing.md,
+                    borderWidth: 1,
+                    borderColor: selected ? colors.separator : colors.accent,
+                    borderRadius: radii.pill,
+                    borderCurve: 'continuous',
+                    backgroundColor: selected ? colors.surface : pressed ? colors.accentSoft : colors.surfaceRaised,
+                    opacity: selected ? 0.48 : 1,
+                  })}>
+                  <ThemedText variant="bodyStrong" tone={selected ? 'faint' : 'accent'}>
+                    {token}
+                  </ThemedText>
+                </Pressable>
+              );
+            })}
+          </View>
+          {selectedTokenIndexes.length ? <PrimaryAction label="Reset response" variant="quiet" onPress={resetAttempt} /> : null}
+        </View>
+      ) : null}
+
+      {feedback ? (
+        <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+          <ThemedText variant="caption" tone="current">
+            TRY AGAIN
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            {feedback}
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {solved && checked ? (
+        <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.success, paddingLeft: spacing.md }}>
+          <ThemedText variant="caption" tone="accent">
+            GUIDED ATTEMPT LOGGED
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            This records one bounded rehearsal. It is not a level, accent, or fluency score.
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {task.kind === 'notice' ? <PrimaryAction label="I see it" onPress={onComplete} /> : null}
+      {task.kind !== 'notice' && !(solved && checked) ? (
+        <PrimaryAction
+          label={checked ? 'Try another response' : 'Check response'}
+          disabled={!canCheck}
+          onPress={checked ? resetAttempt : () => setChecked(true)}
+        />
+      ) : null}
+      {task.kind !== 'notice' && solved && checked ? <PrimaryAction label={actionLabel} onPress={onComplete} /> : null}
+    </View>
+  );
+}

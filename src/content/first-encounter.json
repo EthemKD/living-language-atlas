@@ -1,0 +1,298 @@
+{
+  "schema_version": "0.1.0",
+  "status": "reference_draft_language_review_required",
+  "interface_language": "English",
+  "target_language": "Russian",
+  "content_evidence_card": {
+    "target_skill_id": "rus.a0.first-encounter",
+    "author": "Living Language Atlas product seed",
+    "language_reviewer": null,
+    "audio_source": null,
+    "review_status": "language_review_required",
+    "source_refs": [
+      "docs/product/12_product_foundation_mvp_slice_v0.1.md",
+      "docs/product/13_first_encounter_build_spec_v0.1.md"
+    ],
+    "known_limits": [
+      "No audio or pronunciation scoring is included in this reference build.",
+      "Completion records a deterministic rehearsal trace, not a CEFR or fluency claim.",
+      "All learner-facing Russian remains blocked from production publication pending qualified review."
+    ]
+  },
+  "stages": [
+    {
+      "id": "RUS-00",
+      "order": 0,
+      "title": "Read the sign",
+      "eyebrow": "SCRIPT GATE",
+      "duration": "4 min",
+      "target_skill_id": "rus.a0.read.mission-signs",
+      "can_do": "I can spot a few Cyrillic shapes needed for this mission without treating them as Latin letters.",
+      "evidence_boundary": "This is a guided script check, not a claim of Cyrillic fluency.",
+      "tasks": [
+        {
+          "id": "rus00-notice-v",
+          "kind": "notice",
+          "title": "Do not trust the shape",
+          "prompt": "One letter in this mission looks familiar but makes a different sound.",
+          "source_line": "В",
+          "translation": "This letter is read with a v sound here, not like English B.",
+          "explanation": "Cyrillic and Latin share some shapes, not a shared sound system. Treat the shape as a new signal.",
+          "target_skill_id": "rus.a0.read.false-friend-v"
+        },
+        {
+          "id": "rus00-coffee",
+          "kind": "choice",
+          "title": "Read one useful word",
+          "prompt": "Which familiar café item can you recognize in КОФЕ?",
+          "source_line": "КОФЕ",
+          "translation": "coffee",
+          "retry_hint": "Read the whole word. It is a café item, not an English spelling test.",
+          "target_skill_id": "rus.a0.read.cafe-word",
+          "choices": [
+            { "id": "coffee", "label": "Coffee", "correct": true },
+            { "id": "Menu", "label": "Menu", "correct": false },
+            { "id": "Ticket", "label": "Ticket", "correct": false }
+          ]
+        },
+        {
+          "id": "rus00-r",
+          "kind": "choice",
+          "title": "Catch another false friend",
+          "prompt": "Which Cyrillic letter is used for the r sound in a word such as ресторан?",
+          "source_line": "Р",
+          "translation": "r sound in this mission",
+          "retry_hint": "The letter looks like Latin P, but its job in Russian is different.",
+          "target_skill_id": "rus.a0.read.false-friend-r",
+          "choices": [
+            { "id": "er", "label": "Р", "correct": true },
+            { "id": "pe", "label": "П", "correct": false },
+            { "id": "ve", "label": "В", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RUS-01",
+      "order": 1,
+      "title": "First contact",
+      "eyebrow": "INTRODUCE YOURSELF",
+      "duration": "5 min",
+      "target_skill_id": "rus.a0.first-contact",
+      "can_do": "I can greet formally and give my name in one supported exchange.",
+      "evidence_boundary": "This is guided phrase retrieval; it does not assess spontaneous conversation.",
+      "tasks": [
+        {
+          "id": "rus01-greet",
+          "kind": "notice",
+          "title": "Start formally",
+          "prompt": "You are meeting a café worker for the first time.",
+          "source_line": "Здравствуйте.",
+          "translation": "Hello. (formal)",
+          "explanation": "Use this formal greeting for the first encounter in this mission. The app is not teaching every greeting yet.",
+          "target_skill_id": "rus.a0.greet.formal"
+        },
+        {
+          "id": "rus01-ask-name",
+          "kind": "choice",
+          "title": "Recognize the question",
+          "prompt": "Which line asks a person for their name using the formal register?",
+          "source_line": "Как вас зовут?",
+          "translation": "What is your name? (formal)",
+          "retry_hint": "Look for the line whose job is asking a name, not giving one.",
+          "target_skill_id": "rus.a0.ask-name.formal",
+          "choices": [
+            { "id": "ask-name", "label": "Как вас зовут?", "correct": true },
+            { "id": "give-name", "label": "Меня зовут Марко.", "correct": false },
+            { "id": "ask-price", "label": "Сколько стоит?", "correct": false }
+          ]
+        },
+        {
+          "id": "rus01-build-name",
+          "kind": "build",
+          "title": "Give your name",
+          "prompt": "Build the line that says: My name is Marco.",
+          "source_line": "Меня зовут Марко.",
+          "translation": "My name is Marco.",
+          "retry_hint": "Start with the two-word frame, then add the supported name token.",
+          "target_skill_id": "rus.a0.state-name",
+          "tokens": ["Марко.", "Меня", "зовут"],
+          "correct_token_order": ["Меня", "зовут", "Марко."]
+        }
+      ]
+    },
+    {
+      "id": "RUS-02",
+      "order": 2,
+      "title": "Make a café request",
+      "eyebrow": "CONCRETE NEED",
+      "duration": "6 min",
+      "target_skill_id": "rus.a0.cafe-request",
+      "can_do": "I can request a menu and order one supported drink politely.",
+      "evidence_boundary": "The activity practices one bounded transaction, not free restaurant conversation.",
+      "tasks": [
+        {
+          "id": "rus02-menu",
+          "kind": "notice",
+          "title": "Ask for the menu",
+          "prompt": "You need to see what is available before choosing.",
+          "source_line": "Можно меню, пожалуйста?",
+          "translation": "May I have a menu, please?",
+          "explanation": "Treat this as one polite request frame. The comma marks a pause in writing; you do not need a grammar lecture to use it here.",
+          "target_skill_id": "rus.a0.request-menu"
+        },
+        {
+          "id": "rus02-order-coffee",
+          "kind": "build",
+          "title": "Order one drink",
+          "prompt": "Build the line: A coffee for me, please.",
+          "source_line": "Мне, пожалуйста, кофе.",
+          "translation": "A coffee for me, please.",
+          "retry_hint": "Keep the polite marker between the request frame and the drink.",
+          "target_skill_id": "rus.a0.order-drink",
+          "tokens": ["кофе.", "Мне,", "пожалуйста,"],
+          "correct_token_order": ["Мне,", "пожалуйста,", "кофе."]
+        },
+        {
+          "id": "rus02-price",
+          "kind": "choice",
+          "title": "Ask the price",
+          "prompt": "Which question asks how much the item costs?",
+          "source_line": "Сколько стоит?",
+          "translation": "How much is it?",
+          "retry_hint": "Choose the question about cost, not the request for a menu.",
+          "target_skill_id": "rus.a0.ask-price",
+          "choices": [
+            { "id": "price", "label": "Сколько стоит?", "correct": true },
+            { "id": "menu", "label": "Можно меню, пожалуйста?", "correct": false },
+            { "id": "close", "label": "Спасибо. До свидания.", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RUS-03",
+      "order": 3,
+      "title": "Repair the interaction",
+      "eyebrow": "RECOVER, DON'T FREEZE",
+      "duration": "5 min",
+      "target_skill_id": "rus.a0.repair-interaction",
+      "can_do": "I can ask for repetition or slower speech when I lose the thread.",
+      "evidence_boundary": "The app rehearses a chosen repair response; it does not judge listening ability or pronunciation.",
+      "tasks": [
+        {
+          "id": "rus03-repeat",
+          "kind": "notice",
+          "title": "Ask for one repeat",
+          "prompt": "The other person answered, but you missed it.",
+          "source_line": "Повторите, пожалуйста.",
+          "translation": "Please repeat.",
+          "explanation": "Repair is part of communication, not a penalty. This formal request keeps the interaction open.",
+          "target_skill_id": "rus.a0.repair.repeat"
+        },
+        {
+          "id": "rus03-understand",
+          "kind": "choice",
+          "title": "Name the problem clearly",
+          "prompt": "Which line means: I do not understand?",
+          "source_line": "Я не понимаю.",
+          "translation": "I do not understand.",
+          "retry_hint": "Choose the line that says the problem plainly instead of asking a new question.",
+          "target_skill_id": "rus.a0.repair.not-understand",
+          "choices": [
+            { "id": "understand", "label": "Я не понимаю.", "correct": true },
+            { "id": "price", "label": "Сколько стоит?", "correct": false },
+            { "id": "name", "label": "Меня зовут Марко.", "correct": false }
+          ]
+        },
+        {
+          "id": "rus03-slower",
+          "kind": "build",
+          "title": "Request a slower reply",
+          "prompt": "Build the line: More slowly, please.",
+          "source_line": "Медленнее, пожалуйста.",
+          "translation": "More slowly, please.",
+          "retry_hint": "Name the speed first, then make the request polite.",
+          "target_skill_id": "rus.a0.repair.slower",
+          "tokens": ["пожалуйста.", "Медленнее,"],
+          "correct_token_order": ["Медленнее,", "пожалуйста."]
+        }
+      ]
+    }
+  ],
+  "mission": {
+    "id": "RUS-M01",
+    "title": "First encounter at the café",
+    "eyebrow": "CHANGED-CONTEXT REHEARSAL",
+    "setting": "A quiet café counter",
+    "duration": "7 min",
+    "changed_detail": "The demonstrated coffee order becomes tea, then the server speaks too quickly.",
+    "required_stage_ids": ["RUS-00", "RUS-01", "RUS-02", "RUS-03"],
+    "evidence_boundary": "This reference build records a deterministic rehearsal trace. It cannot issue a language level, pronunciation, or fluency judgement.",
+    "steps": [
+      {
+        "id": "mission-greet",
+        "kind": "build",
+        "title": "Open the interaction",
+        "prompt": "The server looks up. Build a formal hello.",
+        "source_line": "Здравствуйте.",
+        "translation": "Hello. (formal)",
+        "retry_hint": "Use the formal greeting from the first-contact step.",
+        "target_skill_id": "rus.a0.greet.formal",
+        "tokens": ["Здравствуйте."],
+        "correct_token_order": ["Здравствуйте."]
+      },
+      {
+        "id": "mission-name",
+        "kind": "build",
+        "title": "Give one personal detail",
+        "prompt": "The server asks your name. Build: My name is Marco.",
+        "source_line": "Меня зовут Марко.",
+        "translation": "My name is Marco.",
+        "retry_hint": "Use the same supported frame; the mission asks you to retrieve it without a reveal.",
+        "target_skill_id": "rus.a0.state-name",
+        "tokens": ["зовут", "Марко.", "Меня"],
+        "correct_token_order": ["Меня", "зовут", "Марко."]
+      },
+      {
+        "id": "mission-order-tea",
+        "kind": "build",
+        "title": "Handle one changed detail",
+        "prompt": "The menu is out of coffee. Order tea instead, politely.",
+        "source_line": "Мне, пожалуйста, чай.",
+        "translation": "A tea for me, please.",
+        "retry_hint": "The request frame stays; only the drink changes from coffee to tea.",
+        "target_skill_id": "rus.a0.order-drink.transfer",
+        "tokens": ["чай.", "пожалуйста,", "Мне,"],
+        "correct_token_order": ["Мне,", "пожалуйста,", "чай."]
+      },
+      {
+        "id": "mission-repair",
+        "kind": "choice",
+        "title": "Recover when the reply is too fast",
+        "prompt": "The server says the price too quickly. Which response keeps the interaction going?",
+        "source_line": "Медленнее, пожалуйста.",
+        "translation": "More slowly, please.",
+        "retry_hint": "The problem is speed, so choose the repair that asks for a slower reply.",
+        "target_skill_id": "rus.a0.repair.slower.transfer",
+        "choices": [
+          { "id": "slower", "label": "Медленнее, пожалуйста.", "correct": true },
+          { "id": "name", "label": "Меня зовут Марко.", "correct": false },
+          { "id": "menu", "label": "Можно меню, пожалуйста?", "correct": false }
+        ]
+      },
+      {
+        "id": "mission-close",
+        "kind": "build",
+        "title": "Close politely",
+        "prompt": "You have your tea. Build a thank-you and goodbye.",
+        "source_line": "Спасибо. До свидания.",
+        "translation": "Thank you. Goodbye.",
+        "retry_hint": "Thank the person before closing the encounter.",
+        "target_skill_id": "rus.a0.close.formal",
+        "tokens": ["До свидания.", "Спасибо."],
+        "correct_token_order": ["Спасибо.", "До свидания."]
+      }
+    ]
+  }
+}
