@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 
+import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter, type EncounterStage } from '@/content/first-encounter';
@@ -13,6 +14,14 @@ import {
 import { useTheme } from '@/theme';
 
 type RouteState = 'complete' | 'current' | 'locked';
+
+type NextRouteAction = {
+  eyebrow: string;
+  title: string;
+  detail: string;
+  label?: string;
+  onPress?: () => void;
+};
 
 function formatAvailableAt(timestamp: number | null) {
   if (!timestamp) return 'after the first rehearsal';
@@ -83,6 +92,9 @@ export function AtlasScreen() {
   const returnStatus = getFirstEncounterReturnStatus();
   const returnOpen = returnStatus === 'ready' || returnStatus === 'complete';
   const returnMission = firstEncounter.return_mission;
+  const nextStage = firstEncounter.stages.find(
+    (stage) => !progress.completedStageIds.includes(stage.id) && canOpenFirstEncounterStage(stage.id),
+  );
   const returnState =
     progress.storageState === 'loading'
       ? {
@@ -122,6 +134,51 @@ export function AtlasScreen() {
       detail: 'You can keep rehearsing now, but this device cannot currently retain the route after the app closes.',
     },
   }[progress.storageState];
+  const nextAction: NextRouteAction =
+    progress.storageState === 'loading'
+      ? {
+          eyebrow: 'ROUTE RESTORING',
+          title: 'Checking this device’s saved First Encounter state.',
+          detail: 'The next action will appear once the on-device route record has been restored.',
+        }
+      : nextStage
+        ? {
+            eyebrow: 'NEXT ROUTE ACTION',
+            title: nextStage.title,
+            detail: nextStage.can_do,
+            label: `Continue · ${nextStage.duration}`,
+            onPress: () =>
+              router.push({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': nextStage.id } }),
+          }
+        : !progress.missionRehearsed
+          ? {
+              eyebrow: 'NEXT ROUTE ACTION',
+              title: firstEncounter.mission.title,
+              detail: 'Use the four supports inside one changed café scene before the later retrieval is scheduled.',
+              label: 'Enter changed-context rehearsal',
+              onPress: () => router.push('/atlas/encounter/mission'),
+            }
+          : returnStatus === 'ready'
+            ? {
+                eyebrow: 'NEXT ROUTE ACTION',
+                title: returnMission.title,
+                detail: 'The delayed scene is ready. Retrieve the same functions after the real interval.',
+                label: 'Start later retrieval',
+                onPress: () => router.push('/atlas/encounter/return'),
+              }
+            : returnStatus === 'waiting'
+              ? {
+                  eyebrow: 'ROUTE HOLD',
+                  title: 'The later retrieval is scheduled.',
+                  detail: returnState.detail,
+                }
+              : {
+                  eyebrow: 'ROUTE COMPLETE',
+                  title: 'Review what this device actually logged.',
+                  detail: 'The route is complete; inspect the task-level trace instead of treating completion as a language score.',
+                  label: 'Inspect learning trace',
+                  onPress: () => router.push('/you/trace'),
+                };
 
   return (
     <ScrollView
@@ -160,6 +217,17 @@ export function AtlasScreen() {
           <ThemedText variant="callout" tone="muted">
             This path tests a small, changed-context rehearsal. It does not promise fluency, a native accent, or a CEFR level.
           </ThemedText>
+        </View>
+
+        <View style={{ gap: spacing.sm, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>
+          <ThemedText variant="caption" tone="current">
+            {nextAction.eyebrow}
+          </ThemedText>
+          <ThemedText variant="heading">{nextAction.title}</ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            {nextAction.detail}
+          </ThemedText>
+          {nextAction.label && nextAction.onPress ? <PrimaryAction label={nextAction.label} onPress={nextAction.onPress} /> : null}
         </View>
 
         <View style={{ gap: spacing.xs }}>
