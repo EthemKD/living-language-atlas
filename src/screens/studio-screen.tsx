@@ -6,60 +6,18 @@ import { ActionRow } from '@/components/action-row';
 import { PhraseLens } from '@/components/phrase-lens';
 import { PrimaryAction } from '@/components/primary-action';
 import { ThemedText } from '@/components/themed-text';
-import { firstEncounter, type EncounterTask } from '@/content/first-encounter';
+import { firstEncounterPhraseEntries, type FirstEncounterPhraseEntry } from '@/content/first-encounter-phrases';
 import { useTheme } from '@/theme';
-
-type SourceRoute = { kind: 'stage'; stageId: string } | { kind: 'mission' } | { kind: 'return' };
-
-type PhraseDeskEntry = {
-  id: string;
-  sourceLine: string;
-  translation: string;
-  title: string;
-  target: string;
-  origin: string;
-  route: SourceRoute;
-};
-
-function sourceEntries() {
-  const entries: PhraseDeskEntry[] = [];
-  const seenSourceLines = new Set<string>();
-  const addTasks = (tasks: EncounterTask[], origin: string, route: SourceRoute) => {
-    for (const task of tasks) {
-      if (seenSourceLines.has(task.source_line)) continue;
-      seenSourceLines.add(task.source_line);
-      entries.push({
-        id: task.id,
-        sourceLine: task.source_line,
-        translation: task.translation,
-        title: task.title,
-        target: task.target_skill_id,
-        origin,
-        route,
-      });
-    }
-  };
-
-  for (const stage of firstEncounter.stages) {
-    addTasks(stage.tasks, stage.title, { kind: 'stage', stageId: stage.id });
-  }
-  addTasks(firstEncounter.mission.steps, firstEncounter.mission.title, { kind: 'mission' });
-  addTasks(firstEncounter.return_mission.steps, firstEncounter.return_mission.title, { kind: 'return' });
-
-  return entries;
-}
-
-const phraseDeskEntries = sourceEntries();
 
 export function StudioScreen() {
   const router = useRouter();
-  const [selectedId, setSelectedId] = useState(phraseDeskEntries[0]?.id ?? '');
-  const selected = phraseDeskEntries.find((entry) => entry.id === selectedId) ?? phraseDeskEntries[0];
+  const [selectedId, setSelectedId] = useState(firstEncounterPhraseEntries[0]?.id ?? '');
+  const selected = firstEncounterPhraseEntries.find((entry) => entry.id === selectedId) ?? firstEncounterPhraseEntries[0];
   const { colors, spacing, layout } = useTheme();
 
   if (!selected) return null;
 
-  function openRoute(entry: PhraseDeskEntry) {
+  function openRoute(entry: FirstEncounterPhraseEntry) {
     if (entry.route.kind === 'stage') {
       router.push({ pathname: '/atlas/encounter/[stage-id]', params: { 'stage-id': entry.route.stageId } });
       return;
@@ -108,9 +66,9 @@ export function StudioScreen() {
 
         <View>
           <ThemedText variant="caption" tone="faint" style={{ paddingBottom: spacing.xs }}>
-            CURRENT SOURCE SET · {phraseDeskEntries.length} DISTINCT LINES
+            CURRENT SOURCE SET · {firstEncounterPhraseEntries.length} DISTINCT LINES
           </ThemedText>
-          {phraseDeskEntries.map((entry) => (
+          {firstEncounterPhraseEntries.map((entry) => (
             <ActionRow
               key={entry.id}
               eyebrow={entry.origin}

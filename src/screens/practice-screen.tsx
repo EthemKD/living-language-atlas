@@ -5,6 +5,7 @@ import { ActionRow } from '@/components/action-row';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter } from '@/content/first-encounter';
+import { firstEncounterPhrasesAvailableForRecall } from '@/content/first-encounter-phrases';
 import {
   canOpenFirstEncounterMission,
   canOpenFirstEncounterStage,
@@ -55,6 +56,7 @@ export function PracticeScreen() {
   const completedSupportCount = progress.completedStageIds.length;
   const completedCount = completedSupportCount + Number(progress.missionRehearsed) + Number(progress.returnMissionRehearsed);
   const returnCopy = returnMeta(returnStatus);
+  const recallCount = Math.min(firstEncounterPhrasesAvailableForRecall(progress).length, 5);
 
   return (
     <ScrollView
@@ -78,6 +80,13 @@ export function PracticeScreen() {
           <ThemedText variant="caption" tone="faint" style={{ paddingBottom: spacing.xs }}>
             FIRST ENCOUNTER · {completedCount} OF 6 TRACE EVENTS
           </ThemedText>
+          <ActionRow
+            eyebrow="Recall Lens"
+            title="Recognize the latest source phrases"
+            detail="A short English-meaning check built only from the phrases currently open in your route."
+            meta={`${recallCount} ITEMS`}
+            onPress={() => router.push('/practice/recall')}
+          />
           <ActionRow
             eyebrow="Guided support"
             title={firstOpenStage ? firstOpenStage.title : 'All four supports rehearsed'}

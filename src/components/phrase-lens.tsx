@@ -10,9 +10,16 @@ type PhraseLensProps = {
   translation: string;
   explanation?: string;
   presentation?: 'reference' | 'retrieve';
+  translationVisible?: boolean;
 };
 
-export function PhraseLens({ sourceLine, translation, explanation, presentation = 'reference' }: PhraseLensProps) {
+export function PhraseLens({
+  sourceLine,
+  translation,
+  explanation,
+  presentation = 'reference',
+  translationVisible = true,
+}: PhraseLensProps) {
   const [phraseVisible, setPhraseVisible] = useState(presentation === 'reference');
   const [assistVisible, setAssistVisible] = useState(false);
   const [explanationVisible, setExplanationVisible] = useState(false);
@@ -39,9 +46,15 @@ export function PhraseLens({ sourceLine, translation, explanation, presentation 
             <ThemedText variant="phrase" selectable>
               {sourceLine}
             </ThemedText>
-            <ThemedText variant="callout" tone="muted">
-              {translation}
-            </ThemedText>
+            {translationVisible ? (
+              <ThemedText variant="callout" tone="muted">
+                {translation}
+              </ThemedText>
+            ) : (
+              <ThemedText variant="callout" tone="muted">
+                Choose the English meaning below before revealing the supported translation.
+              </ThemedText>
+            )}
           </>
         ) : (
           <ThemedText variant="callout" tone="muted">
