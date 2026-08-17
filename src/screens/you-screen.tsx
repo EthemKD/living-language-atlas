@@ -1,11 +1,15 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 
 import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import { firstEncounter } from '@/content/first-encounter';
-import { getFirstEncounterReturnStatus, useFirstEncounterProgress } from '@/domain/first-encounter-state';
+import {
+  getFirstEncounterReturnStatus,
+  resetFirstEncounterProgress,
+  useFirstEncounterProgress,
+} from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
 function laterReturnLabel(status: ReturnType<typeof getFirstEncounterReturnStatus>) {
@@ -33,6 +37,17 @@ export function YouScreen() {
     ready: 'This device stores only stage completion and the later-retrieval schedule.',
     unavailable: 'Device storage is currently unavailable, so the route may not survive an app restart.',
   }[progress.storageState];
+
+  function confirmReset() {
+    Alert.alert(
+      'Reset this device’s First Encounter route?',
+      'This clears only the local guided-stage and retrieval schedule for this reference build. It does not affect any account because this build has none.',
+      [
+        { text: 'Keep progress', style: 'cancel' },
+        { text: 'Reset route', style: 'destructive', onPress: resetFirstEncounterProgress },
+      ],
+    );
+  }
 
   return (
     <ScrollView
@@ -117,6 +132,16 @@ export function YouScreen() {
             {firstEncounter.content_evidence_card.known_limits[0]}
           </ThemedText>
           <PrimaryAction label="Inspect source notes" variant="quiet" onPress={() => router.push('/you/sources')} />
+        </View>
+
+        <View style={{ gap: spacing.xs, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>
+          <ThemedText variant="caption" tone="faint">
+            REFERENCE BUILD CONTROL
+          </ThemedText>
+          <ThemedText variant="callout" tone="muted">
+            Reset the route when you want to test the complete learner flow from its first support again.
+          </ThemedText>
+          <PrimaryAction label="Reset this device’s route" variant="quiet" onPress={confirmReset} />
         </View>
       </View>
     </ScrollView>

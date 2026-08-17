@@ -16,9 +16,9 @@ one changed detail. It also contains evidence-led practice, a source-bound Studi
 - Durable on-device progress and a visible later-retrieval schedule, with no voice, conversation, identity or sensitive data stored
 - A complete 12-district Russian foundation reference track: 48 skill bundles and 36 mission summaries, retained as a
   longer-horizon curriculum reference rather than a fake unlock tree
-- Deterministic practice checks for three current/due skill bundles
-- Source-bound Studio planning that does not pretend an AI model is connected
-- Separate habit, evidence and practice-credit displays
+- A state-aware Practice tab plus Recall Lens, which uses only phrases already open in the learner's route
+- A source-bound Phrase Desk rather than a fake connected AI chat surface
+- An inspectable local learning record and in-app Source Notes that distinguish scope evidence from phrase approval
 - Automated content-contract tests and a design-system drift audit
 
 Content is explicitly a reference draft. The First Encounter strings, their eventual audio, and all assessment claims
@@ -29,14 +29,25 @@ universal optimum. Those links constrain scope and are not presented as individu
 
 ## Run it
 
-Requirements: Node 24+, npm and Expo Go.
+Requirements: Node 24+, npm and Expo Go for an Android/iOS device check.
 
 ```bash
-npm install
-npx expo start
+npm ci
+npm run web
 ```
 
-Try Expo Go first. A custom native build is not required by the current slice.
+For a phone check, run `npx expo start`, then scan the QR code in Expo Go. Keep the computer and phone on the same Wi-Fi;
+if that network blocks discovery, run `npx expo start --tunnel` instead. A custom native build is not required by the
+current slice.
+
+To create the same static web bundle used by CI:
+
+```bash
+npm run preview:web
+```
+
+Each push to `main` also runs the **web preview** GitHub Action. Open its successful run, download the artifact, extract
+it, and serve the extracted `dist` folder with any static server to inspect that exact commit.
 
 Quality checks:
 

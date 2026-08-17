@@ -222,6 +222,16 @@ export function completeFirstEncounterReturnMission() {
   return true;
 }
 
+export function resetFirstEncounterProgress() {
+  localMutationBeforeHydration = true;
+  const next = defaultProgress(progress.storageState);
+  publish(next);
+
+  void AsyncStorage.removeItem(storageKey).catch(() => {
+    publish({ ...next, storageState: 'unavailable' });
+  });
+}
+
 export function canOpenFirstEncounterStage(stageId: string) {
   const stageIndex = firstEncounter.stages.findIndex((stage) => stage.id === stageId);
   if (stageIndex < 0) return false;
