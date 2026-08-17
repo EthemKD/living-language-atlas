@@ -7,6 +7,8 @@ import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
 import type { EncounterTask } from '@/content/first-encounter';
+import evidenceLedger from '@/content/first-encounter-evidence.json';
+import type { FirstEncounterTaskTrace } from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
 type RehearsalSequence = {
@@ -32,12 +34,14 @@ type RehearsalSummary = {
   title: string;
   detail: string;
   trace: string;
+  nextStep: string;
 };
 
 type FirstEncounterRehearsalFlowProps = {
   rehearsal: RehearsalSequence;
   unavailable?: UnavailableState;
   persistedComplete: boolean;
+  taskTraces: readonly FirstEncounterTaskTrace[];
   summary: RehearsalSummary;
   exitLabel: string;
   onTaskComplete: (task: EncounterTask, completion: GuidedTaskCompletion) => void;
@@ -49,6 +53,7 @@ export function FirstEncounterRehearsalFlow({
   rehearsal,
   unavailable,
   persistedComplete,
+  taskTraces,
   summary,
   exitLabel,
   onTaskComplete,
@@ -72,6 +77,7 @@ export function FirstEncounterRehearsalFlow({
       ? `${stepIndex + 1} / ${rehearsal.steps.length}`
       : 'LOCKED';
   const progressValue = showSummary ? 1 : showSceneBrief ? 0 : available ? stepIndex / rehearsal.steps.length : 0;
+  const traceByTaskId = new Map(taskTraces.map((trace) => [trace.taskId, trace]));
 
   function advance() {
     const nextStepIndex = Math.min(stepIndex + 1, rehearsal.steps.length);
@@ -159,6 +165,43 @@ export function FirstEncounterRehearsalFlow({
                 {summary.trace}
               </ThemedText>
             </View>
+            <View style={{ gap: spacing.sm, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>
+              <ThemedText variant="caption" tone="current">
+                EVIDENCE SNAPSHOT
+              </ThemedText>
+              <ThemedText variant="callout" tone="muted">
+                These rows describe this device&apos;s fixed rehearsal trace. They are not a level, accent, fluency, or
+                Russian-quality score.
+              </ThemedText>
+              {rehearsal.steps.map((task) => {
+                const card = evidenceLedger.cards.find((candidate) => candidate.content_id === task.id);
+                const trace = traceByTaskId.get(task.id);
+
+                return (
+                  <EvidenceDebriefRow
+                    key={task.id}
+                    level={card?.evidence_levels.join(' · ') ?? 'UNMAPPED'}
+                    detail={card?.function ?? task.title}
+                    status={trace ? 'RECORDED' : 'NOT RECORDED'}
+                    traceDetail={
+                      trace
+                        ? `${trace.completions} logged · latest attempt ${trace.incorrectCheckCount} retry check${
+                            trace.incorrectCheckCount === 1 ? '' : 's'
+                          } · ${trace.retrievalPhraseRevealed ? 'support revealed' : 'support not revealed'}`
+                        : 'No device trace yet.'
+                    }
+                  />
+                );
+              })}
+            </View>
+            <View style={{ gap: spacing.xxs, borderLeftWidth: 3, borderLeftColor: colors.current, paddingLeft: spacing.md }}>
+              <ThemedText variant="caption" tone="current">
+                NEXT STEP
+              </ThemedText>
+              <ThemedText variant="callout" tone="muted">
+                {summary.nextStep}
+              </ThemedText>
+            </View>
             <PrimaryAction label={exitLabel} onPress={onExit} />
             {persistedComplete ? <PrimaryAction label="Rehearse this scene again" variant="quiet" onPress={rehearseAgain} /> : null}
           </View>
@@ -189,6 +232,39 @@ function SceneBriefRow({ label, detail }: { label: string; detail: string }) {
       </ThemedText>
       <ThemedText variant="callout" tone="muted">
         {detail}
+      </ThemedText>
+    </View>
+  );
+}
+
+function EvidenceDebriefRow({
+  level,
+  detail,
+  status,
+  traceDetail,
+}: {
+  level: string;
+  detail: string;
+  status: 'RECORDED' | 'NOT RECORDED';
+  traceDetail: string;
+}) {
+  const { colors, spacing } = useTheme();
+
+  return (
+    <View style={{ gap: spacing.xxs, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.separator }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm }}>
+        <ThemedText variant="caption" tone="accent">
+          {level}
+        </ThemedText>
+        <ThemedText variant="caption" tone={status === 'RECORDED' ? 'accent' : 'faint'}>
+          {status}
+        </ThemedText>
+      </View>
+      <ThemedText variant="callout" tone="muted">
+        {detail}
+      </ThemedText>
+      <ThemedText variant="caption" tone="faint">
+        {traceDetail}
       </ThemedText>
     </View>
   );

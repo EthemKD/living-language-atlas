@@ -56,11 +56,13 @@ export function FirstEncounterReturnScreen() {
       rehearsal={returnMission}
       unavailable={unavailable}
       persistedComplete={progress.returnMissionRehearsed}
+      taskTraces={progress.taskTraces}
       summary={{
         eyebrow: 'DELAYED TRACE COMPLETE',
         title: 'You retrieved the café route after a real interval.',
         detail: returnMission.evidence_boundary,
         trace: 'One later retrieval of a formal greeting, changed drink order, direct repair and polite closing. It is not proof of permanent retention.',
+        nextStep: 'Continue on Atlas. This trace adds one delayed observation; it does not unlock a level or certify fluency.',
       }}
       exitLabel="Return to Atlas"
       onTaskComplete={(task, completion) => {

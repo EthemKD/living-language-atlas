@@ -28,11 +28,13 @@ export function FirstEncounterMissionScreen() {
       rehearsal={mission}
       unavailable={unavailable}
       persistedComplete={progress.missionRehearsed}
+      taskTraces={progress.taskTraces}
       summary={{
         eyebrow: 'REHEARSAL TRACE COMPLETE',
         title: 'You handled a changed café detail and a repair event.',
         detail: mission.evidence_boundary,
         trace: 'Guided retrieval of a formal greeting, name, changed drink order, slower-speech repair and polite closing.',
+        nextStep: 'Return to Atlas. The delayed return opens after the explicit 24-hour interval so retrieval can be observed again.',
       }}
       exitLabel="Return to Atlas"
       onTaskComplete={(task, completion) => {
