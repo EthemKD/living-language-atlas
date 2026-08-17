@@ -23,6 +23,39 @@ type NextRouteAction = {
   onPress?: () => void;
 };
 
+type EvidenceRowProps = {
+  label: string;
+  detail: string;
+  status: string;
+  statusTone: 'accent' | 'current' | 'faint';
+};
+
+function EvidenceRow({ label, detail, status, statusTone }: EvidenceRowProps) {
+  const { colors, spacing } = useTheme();
+
+  return (
+    <View
+      style={{
+        gap: spacing.xxs,
+        paddingVertical: spacing.sm,
+        borderTopWidth: 1,
+        borderTopColor: colors.separator,
+      }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md }}>
+        <ThemedText variant="caption" tone="muted">
+          {label}
+        </ThemedText>
+        <ThemedText variant="caption" tone={statusTone}>
+          {status}
+        </ThemedText>
+      </View>
+      <ThemedText variant="callout" tone="muted">
+        {detail}
+      </ThemedText>
+    </View>
+  );
+}
+
 function formatAvailableAt(timestamp: number | null) {
   if (!timestamp) return 'after the first rehearsal';
 
@@ -92,6 +125,26 @@ export function AtlasScreen() {
   const returnStatus = getFirstEncounterReturnStatus();
   const returnOpen = returnStatus === 'ready' || returnStatus === 'complete';
   const returnMission = firstEncounter.return_mission;
+  const completedSupportCount = progress.completedStageIds.length;
+  const supportStatus =
+    completedSupportCount === firstEncounter.stages.length
+      ? 'SUPPORT REHEARSAL LOGGED'
+      : `${completedSupportCount} / ${firstEncounter.stages.length} SUPPORTS`;
+  const supportTone = completedSupportCount === firstEncounter.stages.length ? 'accent' : 'current';
+  const transferStatus = progress.missionRehearsed
+    ? 'TRANSFER TRACE LOGGED'
+    : missionOpen
+      ? 'READY AFTER SUPPORT'
+      : 'LOCKED UNTIL SUPPORTS';
+  const transferTone = progress.missionRehearsed ? 'accent' : missionOpen ? 'current' : 'faint';
+  const returnEvidenceStatus = progress.returnMissionRehearsed
+    ? 'DELAYED RETURN LOGGED'
+    : returnStatus === 'ready'
+      ? 'READY NOW'
+      : returnStatus === 'waiting'
+        ? 'SCHEDULED'
+        : 'LOCKED UNTIL TRANSFER';
+  const returnEvidenceTone = progress.returnMissionRehearsed || returnStatus === 'ready' ? 'accent' : returnStatus === 'waiting' ? 'current' : 'faint';
   const nextStage = firstEncounter.stages.find(
     (stage) => !progress.completedStageIds.includes(stage.id) && canOpenFirstEncounterStage(stage.id),
   );
@@ -217,6 +270,30 @@ export function AtlasScreen() {
           <ThemedText variant="callout" tone="muted">
             This path tests a small, changed-context rehearsal. It does not promise fluency, a native accent, or a CEFR level.
           </ThemedText>
+        </View>
+
+        <View style={{ gap: spacing.xs }} accessibilityLabel="Evidence path">
+          <ThemedText variant="caption" tone="faint">
+            EVIDENCE PATH
+          </ThemedText>
+          <EvidenceRow
+            label="SUPPORT · RUS-00—03"
+            detail="Script, first contact, café request and repair are logged as guided rehearsals — not as a level score."
+            status={supportStatus}
+            statusTone={supportTone}
+          />
+          <EvidenceRow
+            label="TRANSFER · RUS-M01"
+            detail="The café detail changes before the route can record a transfer trace."
+            status={transferStatus}
+            statusTone={transferTone}
+          />
+          <EvidenceRow
+            label="RETURN · RUS-M02"
+            detail="A separate delayed retrieval is scheduled after the first changed-context rehearsal."
+            status={returnEvidenceStatus}
+            statusTone={returnEvidenceTone}
+          />
         </View>
 
         <View style={{ gap: spacing.sm, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>

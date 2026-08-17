@@ -11,6 +11,7 @@ turning every decision into another memo.
 | Start with a truthful first encounter and one bounded mission | `13_first_encounter_build_spec_v0.1.md` | `D03-M01` interactive vertical slice |
 | Use a living mission route instead of dashboard/card soup | `15_experience_architecture_design_doctrine_v0.1.md` | Spatial district route in `atlas-screen.tsx` |
 | Separate encounter, recognition, supported production, transfer and delayed return | Reference content pack evidence ladder | Mission steps and `You` evidence ledger |
+| Keep Russian content reviewable before adding breadth | `docs/product/16_russian_a1_content_blueprint_v0.1.md` | First Encounter stays source-bound and review-gated; the next content change needs an item-level evidence card |
 
 The `governance/` directory is retained as an audit archive. It does not block local read-only competitor research or
 ordinary product implementation; specialist gates still apply to privacy, safety, payments, minors, psychometrics and
