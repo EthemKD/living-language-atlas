@@ -12,6 +12,7 @@ turning every decision into another memo.
 | Use a living mission route instead of dashboard/card soup | `15_experience_architecture_design_doctrine_v0.1.md` | Spatial district route in `atlas-screen.tsx` |
 | Separate encounter, recognition, supported production, transfer and delayed return | Reference content pack evidence ladder | Mission steps and `You` evidence ledger |
 | Keep Russian content reviewable before adding breadth | `docs/product/16_russian_a1_content_blueprint_v0.1.md` | First Encounter stays source-bound and review-gated; the next content change needs an item-level evidence card |
+| Treat competitor breadth as an explicit gap, not a reason to add disconnected features | `17_competitive_gap_snapshot_2026-08-17.md` | Atlas exposes the inspectable curriculum horizon while runnable content and review status remain distinct |
 
 The `governance/` directory is retained as an audit archive. It does not block local read-only competitor research or
 ordinary product implementation; specialist gates still apply to privacy, safety, payments, minors, psychometrics and

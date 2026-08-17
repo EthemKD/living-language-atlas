@@ -4,7 +4,9 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { PrimaryAction } from '@/components/primary-action';
 import { ProgressLine } from '@/components/progress-line';
 import { ThemedText } from '@/components/themed-text';
+import { CurriculumHorizon } from '@/components/curriculum-horizon';
 import { firstEncounter, type EncounterStage } from '@/content/first-encounter';
+import { referenceTrack } from '@/content/reference-track';
 import {
   canOpenFirstEncounterMission,
   canOpenFirstEncounterStage,
@@ -393,6 +395,13 @@ export function AtlasScreen() {
             {returnState.detail}
           </ThemedText>
         </Pressable>
+
+        <CurriculumHorizon
+          districts={referenceTrack.districts}
+          onOpenDistrict={(districtId) =>
+            router.push({ pathname: '/atlas/district/[district-id]', params: { 'district-id': districtId } })
+          }
+        />
 
         <View style={{ gap: spacing.xs, borderTopWidth: 1, borderTopColor: colors.separator, paddingTop: spacing.md }}>
           <ThemedText variant="caption" tone="faint">

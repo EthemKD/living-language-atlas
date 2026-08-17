@@ -8,6 +8,7 @@ export default function AtlasLayout() {
       <Stack.Screen name="encounter/mission" options={{ title: 'Café rehearsal' }} />
       <Stack.Screen name="encounter/return" options={{ title: 'Return rehearsal' }} />
       <Stack.Screen name="mission/[mission-id]" options={{ title: 'Mission' }} />
+      <Stack.Screen name="district/[district-id]" options={{ title: 'Curriculum district' }} />
     </Stack>
   );
 }
