@@ -2,11 +2,13 @@
 
 ## Latest primary acceptance — LLA-A054 accepted on 2026-09-06
 
-GitHub source transition policy is **ACCEPTED, Q97/100**. PR #1 was squash-merged after all required checks passed. Canonical remote `main` is now `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`; previous remote base was `73764fa48beb57cc72bbce32b0987dcf9efb3639`.
+GitHub source transition policy is **ACCEPTED, Q97/100**. PR #1 was squash-merged after all required checks passed as implementation commit `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`. The A054 state-record PR #2 was then merged as `e17a4aa089b18d733f64d7bda2deb328be281abe`, which is the current canonical remote `main`; previous remote base was `73764fa48beb57cc72bbce32b0987dcf9efb3639`.
 
 `main` protection is active and applies to administrators: pull requests and an up-to-date successful `checks` context are required; linear history and conversation resolution are required; force pushes and branch deletion are disabled. Because this is currently a single-owner repository, required approving reviews are set to zero to avoid an impossible self-approval gate. Protection request: `outputs/living_language_atlas_a054_branch_protection_request_v1.json`. Acceptance record: `outputs/living_language_atlas_a054_repository_acceptance_v1.md`.
 
 GitHub now contains the accepted German technical core, canonical candidate/reviewer artifacts, current roadmap/status/current-state, product direction and AI coordination records. Repository-facing `AGENTS.md` and `README.md` are German-first; Russian material is explicitly legacy/reference-only. Transfer ZIPs, JSON attachment envelopes, `work/**` and secrets remain excluded.
+
+Both post-merge workflows on `main@e17a4aa...` succeeded: GitHub `quality` and `web preview` are green. The local clean clone's `main` exactly matches `origin/main@e17a4aa...`.
 
 Current frontier: **LLA-A055 PLANNED** — create the Notion atom tracker with links to the canonical roadmap and GitHub commits. No A055 work has started.
 

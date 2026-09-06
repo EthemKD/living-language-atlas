@@ -35,12 +35,14 @@
     "visibility": "PRIVATE",
     "default_branch": "main",
     "previous_main_sha": "73764fa48beb57cc72bbce32b0987dcf9efb3639",
-    "current_main_sha": "38d301236ac4b6297cb9b6c5bd8f302ca70ae81f",
+    "accepted_implementation_merge_sha": "38d301236ac4b6297cb9b6c5bd8f302ca70ae81f",
+    "last_verified_main_sha": "e17a4aa089b18d733f64d7bda2deb328be281abe",
     "main_protected": true,
     "local_workspace_connected": true,
-    "latest_quality_ci": "SUCCESS_ON_PR_1_HEAD_4EC320B",
-    "latest_web_preview_ci": "NOT_REQUIRED_ON_PULL_REQUEST",
-    "pull_request_1": "MERGED"
+    "latest_quality_ci": "SUCCESS_ON_MAIN_E17A4AA",
+    "latest_web_preview_ci": "SUCCESS_ON_MAIN_E17A4AA",
+    "pull_request_1": "MERGED_AS_38D3012",
+    "pull_request_2": "MERGED_AS_E17A4AA"
   },
   "human_publication_gates": [
     "LLA-A043",
