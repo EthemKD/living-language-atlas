@@ -278,7 +278,7 @@ export function AtlasScreen() {
     progress.storageState === 'loading'
       ? {
           eyebrow: 'ROUTE RESTORING',
-          title: 'Checking this device's saved First Encounter state.',
+          title: "Checking this device's saved First Encounter state.",
           detail: 'The next action will appear once the on-device route record has been restored.',
         }
       : nextStage

@@ -1,7 +1,7 @@
 {
   "name": "living-language-atlas",
   "private": true,
-  "license": "MIT",
+  "license": "UNLICENSED",
   "main": "expo-router/entry",
   "version": "0.1.0",
   "dependencies": {
