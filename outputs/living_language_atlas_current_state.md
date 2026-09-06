@@ -1,5 +1,15 @@
 # Living Language Atlas — Current state
 
+## Latest primary acceptance — LLA-A054 accepted on 2026-09-06
+
+GitHub source transition policy is **ACCEPTED, Q97/100**. PR #1 was squash-merged after all required checks passed. Canonical remote `main` is now `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`; previous remote base was `73764fa48beb57cc72bbce32b0987dcf9efb3639`.
+
+`main` protection is active and applies to administrators: pull requests and an up-to-date successful `checks` context are required; linear history and conversation resolution are required; force pushes and branch deletion are disabled. Because this is currently a single-owner repository, required approving reviews are set to zero to avoid an impossible self-approval gate. Protection request: `outputs/living_language_atlas_a054_branch_protection_request_v1.json`. Acceptance record: `outputs/living_language_atlas_a054_repository_acceptance_v1.md`.
+
+GitHub now contains the accepted German technical core, canonical candidate/reviewer artifacts, current roadmap/status/current-state, product direction and AI coordination records. Repository-facing `AGENTS.md` and `README.md` are German-first; Russian material is explicitly legacy/reference-only. Transfer ZIPs, JSON attachment envelopes, `work/**` and secrets remain excluded.
+
+Current frontier: **LLA-A055 PLANNED** — create the Notion atom tracker with links to the canonical roadmap and GitHub commits. No A055 work has started.
+
 ## Latest primary acceptance — LLA-A053R1 accepted on 2026-09-06
 
 The repository import and sync correction are **ACCEPTED, Q96/100**. Existing PR #1 now points to correction commit `b912468c86a62b83fbda051cd16d70c56a04f04f`. Primary BRAIN independently verified the branch, live GitHub check and imported authority surface.

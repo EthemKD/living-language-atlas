@@ -3,7 +3,7 @@
 **Tarih:** 2026-09-06  
 **Kapsam:** German-first (`de-DE`) üründen kapalı alphaya, Studio/voice/People/economy ve çok-dilli ölçeğe kadar bütün ürün yolu  
 **Atom sayısı:** **270**  
-**Aktif ilerleme cephesi:** **LLA-A054 — Main/branch/PR/commit-SHA kabul politikasını uygula**  
+**Aktif ilerleme cephesi:** **LLA-A055 — Notion atom tracker'ını roadmap/commit linkleriyle kur**  
 **Bu dosyanın atomu:** **LLA-A011 — ACCEPTED, Q96/100**
 
 Makinece okunabilir anlık işaretçi: `outputs/living_language_atlas_atomic_status_v1.json`.
@@ -132,7 +132,7 @@ Gate: Atomun kapanması için kalan tek somut şart.
 | LLA-A051 | Private GitHub repo/destination ve visibility kararı | OWNER + BRAIN | ACCEPTED | 96 |
 | LLA-A052 | Remote/local reconciliation manifest, license boundary, `.gitignore` ve secret preflight | SPARK + WORKER → BRAIN | ACCEPTED | 96 |
 | LLA-A053 | Clean clone branch, approved German artifact import, commit ve PR | WORKER + OWNER → BRAIN | ACCEPTED | 96 |
-| LLA-A054 | Main/branch/PR/commit-SHA kabul politikasını uygula | OWNER + BRAIN | ACTIVE | — |
+| LLA-A054 | Main/branch/PR/commit-SHA kabul politikasını uygula | OWNER + BRAIN | ACCEPTED | 97 |
 | LLA-A055 | Notion atom tracker'ını roadmap/commit linkleriyle kur | SPARK + NOTION + OWNER → BRAIN | PLANNED | — |
 | LLA-A056 | Fresh-clone testleri ve GitHub source-of-truth kabulü | BRAIN | PLANNED | — |
 
@@ -453,8 +453,8 @@ Notion özellikle A057, A058, A064, A069, A077, A088, A155, A159, A167, A183, A1
 
 ## 9. Şimdiki gerçek
 
-- Tamamlanan son ürün atomu: `LLA-A053`.
+- Tamamlanan son ürün atomu: `LLA-A054`.
 - Roadmap/koordinasyon atomu: `LLA-A011`, bu sürümle kabul edildi.
-- İlk eksik ve en yüksek değerli atom: `LLA-A054`.
+- İlk eksik ve en yüksek değerli atom: `LLA-A055`.
 - Persistent storage, backend, auth, Expo runtime, learner UI, canlı audio ve human content approval henüz yoktur.
 - Legacy canonical comparator'ın `1/27` eşleşmesi belgelenmiş integration debt'tir; fixture'larda trusted runtime history olmadığı için başarı testi gibi sunulmaz.
