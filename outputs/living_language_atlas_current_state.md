@@ -1,6 +1,16 @@
 # Living Language Atlas — Current state
 
-## Latest primary audit — LLA-A053 changes required on 2026-09-06
+## Latest primary acceptance — LLA-A053R1 accepted on 2026-09-06
+
+The repository import and sync correction are **ACCEPTED, Q96/100**. Existing PR #1 now points to correction commit `b912468c86a62b83fbda051cd16d70c56a04f04f`. Primary BRAIN independently verified the branch, live GitHub check and imported authority surface.
+
+The correction adds 21 selected current governance/product/acceptance records; updates `AGENTS.md` and `README.md` to German-first while preserving Russian material only as legacy/reference evidence; sets the private mixed-license package to `UNLICENSED`; fixes the inherited apostrophe parse defect; and makes the design audit portable on Windows without changing its Linux behavior. No `work/**`, transfer ZIP, AI attachment envelope or secret was committed.
+
+Validation: repository `npm run check` exit 0; German runner exit 0 with reader 7, evaluator regressions 151 and learning-event contract 28 checks; candidate hash remains `4F80F1FE...CD300`; live GitHub `quality / checks` succeeded in 29 seconds; PR state is `CLEAN` and `MERGEABLE`. Acceptance review: `outputs/chatgpt_lla_a053r1_acceptance_review_v1.md`.
+
+Current frontier: **LLA-A054 ACTIVE** — establish the strongest available `main` protection/PR policy, record the accepted commit chain, then merge PR #1 only while required checks remain green.
+
+## Superseded primary audit — LLA-A053 changes required on 2026-09-06
 
 Primary BRAIN resumed after the complete return handoff and independently inspected local clone `worker/LLA-A053@c0061d481b81a3ec4966186b99e65cb80852acca` plus live GitHub PR #1. The German engine/content import is real and its branch is pushed, but A053 is reopened as **CHANGES_REQUIRED, Q82/100**.
 

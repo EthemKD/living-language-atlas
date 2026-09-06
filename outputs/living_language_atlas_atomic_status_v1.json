@@ -5,10 +5,10 @@
   "total_atoms": 270,
   "last_updated": "2026-09-06",
   "status_counts": {
-    "ACCEPTED": 44,
+    "ACCEPTED": 45,
     "ACCEPTED_CANDIDATE": 5,
     "BLOCKED_OWNER": 10,
-    "CHANGES_REQUIRED": 1,
+    "CHANGES_REQUIRED": 0,
     "PLANNED": 163,
     "DEFERRED": 47
   },
@@ -18,15 +18,15 @@
     "quality_score": 96,
     "owner": "BRAIN"
   },
-  "last_accepted_atom": "LLA-A052",
-  "last_accepted_implementation_atom": "LLA-A049",
+  "last_accepted_atom": "LLA-A053",
+  "last_accepted_implementation_atom": "LLA-A053",
   "active_frontier": {
-    "atom_id": "LLA-A053",
+    "atom_id": "LLA-A054",
     "phase": 3,
-    "title": "R1: complete authoritative governance sync, German-first repository instructions and green PR",
-    "status": "CHANGES_REQUIRED",
+    "title": "Main/branch/PR/commit-SHA acceptance policy enforcement",
+    "status": "ACTIVE",
     "quality_score": null,
-    "owner": "BRAIN + OWNER"
+    "owner": "OWNER + BRAIN"
   },
   "next_implementation_requires_owner_continue": true,
   "workspace_is_git_repository": false,
@@ -37,7 +37,7 @@
     "inspected_base_sha": "73764fa48beb57cc72bbce32b0987dcf9efb3639",
     "main_protected": false,
     "local_workspace_connected": false,
-    "latest_quality_ci": "FAILURE_ON_PR_1",
+    "latest_quality_ci": "SUCCESS_ON_PR_1_HEAD_B912468",
     "latest_web_preview_ci": "FAILURE"
   },
   "human_publication_gates": [
