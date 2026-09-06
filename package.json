@@ -47,6 +47,11 @@
     "test": "node --test tests/*.test.mjs",
     "check:content": "node scripts/validate-content.mjs",
     "audit:design": "node scripts/audit-design-system.mjs",
-    "check": "npm run check:content && npm run audit:design && npm run test && npm run typecheck && npm run lint"
+    "check": "npm run check:content && npm run audit:design && npm run test && npm run typecheck && npm run lint",
+    "test:german:reader": "node tests/content_reader.test.js",
+    "test:german:evaluator": "node tests/evaluator_engine.test.js",
+    "test:german:regressions": "node tests/evaluator_engine_regressions.test.js",
+    "test:german:ledger": "node tests/learning_event_contract.test.js",
+    "test:german": "npm run test:german:reader && npm run test:german:regressions && npm run test:german:ledger"
   }
 }
