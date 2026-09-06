@@ -14,7 +14,8 @@
 - Accepted PR head: `worker/LLA-A053@4ec320bf6d7ec182fa314a642d9b69d3c794f14e`
 - Pull request: `https://github.com/EthemKD/living-language-atlas/pull/1`
 - Pull-request state: merged
-- Squash merge commit on `main`: `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`
+- PR #1 squash merge commit (accepted implementation): `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`
+- PR #2 squash merge commit (A054 state record / current `main`): `e17a4aa089b18d733f64d7bda2deb328be281abe`
 
 ## Required checks and evidence
 
@@ -23,6 +24,7 @@
 - Local `npm run check` exited 0: content validation, design audit, 5 legacy tests, TypeScript and lint.
 - Local `npm run test:german` exited 0: reader 7, evaluator regressions 151, learning-event contract 28.
 - Candidate content hash remained `4F80F1FE030D05EDA87F8948E2C95571E88FD2C83BA993F11C4B2523FF6CD300`.
+- Both post-merge workflows on current `main@e17a4aa...` succeeded: `quality` and `web preview`.
 
 ## Main protection policy
 
@@ -41,6 +43,6 @@ The exact request is stored at `outputs/living_language_atlas_a054_branch_protec
 
 ## Acceptance boundary
 
-GitHub `main@38d3012...` is now the latest accepted implementation and documentation source. The original non-Git root remains a staging/archive workspace until A056 performs a fresh-clone acceptance. `work/**`, transfer bundles and secrets are not repository source.
+GitHub `main@e17a4aa...` is now the latest accepted implementation and documentation source; `38d3012...` remains the accepted implementation merge within its history. The original non-Git root remains a staging/archive workspace until A056 performs a fresh-clone acceptance. `work/**`, transfer bundles and secrets are not repository source.
 
 Next atom: `LLA-A055` (planned). No next-atom work is authorized by this acceptance record.
