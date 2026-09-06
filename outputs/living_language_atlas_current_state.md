@@ -1,16 +1,26 @@
 # Living Language Atlas — Current state
 
+## Latest primary acceptance — LLA-A055 accepted on 2026-09-07
+
+Notion operational mirror is **ACCEPTED, Q95/100**. Control Room, a 270-row **LLA Atom Tracker**, and a seven-row **LLA GitHub Delivery Log** were created without modifying GitHub or starting a successor atom. The tracker retains the canonical status distribution: `ACCEPTED 46`, `ACCEPTED_CANDIDATE 5`, `BLOCKED_OWNER 10`, `CHANGES_REQUIRED 0`, `ACTIVE 1`, `PLANNED 161`, `DEFERRED 47`; `LLA-A055` is recorded as the sole active atom in the imported snapshot and `LLA-A056` remains planned.
+
+Primary BRAIN independently inspected the live Notion Control Room, tracker property surface and imported sample records, plus all seven delivery rows and direct GitHub URLs. Local seed parsing independently confirmed 270 unique IDs and the same tally. The Spark mechanical run was blocked before reading inputs, so its empty result was not treated as validation; it is covered by BRAIN's equivalent local check. The only accepted variance is that `Phase` is stored as exact imported text rather than a Notion Select, preserving all labels while reducing filter ergonomics. No authority or status semantics are weakened.
+
+Notion URLs: [Control Room](https://app.notion.com/p/Living-Language-Atlas-Control-Room-88a73a056d7e4edd87afb0d08a7e5952?pvs=21), [LLA Atom Tracker](https://app.notion.com/p/59cd6af951bc4ce996e2de764d7a4d8d?pvs=21), [LLA GitHub Delivery Log](https://app.notion.com/p/ab7a61d2f9e44dbfb5e15d026f31e23f?pvs=21). Acceptance record: `outputs/chatgpt_lla_a055_notion_tracker_acceptance_review_v1.md`.
+
+Current frontier: **LLA-A056 PLANNED** — fresh-clone tests and GitHub source-of-truth acceptance. It requires a new explicit start; no implementation or repository action belonging to A056 has started.
+
 ## Latest primary acceptance — LLA-A054 accepted on 2026-09-06
 
-GitHub source transition policy is **ACCEPTED, Q97/100**. PR #1 was squash-merged after all required checks passed as implementation commit `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`. The A054 state-record PR #2 was then merged as `e17a4aa089b18d733f64d7bda2deb328be281abe`, which is the current canonical remote `main`; previous remote base was `73764fa48beb57cc72bbce32b0987dcf9efb3639`.
+GitHub source transition policy is **ACCEPTED, Q97/100**. PR #1 was squash-merged after all required checks passed as implementation commit `38d301236ac4b6297cb9b6c5bd8f302ca70ae81f`. The A054 state-record PR #2 was merged as `e17a4aa089b18d733f64d7bda2deb328be281abe`; the final post-A054 AI sync correction PR #3 was merged as `e9a2ee6550fd1fa6db37bd10dc647b0efdc91ae5`, which is the latest independently verified remote `main`. Previous pre-integration base was `73764fa48beb57cc72bbce32b0987dcf9efb3639`.
 
 `main` protection is active and applies to administrators: pull requests and an up-to-date successful `checks` context are required; linear history and conversation resolution are required; force pushes and branch deletion are disabled. Because this is currently a single-owner repository, required approving reviews are set to zero to avoid an impossible self-approval gate. Protection request: `outputs/living_language_atlas_a054_branch_protection_request_v1.json`. Acceptance record: `outputs/living_language_atlas_a054_repository_acceptance_v1.md`.
 
 GitHub now contains the accepted German technical core, canonical candidate/reviewer artifacts, current roadmap/status/current-state, product direction and AI coordination records. Repository-facing `AGENTS.md` and `README.md` are German-first; Russian material is explicitly legacy/reference-only. Transfer ZIPs, JSON attachment envelopes, `work/**` and secrets remain excluded.
 
-Both post-merge workflows on `main@e17a4aa...` succeeded: GitHub `quality` and `web preview` are green. The local clean clone's `main` exactly matches `origin/main@e17a4aa...`.
+Both post-merge workflows on final `main@e9a2ee6...` succeeded: GitHub `quality` and `web preview` are green. The local clean clone's `main` exactly matches `origin/main@e9a2ee6...`.
 
-Current frontier: **LLA-A055 PLANNED** — create the Notion atom tracker with links to the canonical roadmap and GitHub commits. No A055 work has started.
+Historical note: at that time LLA-A055 had been activated; it was accepted on 2026-09-07 by the newer record above.
 
 ## Latest primary acceptance — LLA-A053R1 accepted on 2026-09-06
 
