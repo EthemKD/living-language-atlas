@@ -1,5 +1,9 @@
 # Working agreement
 
+## Current authority
+
+The current product direction is German-first (`de-DE`) for English-reading adult beginners. Repository-connected agents must read `outputs/living_language_atlas_current_state.md`, `outputs/living_language_atlas_atomic_status_v1.json`, and `outputs/living_language_atlas_atomic_master_roadmap_v1.md` before proposing work. The existing Russian Expo experience is retained as legacy/reference implementation evidence; it is not the current first learner track and must not override the German-first roadmap.
+
 ## Product invariants
 
 1. Habit, skill evidence and economy are separate state domains. Never derive one from another.
@@ -8,8 +12,9 @@
 4. AI output must be labeled, source-grounded and evaluated. Never fabricate a connected model or live response.
 5. People, tutoring and reward-for-teaching features stay gated behind identity, moderation, reporting, age-safety,
    payments and liquidity work. Do not add fake community activity to make a screen look full.
-6. Russian content remains `expert_review_required` until an accountable RFL reviewer signs the exact version.
-7. Never claim CEFR, TORFL or psychometric validity from the reference track.
+6. German candidate content remains blocked until qualified German-language and DaF/DaZ reviewers sign the exact version; audio also requires recorded rights evidence.
+7. Never claim CEFR, psychometric or assessment validity from candidate or reference tracks.
+8. Russian content remains legacy/reference-only and `expert_review_required`; do not silently reconnect it as the first learner track.
 
 ## Interface invariants
 

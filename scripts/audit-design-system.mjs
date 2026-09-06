@@ -1,8 +1,10 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { extname, join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const root = new URL('../', import.meta.url);
 const sourceRoot = new URL('src/', root);
+const sourceRootPath = fileURLToPath(sourceRoot);
 const themePrefix = 'theme/';
 
 async function walk(directory) {
@@ -26,12 +28,12 @@ const rules = [
   { id: 'decorative-gradient-or-glass', pattern: /LinearGradient|expo-glass-effect|GlassView/g },
 ];
 
-const files = (await walk(sourceRoot.pathname)).filter((file) => ['.ts', '.tsx'].includes(extname(file)));
+const files = (await walk(sourceRootPath)).filter((file) => ['.ts', '.tsx'].includes(extname(file)));
 const findings = [];
 let sourceLines = 0;
 
 for (const file of files) {
-  const relativePath = relative(sourceRoot.pathname, file);
+  const relativePath = relative(sourceRootPath, file).replaceAll('\\', '/');
   const text = await readFile(file, 'utf8');
   sourceLines += text.split('\n').length;
   if (relativePath.startsWith(themePrefix)) continue;

@@ -1,0 +1,55 @@
+{
+  "roadmap_version": 1,
+  "roadmap_file": "outputs/living_language_atlas_atomic_master_roadmap_v1.md",
+  "coordination_protocol": "outputs/living_language_atlas_ai_coordination_protocol_v2.md",
+  "total_atoms": 270,
+  "last_updated": "2026-09-06",
+  "status_counts": {
+    "ACCEPTED": 45,
+    "ACCEPTED_CANDIDATE": 5,
+    "BLOCKED_OWNER": 10,
+    "CHANGES_REQUIRED": 0,
+    "PLANNED": 163,
+    "DEFERRED": 47
+  },
+  "roadmap_creation": {
+    "atom_id": "LLA-A011",
+    "status": "ACCEPTED",
+    "quality_score": 96,
+    "owner": "BRAIN"
+  },
+  "last_accepted_atom": "LLA-A053",
+  "last_accepted_implementation_atom": "LLA-A053",
+  "active_frontier": {
+    "atom_id": "LLA-A054",
+    "phase": 3,
+    "title": "Main/branch/PR/commit-SHA acceptance policy enforcement",
+    "status": "ACTIVE",
+    "quality_score": null,
+    "owner": "OWNER + BRAIN"
+  },
+  "next_implementation_requires_owner_continue": true,
+  "workspace_is_git_repository": false,
+  "repository": {
+    "url": "https://github.com/EthemKD/living-language-atlas",
+    "visibility": "PRIVATE",
+    "default_branch": "main",
+    "inspected_base_sha": "73764fa48beb57cc72bbce32b0987dcf9efb3639",
+    "main_protected": false,
+    "local_workspace_connected": false,
+    "latest_quality_ci": "SUCCESS_ON_PR_1_HEAD_B912468",
+    "latest_web_preview_ci": "FAILURE"
+  },
+  "human_publication_gates": [
+    "LLA-A043",
+    "LLA-A044",
+    "LLA-A045"
+  ],
+  "complete_handoff_triggers": [
+    "komple handoff",
+    "tam handoff",
+    "second brain'e devret"
+  ],
+  "return_handoff_trigger": "geri handoff",
+  "message_header_template": "[LLA-Axxx/270 | Phase NN | STATUS | Qxx/100 | OWNER]"
+}
