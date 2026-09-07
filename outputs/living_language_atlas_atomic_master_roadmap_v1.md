@@ -134,7 +134,7 @@ Gate: Atomun kapanması için kalan tek somut şart.
 | LLA-A053 | Clean clone branch, approved German artifact import, commit ve PR | WORKER + OWNER → BRAIN | ACCEPTED | 96 |
 | LLA-A054 | Main/branch/PR/commit-SHA kabul politikasını uygula | OWNER + BRAIN | ACCEPTED | 97 |
 | LLA-A055 | Notion atom tracker'ını roadmap/commit linkleriyle kur | SPARK + NOTION + OWNER → BRAIN | ACCEPTED | 95 |
-| LLA-A056 | Fresh-clone testleri ve GitHub source-of-truth kabulü | BRAIN | PLANNED | — |
+| LLA-A056 | Fresh-clone testleri ve GitHub source-of-truth kabulü | BRAIN | ACCEPTED | 98 |
 
 ### Phase 04 — Güncel teknoloji doğrulaması ve küçük spike'lar
 
