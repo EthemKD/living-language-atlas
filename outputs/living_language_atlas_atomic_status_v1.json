@@ -5,11 +5,11 @@
   "total_atoms": 270,
   "last_updated": "2026-09-07",
   "status_counts": {
-    "ACCEPTED": 47,
+    "ACCEPTED": 48,
     "ACCEPTED_CANDIDATE": 5,
     "BLOCKED_OWNER": 10,
     "CHANGES_REQUIRED": 0,
-    "PLANNED": 162,
+    "PLANNED": 160,
     "DEFERRED": 47
   },
   "roadmap_creation": {
@@ -18,15 +18,15 @@
     "quality_score": 96,
     "owner": "BRAIN"
   },
-  "last_accepted_atom": "LLA-A055",
+  "last_accepted_atom": "LLA-A056",
   "last_accepted_implementation_atom": "LLA-A053",
   "active_frontier": {
-    "atom_id": "LLA-A056",
-    "phase": 3,
-    "title": "Fresh-clone testleri ve GitHub source-of-truth kabulü",
+    "atom_id": "LLA-A057",
+    "phase": 4,
+    "title": "Stable Expo/React Native/New Architecture sürüm matrisi",
     "status": "PLANNED",
     "quality_score": null,
-    "owner": "BRAIN"
+    "owner": "NOTION → BRAIN"
   },
   "next_implementation_requires_owner_continue": true,
   "workspace_is_git_repository": false,
@@ -36,14 +36,16 @@
     "default_branch": "main",
     "previous_main_sha": "73764fa48beb57cc72bbce32b0987dcf9efb3639",
     "accepted_implementation_merge_sha": "38d301236ac4b6297cb9b6c5bd8f302ca70ae81f",
-    "last_verified_main_sha": "e9a2ee6550fd1fa6db37bd10dc647b0efdc91ae5",
+    "last_verified_main_sha": "c666f388c7351d8be32b2c71dac67b553f234c60",
     "main_protected": true,
     "local_workspace_connected": true,
-    "latest_quality_ci": "SUCCESS_ON_MAIN_E9A2EE6",
+    "latest_quality_ci": "SUCCESS_ON_PR5_4AD7E33; MAIN_C666F38_PENDING_OBSERVATION",
     "latest_web_preview_ci": "SUCCESS_ON_MAIN_E9A2EE6",
     "pull_request_1": "MERGED_AS_38D3012",
     "pull_request_2": "MERGED_AS_E17A4AA",
-    "pull_request_3": "MERGED_AS_E9A2EE6"
+    "pull_request_3": "MERGED_AS_E9A2EE6",
+    "pull_request_4": "MERGED_AS_1C7CA32",
+    "pull_request_5": "MERGED_AS_C666F38"
   },
   "human_publication_gates": [
     "LLA-A043",

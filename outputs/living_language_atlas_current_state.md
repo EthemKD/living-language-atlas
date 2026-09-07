@@ -1,6 +1,14 @@
 # Living Language Atlas — Current state
 
-## Latest primary acceptance — LLA-A055 accepted on 2026-09-07
+## Latest primary acceptance — LLA-A056 accepted on 2026-09-07
+
+Fresh Windows-clone and GitHub source-integrity gate is **ACCEPTED, Q98/100**. The initial clean-clone gate exposed a real byte-identity failure: Git checked out the frozen canonical candidate JSON with CRLF line endings, changing its SHA-256 despite the underlying Git blob being correct. Repair PR #5 introduced a one-line, asset-specific `.gitattributes` rule that applies `-text` only to `outputs/living_language_atlas_wp02_german_content_pack_v2_1_candidate.json`.
+
+Primary BRAIN independently cloned `worker/LLA-A056R1` into a separate fresh Windows worktree, verified the checked-out candidate hash as `4F80F1FE030D05EDA87F8948E2C95571E88FD2C83BA993F11C4B2523FF6CD300` and observed `i/lf w/lf attr/-text`. `npm ci`, `npm run test:german`, and `npm run check` all passed. GitHub Actions `checks` passed for the repair PR. PR #5 was merged as `c666f388c7351d8be32b2c71dac67b553f234c60`; no candidate bytes, learning logic, UI, or runtime behavior changed.
+
+Acceptance record: `outputs/chatgpt_lla_a056r1_acceptance_review_v1.md`. Dependency-audit advisories printed by `npm ci` are pre-existing/out of scope for the one-line repair and require separate release-readiness tracking. Current frontier: **LLA-A057 PLANNED** — verify the stable Expo, React Native and New Architecture version matrix before selecting implementation dependencies.
+
+## Previous primary acceptance — LLA-A055 accepted on 2026-09-07
 
 Notion operational mirror is **ACCEPTED, Q95/100**. Control Room, a 270-row **LLA Atom Tracker**, and a seven-row **LLA GitHub Delivery Log** were created without modifying GitHub or starting a successor atom. The tracker retains the canonical status distribution: `ACCEPTED 46`, `ACCEPTED_CANDIDATE 5`, `BLOCKED_OWNER 10`, `CHANGES_REQUIRED 0`, `ACTIVE 1`, `PLANNED 161`, `DEFERRED 47`; `LLA-A055` is recorded as the sole active atom in the imported snapshot and `LLA-A056` remains planned.
 
