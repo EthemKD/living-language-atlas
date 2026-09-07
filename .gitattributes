@@ -1,0 +1,2 @@
+# Preserve byte-for-byte canonical content pack against EOL/text conversion
+outputs/living_language_atlas_wp02_german_content_pack_v2_1_candidate.json -text
