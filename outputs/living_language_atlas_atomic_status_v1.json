@@ -5,11 +5,11 @@
   "total_atoms": 270,
   "last_updated": "2026-09-10",
   "status_counts": {
-    "ACCEPTED": 48,
+    "ACCEPTED": 49,
     "ACCEPTED_CANDIDATE": 5,
     "BLOCKED_OWNER": 10,
     "CHANGES_REQUIRED": 0,
-    "ACTIVE": 1,
+    "ACTIVE": 0,
     "PLANNED": 159,
     "DEFERRED": 47
   },
@@ -19,15 +19,15 @@
     "quality_score": 96,
     "owner": "BRAIN"
   },
-  "last_accepted_atom": "LLA-A056",
+  "last_accepted_atom": "LLA-A057",
   "last_accepted_implementation_atom": "LLA-A053",
   "active_frontier": {
-    "atom_id": "LLA-A057",
+    "atom_id": "LLA-A058",
     "phase": 4,
-    "title": "Stable Expo/React Native/New Architecture sürüm matrisi",
-    "status": "ACTIVE",
+    "title": "gluestack/NativeWind/Lucide/Noto lisans ve uyumluluk matrisi",
+    "status": "PLANNED",
     "quality_score": null,
-    "owner": "BRAIN"
+    "owner": "BRAIN + SPARK"
   },
   "next_implementation_requires_owner_continue": true,
   "workspace_is_git_repository": false,
@@ -37,17 +37,18 @@
     "default_branch": "main",
     "previous_main_sha": "73764fa48beb57cc72bbce32b0987dcf9efb3639",
     "accepted_implementation_merge_sha": "38d301236ac4b6297cb9b6c5bd8f302ca70ae81f",
-    "last_verified_main_sha": "38484be3189dbdd98c09a9417901bcbbfb30f9fa",
+    "last_verified_main_sha": "71e1807ed66c70ed24de1b0facb23c013f3dec26",
     "main_protected": true,
     "local_workspace_connected": true,
-    "latest_quality_ci": "SUCCESS_ON_MAIN_38484BE (checks)",
-    "latest_web_preview_ci": "SUCCESS_ON_MAIN_38484BE (export)",
+    "latest_quality_ci": "SUCCESS_ON_MAIN_71E1807 (checks)",
+    "latest_web_preview_ci": "SUCCESS_ON_MAIN_71E1807 (export)",
     "pull_request_1": "MERGED_AS_38D3012",
     "pull_request_2": "MERGED_AS_E17A4AA",
     "pull_request_3": "MERGED_AS_E9A2EE6",
     "pull_request_4": "MERGED_AS_1C7CA32",
     "pull_request_5": "MERGED_AS_C666F38",
-    "pull_request_6": "MERGED_AS_38484BE"
+    "pull_request_6": "MERGED_AS_38484BE",
+    "pull_request_7": "MERGED_AS_71E1807"
   },
   "human_publication_gates": [
     "LLA-A043",
