@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { ActionRow } from '@/components/action-row';
@@ -14,7 +14,7 @@ import {
 import { useFirstEncounterProgress } from '@/domain/first-encounter-state';
 import { useTheme } from '@/theme';
 
-export function StudioScreen() {
+export function StudioScreen({ children }: { children?: ReactNode } = {}) {
   const router = useRouter();
   const progress = useFirstEncounterProgress();
   const [selectedId, setSelectedId] = useState(firstEncounterPhraseEntries[0]?.id ?? '');
@@ -103,6 +103,7 @@ export function StudioScreen() {
             lesson, validate open-ended writing, assess a voice or decide that a learner has reached a language level.
           </ThemedText>
         </View>
+        {children}
       </View>
     </ScrollView>
   );

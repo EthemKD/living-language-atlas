@@ -8,6 +8,30 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
+test('Newly introduced mobile foundation dependencies are exact pins matching lockfile', () => {
+  const pkgPath = path.join(projectRoot, 'package.json');
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+  // Exact dependency pins check (no ^ or ~ allowed)
+  assert.equal(pkg.dependencies['@expo-google-fonts/noto-sans'], '0.4.2', 'noto-sans must be exactly pinned to 0.4.2');
+  assert.equal(pkg.dependencies['lucide-react-native'], '1.44.0', 'lucide-react-native must be exactly pinned to 1.44.0');
+  assert.equal(pkg.dependencies['nativewind'], '4.1.23', 'nativewind must be exactly pinned to 4.1.23');
+  assert.equal(pkg.dependencies['react-native-svg'], '15.15.4', 'react-native-svg must be exactly pinned to 15.15.4');
+  assert.equal(pkg.devDependencies['tailwindcss'], '3.4.17', 'tailwindcss devDependency must be exactly pinned to 3.4.17');
+
+  // Verify lockfile exact matches
+  const lockPath = path.join(projectRoot, 'package-lock.json');
+  const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+  const rootDeps = lock.packages[''].dependencies;
+  const rootDevDeps = lock.packages[''].devDependencies;
+
+  assert.equal(rootDeps['@expo-google-fonts/noto-sans'], '0.4.2');
+  assert.equal(rootDeps['lucide-react-native'], '1.44.0');
+  assert.equal(rootDeps['nativewind'], '4.1.23');
+  assert.equal(rootDeps['react-native-svg'], '15.15.4');
+  assert.equal(rootDevDeps['tailwindcss'], '3.4.17');
+});
+
 test('NativeWind v4 configuration files exist and declare correct presets and inputs', () => {
   // 1. tailwind.config.js
   const tailwindPath = path.join(projectRoot, 'tailwind.config.js');
@@ -60,8 +84,8 @@ test('Lucide React Native and react-native-svg are installed and resolvable', as
   const pkgPath = path.join(projectRoot, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
-  assert.ok(pkg.dependencies['lucide-react-native'], 'lucide-react-native must be in dependencies');
-  assert.equal(pkg.dependencies['react-native-svg'], '15.15.4', 'react-native-svg must be pinned to 15.15.4 for Expo SDK 57');
+  assert.equal(pkg.dependencies['lucide-react-native'], '1.44.0');
+  assert.equal(pkg.dependencies['react-native-svg'], '15.15.4');
 
   // Verify resolution of both packages from node_modules
   const lucidePkgPath = path.join(projectRoot, 'node_modules', 'lucide-react-native', 'package.json');
@@ -85,24 +109,53 @@ test('Lucide React Native and react-native-svg are installed and resolvable', as
   assert.match(typingsContent, /Check/, 'lucide-react-native must declare Check icon');
 });
 
-test('Noto Sans font loading and Latin/Cyrillic glyph support path is configured', () => {
-  const pkgPath = path.join(projectRoot, 'package.json');
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  assert.ok(pkg.dependencies['@expo-google-fonts/noto-sans'], '@expo-google-fonts/noto-sans must be in dependencies');
-
-  // Root layout loads Noto Sans
+test('RootLayout safely handles Noto Sans loaded/error states and preserves navigation stack', () => {
   const layoutPath = path.join(projectRoot, 'src', 'app', '_layout.tsx');
+  assert.ok(fs.existsSync(layoutPath), 'RootLayout must exist');
   const layoutContent = fs.readFileSync(layoutPath, 'utf8');
-  assert.match(layoutContent, /@expo-google-fonts\/noto-sans/, 'RootLayout must import from @expo-google-fonts/noto-sans');
-  assert.match(layoutContent, /useFonts\(/, 'RootLayout must call useFonts');
-  assert.match(layoutContent, /NotoSans_400Regular/, 'RootLayout must load NotoSans_400Regular');
 
-  // Showcase demonstrates Latin and Cyrillic scripts
+  // useFonts import and destructuring
+  assert.match(layoutContent, /import\s*\{\s*useFonts\s*\}\s*from\s*'expo-font'/, 'RootLayout must import useFonts from expo-font');
+  assert.match(layoutContent, /NotoSans_400Regular/, 'RootLayout must reference NotoSans_400Regular');
+  assert.match(layoutContent, /const\s*\[loaded,\s*error\]\s*=\s*useFonts\(/, 'RootLayout must capture loaded and error');
+
+  // Error handling: visible and deterministic
+  assert.match(layoutContent, /if\s*\(\s*error\s*\)/, 'Must branch on font loading error');
+  assert.match(layoutContent, /testID="font-load-error"/, 'Must render testID for font load error');
+  assert.match(layoutContent, /Font Loading Error/, 'Must render clear error title');
+
+  // Loaded handling: does not render main stack before fonts ready
+  assert.match(layoutContent, /if\s*\(\s*!loaded\s*\)\s*\{\s*return\s+null;\s*\}/, 'Must return null before fonts load');
+
+  // Preserves existing navigation stack
+  assert.match(layoutContent, /<Stack>/, 'Must preserve Stack navigator');
+  assert.match(layoutContent, /name="index"/, 'Must preserve index screen');
+  assert.match(layoutContent, /name="\(tabs\)"/, 'Must preserve (tabs) screen');
+  assert.match(layoutContent, /name="\+not-found"/, 'Must preserve +not-found screen');
+});
+
+test('MobileFoundationShowcase is integrated into demo/development Studio route with clean wiring', () => {
+  const studioRoutePath = path.join(projectRoot, 'src', 'app', '(tabs)', 'studio', 'index.tsx');
+  assert.ok(fs.existsSync(studioRoutePath), 'Studio route file must exist');
+  const routeContent = fs.readFileSync(studioRoutePath, 'utf8');
+
+  // Verifies import and render wiring
+  assert.match(routeContent, /import\s*\{\s*MobileFoundationShowcase\s*\}\s*from\s*'@\/components\/mobile-foundation-showcase'/, 'Studio route must import MobileFoundationShowcase');
+  assert.match(routeContent, /<MobileFoundationShowcase\s*\/>/, 'Studio route must render MobileFoundationShowcase');
+  assert.match(routeContent, /export\s+default\s+function\s+StudioRoute/, 'Must export default StudioRoute component');
+
+  // Verify showcase component itself contains Latin & Cyrillic scripts
   const showcasePath = path.join(projectRoot, 'src', 'components', 'mobile-foundation-showcase.tsx');
   assert.ok(fs.existsSync(showcasePath), 'Showcase component must exist');
   const showcaseContent = fs.readFileSync(showcasePath, 'utf8');
   assert.match(showcaseContent, /Guten Tag!/, 'Must demonstrate German/Latin glyph string');
   assert.match(showcaseContent, /Живой языковой атлас/, 'Must demonstrate Cyrillic glyph string');
+
+  // Verify production learning routes are unaffected
+  const atlasPath = path.join(projectRoot, 'src', 'app', '(tabs)', 'atlas', 'index.tsx');
+  const practicePath = path.join(projectRoot, 'src', 'app', '(tabs)', 'practice', 'index.tsx');
+  assert.doesNotMatch(fs.readFileSync(atlasPath, 'utf8'), /MobileFoundationShowcase/, 'Atlas route must not contain showcase');
+  assert.doesNotMatch(fs.readFileSync(practicePath, 'utf8'), /MobileFoundationShowcase/, 'Practice route must not contain showcase');
 });
 
 test('Third-party licensing notice covers MIT, ISC, and OFL-1.1 with dual-boundary separation', () => {
