@@ -1,5 +1,15 @@
 # Living Language Atlas — Current state
 
+## Latest primary acceptance — LLA-A057 accepted on 2026-09-10
+
+The Expo / React Native / New Architecture version matrix is **ACCEPTED, Q95/100**. BRAIN inspected the exact repository baseline at `main@38484be3189dbdd98c09a9417901bcbbfb30f9fa` and Second Brain independently challenged the conclusion using official Expo and React Native sources.
+
+The accepted decision is `PIN_NOW`: retain the Expo SDK 57 family, React Native 0.86.0, React 19.2.3 and React Native Web 0.21.0 tuple; do not independently bump React Native to 0.87 or adopt a pre-release Expo SDK. Expo’s official matrix maps SDK 57 to this tuple and sets Node 22.13.x as the minimum. CI currently uses Node 24. Expo SDK 55+ uses New Architecture exclusively, so it cannot be disabled for this app.
+
+The decision is a compatibility pin, not release readiness. The package ranges (`~57.0.8`) resolve through the lockfile to patch releases (`57.0.13`); `npm ci` is the reproducibility boundary. A later tooling/ADR atom must decide whether to add an explicit Node engines policy and how to handle React 19 peer-dependency friction. Expo Go is limited to narrow JavaScript/UI smoke; custom native modules/configuration and release-grade device evidence require a development build.
+
+Evidence: `outputs/living_language_atlas_a057_brain_version_matrix_v1.md` and the bounded Second Brain return. Current frontier: **LLA-A058 PLANNED** — BRAIN owns the UI dependency compatibility/licensing decision, with SPARK limited to mechanical package/license/version extraction.
+
 ## Current plan reset — OWNER-directed v1 on 2026-09-10
 
 The operating model is reset to put more critical-path work directly under **Primary BRAIN**. BRAIN now owns product, architecture, security/privacy, content-policy, source evaluation, acceptance, and all final technology decisions. **SECOND-BRAIN** is a bounded independent adversarial reviewer and continuity fallback; **WORKER** implements only BRAIN-authored single-atom briefs; **SPARK** performs only mechanical inventories, diff/hash/count checks and test-log normalization. Notion is removed from the active execution chain unless OWNER + BRAIN explicitly invoke it for a narrow, non-decisive research task.

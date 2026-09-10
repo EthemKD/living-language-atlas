@@ -140,8 +140,8 @@ Gate: Atomun kapanması için kalan tek somut şart.
 
 | Atom | İş | Sahip | Durum |
 |---|---|---|---|
-| LLA-A057 | Stable Expo/React Native/New Architecture sürüm matrisi | BRAIN | ACTIVE |
-| LLA-A058 | gluestack/NativeWind/Lucide/Noto lisans ve uyumluluk matrisi | SPARK + NOTION → BRAIN | PLANNED |
+| LLA-A057 | Stable Expo/React Native/New Architecture sürüm matrisi | BRAIN | ACCEPTED | 95 |
+| LLA-A058 | gluestack/NativeWind/Lucide/Noto lisans ve uyumluluk matrisi | BRAIN + SPARK | PLANNED |
 | LLA-A059 | UI stack/version ADR ve fallback kararı | BRAIN | PLANNED |
 | LLA-A060 | İzole Expo UI compatibility spike'ı | WORKER → BRAIN | PLANNED |
 | LLA-A061 | German glyph, NFC, quote ve compound-wrap smoke | SPARK + WORKER → BRAIN | PLANNED |
