@@ -20,3 +20,8 @@ This repository contains two distinct categories of intellectual property with d
   - **Copyright (c) 2026 EthemKD. All rights reserved.**
   - **Release Gate:** BLOCKED_PENDING_HUMAN_REVIEW
   - Commercial or public use, training on AI models without explicit authorization, and unauthorized reproduction are forbidden.
+
+### D. Third-Party Foundation & Component Sourcing (MIT, ISC, OFL-1.1)
+- For comprehensive third-party license notices, font licensing (OFL-1.1 for Noto Sans Latin/Cyrillic), Lucide icon licensing, and open-source attributions, see:
+  - **[docs/sourcing/LICENSE_NOTICES.md](docs/sourcing/LICENSE_NOTICES.md)**
+
