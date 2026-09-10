@@ -1,10 +1,17 @@
+import '../../global.css';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import Stack from 'expo-router/stack';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
+import { useFonts, NotoSans_400Regular, NotoSans_600SemiBold, NotoSans_700Bold } from '@expo-google-fonts/noto-sans';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  useFonts({
+    NotoSans_400Regular,
+    NotoSans_600SemiBold,
+    NotoSans_700Bold,
+  });
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
