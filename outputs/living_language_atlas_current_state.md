@@ -1,6 +1,16 @@
 # Living Language Atlas — Current state
 
-## Latest primary acceptance — LLA-A056 accepted on 2026-09-07
+## Current plan reset — OWNER-directed v1 on 2026-09-10
+
+The operating model is reset to put more critical-path work directly under **Primary BRAIN**. BRAIN now owns product, architecture, security/privacy, content-policy, source evaluation, acceptance, and all final technology decisions. **SECOND-BRAIN** is a bounded independent adversarial reviewer and continuity fallback; **WORKER** implements only BRAIN-authored single-atom briefs; **SPARK** performs only mechanical inventories, diff/hash/count checks and test-log normalization. Notion is removed from the active execution chain unless OWNER + BRAIN explicitly invoke it for a narrow, non-decisive research task.
+
+This reset supersedes future roadmap owner cells containing `NOTION` through the v3 coordination protocol without rewriting historical delivery records. It activates **LLA-A057** under BRAIN: an official-source Expo/React Native/New Architecture compatibility decision. No dependency upgrade, code implementation, new service account, or successor atom is authorized by the reset itself.
+
+Audit snapshot: remote `main` is `38484be3189dbdd98c09a9417901bcbbfb30f9fa` (PR #6 merged); its `checks` and `export` workflows passed. The frozen German candidate is still `4F80F1FE030D05EDA87F8948E2C95571E88FD2C83BA993F11C4B2523FF6CD300`. There are 48 accepted atoms, 5 accepted candidates, 10 human-owner gates, 1 active atom, 159 planned atoms, and 47 deferred atoms. The local `living-language-atlas` checkout may be on an older worker branch and is not source-of-truth; use `origin/main` or a clean worktree for decisions.
+
+Authoritative reset records: `outputs/living_language_atlas_plan_reset_v1.md`, `outputs/living_language_atlas_ai_coordination_protocol_v3.md`, `outputs/living_language_atlas_second_brain_master_prompt_v3.md`, and `outputs/living_language_atlas_per_atom_ai_dispatch_guide_v2.md`.
+
+## Previous primary acceptance — LLA-A056 accepted on 2026-09-07
 
 Fresh Windows-clone and GitHub source-integrity gate is **ACCEPTED, Q98/100**. The initial clean-clone gate exposed a real byte-identity failure: Git checked out the frozen canonical candidate JSON with CRLF line endings, changing its SHA-256 despite the underlying Git blob being correct. Repair PR #5 introduced a one-line, asset-specific `.gitattributes` rule that applies `-text` only to `outputs/living_language_atlas_wp02_german_content_pack_v2_1_candidate.json`.
 

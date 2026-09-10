@@ -28,7 +28,7 @@ Bu roadmap bir tahmin takvimi değil, bağımlılık ve kabul sicilidir. Bir ato
 | Kod | Rol | Yetki sınırı |
 |---|---|---|
 | `BRAIN` | Primary ChatGPT | Ürün aklı, atom kapsamı, mimari karar, worker brief, bağımsız kabul, roadmap/current-state güncellemesi |
-| `NOTION` | Notion içindeki seçilmiş güçlü model | Uzun araştırma, karşılaştırma, read-only mimari/adversarial review; kanonik dosya değiştirme veya kendiliğinden yeni atom başlatma yetkisi yok |
+| `NOTION` | Tarihsel/opsiyonel dış araştırma yüzeyi | Aktif yürütme zincirinde yer almaz. v3 plan resetinden sonra ancak OWNER + BRAIN açıkça çağırırsa, karar yetkisi olmadan dar araştırma yapabilir. |
 | `SPARK` | Gemini Spark scout | Mekanik envanter, checklist, log/ID/hash normalizasyonu ve küçük karşılaştırma; karar, kod yazımı veya kabul yetkisi yok |
 | `WORKER` | Antigravity worker sohbeti | Yalnız açıkça verilen tek atomu uygular, test eder, raporlar; kendi işini kabul etmez ve sonraki atoma geçmez |
 | `SECOND-BRAIN` | Ayrı Antigravity strateji sohbeti | Normalde standby. `komple handoff` ile geçici BRAIN yetkisi alır; worker sohbetinden kesin olarak ayrıdır |
@@ -140,7 +140,7 @@ Gate: Atomun kapanması için kalan tek somut şart.
 
 | Atom | İş | Sahip | Durum |
 |---|---|---|---|
-| LLA-A057 | Stable Expo/React Native/New Architecture sürüm matrisi | NOTION → BRAIN | PLANNED |
+| LLA-A057 | Stable Expo/React Native/New Architecture sürüm matrisi | BRAIN | ACTIVE |
 | LLA-A058 | gluestack/NativeWind/Lucide/Noto lisans ve uyumluluk matrisi | SPARK + NOTION → BRAIN | PLANNED |
 | LLA-A059 | UI stack/version ADR ve fallback kararı | BRAIN | PLANNED |
 | LLA-A060 | İzole Expo UI compatibility spike'ı | WORKER → BRAIN | PLANNED |
